@@ -8,6 +8,11 @@ const questionSchema = new mongoose.Schema(
       trim: true,
     },
 
+    description: {
+      type: String,
+      default: "",
+    },
+
     answer: {
       type: String,
       required: true,
@@ -31,11 +36,37 @@ const questionSchema = new mongoose.Schema(
       required: true,
     },
 
-    tags: [String],
+    tags: [
+      {
+        type: String,
+      },
+    ],
+
+    examples: [
+      {
+        input: String,
+        output: String,
+        explanation: String,
+      },
+    ],
+
+    constraints: [String],
+
+    hints: [String],
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+    },
+
+    likes: {
+      type: Number,
+      default: 0,
+    },
+
+    views: {
+      type: Number,
+      default: 0,
     },
   },
   {

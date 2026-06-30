@@ -14,39 +14,41 @@ const Sidebar = () => {
       path: "/profile",
     },
    
-{
-  name: "My Interviews",
-  path: "/interviews",
-},
+
 {
   name: "Start Interview",
   path: "/interviews/start",
 },
-   
+   {
+  name: "My Interviews",
+  path: "/interviews",
+},
     {
       name: "Resume Analyzer",
       path: "/resume-analyzer",
     },
      {
-      name: "Questions",
-      path: "/questions",
-    },
+    name: "Coding Problems",
+    path: "/coding",
+  },
+  {
+    name: "My Submissions",
+    path: "/coding/submissions",
+  },
     {
-      name: "Tests",
+  name: "Question Bank",
+  path: "/question-bank/questions",
+},
+    {
+      name: " Mock Tests",
       path: "/tests",
     },
-    {
-      name: "Coding Problems",
-      path: "/coding",
-    },
+    
     {
       name: "Community",
       path: "/community",
     },
-    {
-      name: "Study Groups",
-      path: "/groups",
-    },
+     
     {
       name: "Contests",
       path: "/contests",
@@ -64,6 +66,27 @@ const Sidebar = () => {
       path: "/rewards",
     },
   ];
+
+  const isActive = (path) => {
+    const matches = menu.filter((item) => {
+      if (item.path === "/") {
+        return location.pathname === "/";
+      }
+      if (item.path === "/resume-analyzer" && location.pathname.startsWith("/resume-report")) {
+        return true;
+      }
+      return location.pathname === item.path || location.pathname.startsWith(item.path + "/");
+    });
+
+    if (matches.length === 0) return false;
+
+    const bestMatch = matches.reduce(
+      (best, current) => (current.path.length > best.path.length ? current : best),
+      matches[0]
+    );
+
+    return bestMatch.path === path;
+  };
 
   return (
     <aside className="fixed left-0 top-0 w-72 h-screen bg-slate-950 border-r border-white/10 backdrop-blur-xl overflow-y-auto z-50">
@@ -88,7 +111,7 @@ const Sidebar = () => {
             to={item.path}
             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300
               ${
-                location.pathname === item.path
+                isActive(item.path)
                   ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg"
                   : "text-slate-300 hover:bg-white/10 hover:text-white"
               }`}

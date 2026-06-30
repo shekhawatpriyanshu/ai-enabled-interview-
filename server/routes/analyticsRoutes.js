@@ -7,6 +7,8 @@ const {
   createBadge,
   createAchievement,
   assignReward,
+  getBadges,
+  getAchievements,
   getMyRewards,
 } = require(
   "../controllers/analyticsController"
@@ -56,6 +58,17 @@ router.post(
   protect,
   assignReward
 );
+router.get(
+  "/achievements",
+  protect,
+  getAchievements
+);
+router.get(
+  "/badges",
+  protect,
+  getBadges
+);
+
 
 router.get(
   "/rewards",

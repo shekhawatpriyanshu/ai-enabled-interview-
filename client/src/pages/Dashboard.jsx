@@ -1,6 +1,50 @@
+import React, { useEffect, useState } from "react";
 import MainLayout from "../layouts/MainLayout";
+import { getMyAnalytics, getMyRewards } from "../services/AnalyticsService";
 
 const Dashboard = () => {
+  const [analytics, setAnalytics] = useState(null);
+  const [rewards, setRewards] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [analyticsRes, rewardsRes] = await Promise.all([
+          getMyAnalytics(),
+          getMyRewards(),
+        ]);
+        if (analyticsRes.success) {
+          setAnalytics(analyticsRes.analytics);
+        }
+        if (rewardsRes.success) {
+          setRewards(rewardsRes.rewards);
+        }
+      } catch (error) {
+        console.error("Failed to load dashboard statistics:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <MainLayout showNavbar={true}>
+        <div className="flex justify-center items-center h-[50vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  const totalInterviews = analytics?.interviewsCompleted || 0;
+  const questionsSolved = analytics?.questionsSolved || 0;
+  const achievementsCount = rewards.filter((r) => r.achievement).length;
+  const totalScore = analytics?.totalScore || 0;
+
   return (
     <MainLayout showNavbar={true}>
 
@@ -22,7 +66,7 @@ const Dashboard = () => {
           </h3>
 
           <p className="text-4xl font-bold mt-3 text-cyan-600">
-            24
+            {totalInterviews}
           </p>
         </div>
 
@@ -32,7 +76,7 @@ const Dashboard = () => {
           </h3>
 
           <p className="text-4xl font-bold mt-3 text-purple-600">
-            156
+            {questionsSolved}
           </p>
         </div>
 
@@ -42,7 +86,7 @@ const Dashboard = () => {
           </h3>
 
           <p className="text-4xl font-bold mt-3 text-green-600">
-            12
+            {achievementsCount}
           </p>
         </div>
 
@@ -52,7 +96,7 @@ const Dashboard = () => {
           </h3>
 
           <p className="text-4xl font-bold mt-3 text-orange-600">
-            580
+            {totalScore}
           </p>
         </div>
 

@@ -3,11 +3,13 @@ const express = require("express");
 const {
   createProblem,
   getProblems,
+  runCode,
   getProblem,
   updateProblem,
   deleteProblem,
   submitCode,
   getMySubmissions,
+  generateProblem
 } = require(
   "../controllers/codingController"
 );
@@ -21,12 +23,17 @@ const {
 const router =
   express.Router();
 
+  router.post(
+  "/generate",
+  protect,
+  generateProblem
+);
 router.post(
   "/problem/create",
   protect,
   createProblem
 );
-
+router.post("/run", protect, runCode);
 router.get(
   "/problem/all",
   getProblems

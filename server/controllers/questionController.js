@@ -93,11 +93,15 @@ const createQuestion = async (
   try {
     const {
       title,
-      answer,
-      difficulty,
-      topic,
-      company,
-      tags,
+  description,
+  answer,
+  difficulty,
+  topic,
+  company,
+  tags,
+  examples,
+  constraints,
+  hints,
     } = req.body;
 
     const topicExists =
@@ -122,13 +126,17 @@ const createQuestion = async (
 
     const question =
       await Question.create({
-        title,
-        answer,
-        difficulty,
-        topic,
-        company,
-        tags,
-        createdBy: req.user._id,
+          title,
+  description,
+  answer,
+  difficulty,
+  topic,
+  company,
+  tags,
+  examples,
+  constraints,
+  hints,
+  createdBy: req.user._id,
       });
 
     res.status(201).json({
@@ -145,19 +153,43 @@ const createQuestion = async (
 
 
 // GET ALL QUESTIONS
-const getQuestions = async (
-  req,
-  res
-) => {
+const getQuestions = async (req, res) => {
   try {
-    const questions =
-      await Question.find()
-        .populate("topic")
-        .populate("company")
-        .populate(
-          "createdBy",
-          "name email"
-        );
+    const {
+      topic,
+      company,
+      difficulty,
+      search,
+    } = req.query;
+
+    const filter = {};
+
+    if (topic) {
+      filter.topic = topic;
+    }
+
+    if (company) {
+      filter.company = company;
+    }
+
+    if (difficulty) {
+      filter.difficulty = difficulty;
+    }
+
+    if (search) {
+      filter.title = {
+        $regex: search,
+        $options: "i",
+      };
+    }
+
+    const questions = await Question.find(filter)
+      .populate("topic")
+      .populate("company")
+      .populate("createdBy", "name email")
+      .sort({
+        createdAt: -1,
+      });
 
     res.status(200).json({
       success: true,
