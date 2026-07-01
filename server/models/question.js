@@ -68,6 +68,20 @@ const questionSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    question: {
+      type: String,
+    },
+
+    options: [
+      {
+        type: String,
+      },
+    ],
+
+    correctAnswer: {
+      type: String,
+    },
   },
   {
     timestamps: true,

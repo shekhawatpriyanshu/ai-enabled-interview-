@@ -5,10 +5,24 @@ const groq = new Groq({
 });
 
 const cleanJSON = (text) => {
-  return text
-    .replace(/```json/g, "")
-    .replace(/```/g, "")
-    .trim();
+  let cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();
+  const startArray = cleaned.indexOf("[");
+  const startObj = cleaned.indexOf("{");
+  let startIdx = -1;
+  let endIdx = -1;
+
+  if (startArray !== -1 && (startObj === -1 || startArray < startObj)) {
+    startIdx = startArray;
+    endIdx = cleaned.lastIndexOf("]") + 1;
+  } else if (startObj !== -1) {
+    startIdx = startObj;
+    endIdx = cleaned.lastIndexOf("}") + 1;
+  }
+
+  if (startIdx !== -1 && endIdx > startIdx) {
+    cleaned = cleaned.substring(startIdx, endIdx);
+  }
+  return cleaned;
 };
 
 const isMeaningfulAnswer = (

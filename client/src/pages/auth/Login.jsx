@@ -245,12 +245,12 @@ const Login = () => {
 
             {/* Forgot Password */}
             <div className="flex justify-end">
-              <button
-                type="button"
+              <Link
+                to="/forgot-password"
                 className="text-cyan-400 text-sm hover:text-cyan-300"
               >
                 Forgot Password?
-              </button>
+              </Link>
             </div>
 
             {/* Login Button */}

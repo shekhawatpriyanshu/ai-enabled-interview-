@@ -92,7 +92,7 @@ const Dashboard = () => {
 
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg transition">
           <h3 className="text-slate-500">
-            Rewards
+            Score
           </h3>
 
           <p className="text-4xl font-bold mt-3 text-orange-600">

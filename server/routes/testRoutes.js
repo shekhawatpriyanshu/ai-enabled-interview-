@@ -17,6 +17,19 @@ const {
 const router = express.Router();
 
 
+// SUBMISSIONS
+router.post(
+  "/submit",
+  protect,
+  submitTest
+);
+
+router.get(
+  "/my-submissions",
+  protect,
+  getMySubmissions
+);
+
 // TEST CRUD
 router.post(
   "/create",
@@ -44,20 +57,6 @@ router.delete(
   "/delete/:id",
   protect,
   deleteTest
-);
-
-
-// SUBMISSIONS
-router.post(
-  "/submit",
-  protect,
-  submitTest
-);
-
-router.get(
-  "/my-submissions",
-  protect,
-  getMySubmissions
 );
 
 module.exports = router;

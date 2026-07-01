@@ -5,6 +5,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 // Auth Pages
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 // analytics 
 // Analytics Pages
 import AnalyticsDashboard from "./pages/analytics/AnalyticsDashboard";
@@ -35,6 +36,7 @@ import Dashboard from "./pages/Dashboard";
 // Mock Tests
 import TestsPage from "./pages/tests/TestPage";
 import TestDetails from "./pages/tests/TestDetails";
+import TestOverview from "./pages/tests/TestOverview";
 import MySubmissions from "./pages/tests/MySubmission";
 // Question Bank
 import Topics from "./pages/QuestionBank/Topics";
@@ -70,6 +72,7 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Protected Routes */}
         <Route
@@ -204,6 +207,14 @@ function App() {
         />
         <Route
           path="/tests/:id"
+          element={
+            <ProtectedRoute>
+              <TestOverview />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tests/:id/attempt"
           element={
             <ProtectedRoute>
               <TestDetails />
@@ -398,49 +409,49 @@ function App() {
         </Route>
         {/* ========================= ANALYTICS ========================= */}
 
-<Route
-  element={
-    <AnalyticsProvider>
-      <Outlet />
-    </AnalyticsProvider>
-  }
->
-  <Route
-    path="/analytics"
-    element={
-      <ProtectedRoute>
-        <AnalyticsDashboard />
-      </ProtectedRoute>
-    }
-  />
+        <Route
+          element={
+            <AnalyticsProvider>
+              <Outlet />
+            </AnalyticsProvider>
+          }
+        >
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <AnalyticsDashboard />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="/achievements"
-    element={
-      <ProtectedRoute>
-        <Achievements />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="/achievements"
+            element={
+              <ProtectedRoute>
+                <Achievements />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="/badges"
-    element={
-      <ProtectedRoute>
-        <Badges />
-      </ProtectedRoute>
-    }
-  />
+          <Route
+            path="/badges"
+            element={
+              <ProtectedRoute>
+                <Badges />
+              </ProtectedRoute>
+            }
+          />
 
-  <Route
-    path="/rewards"
-    element={
-      <ProtectedRoute>
-        <Rewards />
-      </ProtectedRoute>
-    }
-  />
-</Route>
+          <Route
+            path="/rewards"
+            element={
+              <ProtectedRoute>
+                <Rewards />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
 
       </Routes>
     </BrowserRouter>

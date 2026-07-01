@@ -80,18 +80,21 @@ const ProblemDetails = () => {
 
       setExpectedOutput(res.expectedOutput || "");
 
+      setScore(res.status === "Accepted" ? 100 : 0);
+
       if (res.error) {
         toast.error(res.error);
       }
     } catch (error) {
       console.log(error.response?.data);
 
-    setStatus("Compilation Error");
+      setStatus("Compilation Error");
 
-    setOutput(
-        error.response?.data?.message ||
-        "Server Error"
-    );
+      setOutput(
+          error.response?.data?.message ||
+          "Server Error"
+      );
+      setScore(0);
     }
   };
 
@@ -102,18 +105,39 @@ const ProblemDetails = () => {
         language,
       });
 
+      if (!res.success) {
+        setStatus(res.status || "Wrong Answer");
+        setOutput(res.output || res.message || "Submission failed.");
+        setExpectedOutput(res.expectedOutput || "");
+        setScore(0);
+        setRuntime("--");
+        setMemory("--");
+        toast.error(res.message || "Submission failed.");
+        return;
+      }
+
       toast.success("Code submitted successfully!");
 
       setStatus(res.submission.status);
       setScore(res.submission.score);
 
       setOutput("Submission completed successfully.");
-      setRuntime("0 ms");
-      setMemory("N/A");
+      setRuntime(res.runtime || "--");
+      setMemory(res.memory || "--");
+      setExpectedOutput("");
     } catch (error) {
+      console.log(error.response?.data);
+      const errData = error.response?.data;
+      
+      setStatus(errData?.status || "Submission Error");
+      setOutput(errData?.output || errData?.message || "Submission failed.");
+      setExpectedOutput(errData?.expectedOutput || "");
+      setScore(0);
+      setRuntime("--");
+      setMemory("--");
+
       toast.error(
-        error.response?.data?.message ||
-          "Submission failed."
+        errData?.message || "Submission failed."
       );
     }
   };

@@ -45,6 +45,20 @@ export const AuthProvider = ({
     return res.data;
   };
 
+  const forgotPassword = async (email) => {
+    const res = await API.post("/auth/forgot-password", { email });
+    return res.data;
+  };
+
+  const resetPassword = async (email, otp, newPassword) => {
+    const res = await API.post("/auth/reset-password", {
+      email,
+      otp,
+      newPassword,
+    });
+    return res.data;
+  };
+
   const logout = () => {
     localStorage.removeItem(
       "token"
@@ -59,6 +73,8 @@ export const AuthProvider = ({
         login,
         register,
         logout,
+        forgotPassword,
+        resetPassword,
       }}
     >
       {children}

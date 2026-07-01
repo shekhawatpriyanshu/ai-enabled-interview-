@@ -82,10 +82,7 @@ const ResumeAnalyzer = () => {
       } catch (error) {
   console.log("Resume Error:", error);
 
-  console.log(
-    "Backend Response:",
-    error.response?.data
-  );
+
 
   alert(
     error.response?.data?.message ||

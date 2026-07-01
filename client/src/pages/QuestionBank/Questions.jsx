@@ -25,6 +25,11 @@ const Questions = () => {
     topic: searchParams.get("topic") || "",
     company: searchParams.get("company") || "",
   });
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filters]);
 
   // Fetch all question bank data
   const fetchData = async () => {
@@ -88,6 +93,13 @@ const filteredQuestions = questions.filter((q) => {
   );
 });
 
+  const QUESTIONS_PER_PAGE = 10;
+  const totalPages = Math.ceil(filteredQuestions.length / QUESTIONS_PER_PAGE);
+  const paginatedQuestions = filteredQuestions.slice(
+    (currentPage - 1) * QUESTIONS_PER_PAGE,
+    currentPage * QUESTIONS_PER_PAGE
+  );
+
   return (
     
     <MainLayout>
@@ -111,7 +123,32 @@ const filteredQuestions = questions.filter((q) => {
           companies={companies}
         />
 
-        <QuestionTable questions={filteredQuestions} loading={loading} />
+        <QuestionTable questions={paginatedQuestions} loading={loading} />
+
+        {/* Pagination Controls */}
+        {!loading && totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-6 pb-6">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              Previous
+            </button>
+            
+            <span className="text-slate-600 text-sm font-medium mx-2">
+              Page <strong className="text-slate-900">{currentPage}</strong> of <strong className="text-slate-900">{totalPages}</strong>
+            </span>
+
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </MainLayout>
   );

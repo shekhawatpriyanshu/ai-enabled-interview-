@@ -34,7 +34,7 @@ const MySubmissions = () => {
 
   if (loading) {
     return (
-      <MainLayout showNavbar>
+      <MainLayout showNavbar={false}>
         <div className="flex justify-center items-center h-[70vh]">
           <h2 className="text-2xl font-semibold">
             Loading Submissions...
@@ -45,7 +45,7 @@ const MySubmissions = () => {
   }
 
   return (
-    <MainLayout showNavbar>
+    <MainLayout showNavbar={false}>
 
       <div className="max-w-7xl mx-auto">
 

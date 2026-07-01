@@ -40,7 +40,28 @@ Example:
       completion.choices[0]
         .message.content;
 
-    return JSON.parse(response);
+    const cleanJSON = (text) => {
+      let cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();
+      const startArray = cleaned.indexOf("[");
+      const startObj = cleaned.indexOf("{");
+      let startIdx = -1;
+      let endIdx = -1;
+
+      if (startArray !== -1 && (startObj === -1 || startArray < startObj)) {
+        startIdx = startArray;
+        endIdx = cleaned.lastIndexOf("]") + 1;
+      } else if (startObj !== -1) {
+        startIdx = startObj;
+        endIdx = cleaned.lastIndexOf("}") + 1;
+      }
+
+      if (startIdx !== -1 && endIdx > startIdx) {
+        cleaned = cleaned.substring(startIdx, endIdx);
+      }
+      return cleaned;
+    };
+
+    return JSON.parse(cleanJSON(response));
   } catch (error) {
     console.error(
       "Groq Error:",

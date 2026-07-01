@@ -152,7 +152,7 @@ const submitTest = async (
 
     const test = await Test.findById(
       testId
-    );
+    ).populate("questions");
 
     if (!test) {
       return res.status(404).json({
@@ -161,15 +161,31 @@ const submitTest = async (
       });
     }
 
+    let correctAnswersCount = 0;
+    const questionsList = test.questions || [];
+
+    // Calculate score based on correctAnswer
+    answers.forEach((ans) => {
+      const questionDoc = questionsList.find(
+        (q) => q._id.toString() === ans.question.toString()
+      );
+      if (questionDoc && questionDoc.correctAnswer === ans.answer) {
+        correctAnswersCount++;
+      }
+    });
+
+    const totalQuestions = questionsList.length;
+    const score = correctAnswersCount;
+    const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
+
     const submission =
       await Submission.create({
         user: req.user._id,
         test: testId,
         answers,
-        totalQuestions:
-          answers.length,
-        score: 0,
-        percentage: 0,
+        totalQuestions,
+        score,
+        percentage,
       });
 
     res.status(201).json({

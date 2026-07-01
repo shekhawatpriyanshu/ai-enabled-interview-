@@ -15,10 +15,15 @@ const TestsPage = () => {
 
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetchTests();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, difficulty]);
 
   const fetchTests = async () => {
     try {
@@ -56,6 +61,15 @@ const TestsPage = () => {
     });
   }, [tests, search, difficulty]);
 
+  const ITEMS_PER_PAGE = 15;
+
+  const paginatedTests = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredTests.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredTests, currentPage]);
+
+  const totalPages = Math.ceil(filteredTests.length / ITEMS_PER_PAGE);
+
   const stats = {
     total: tests.length,
     easy: tests.filter((t) => t.difficulty === "Easy").length,
@@ -64,7 +78,7 @@ const TestsPage = () => {
   };
 
   return (
-    <MainLayout showNavbar>
+    <MainLayout showNavbar={false}>
 
       <div className="space-y-8">
 
@@ -162,19 +176,44 @@ const TestsPage = () => {
 
         {loading ? (
           <LoadingSkeleton />
-        ) : filteredTests.length === 0 ? (
+        ) : paginatedTests.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <>
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {paginatedTests.map((test) => (
+                <TestCard
+                  key={test._id}
+                  test={test}
+                />
+              ))}
+            </div>
 
-            {filteredTests.map((test) => (
-              <TestCard
-                key={test._id}
-                test={test}
-              />
-            ))}
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-10 pb-8">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                
+                <span className="text-slate-600 text-sm font-medium mx-2">
+                  Page <strong className="text-slate-900">{currentPage}</strong> of <strong className="text-slate-900">{totalPages}</strong>
+                </span>
 
-          </div>
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
 
       </div>

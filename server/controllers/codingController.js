@@ -227,6 +227,86 @@ const submitCode =
         });
       }
 
+      const languageMap = {
+        javascript: 102, // Node.js 22.08.0
+        python: 100,     // Python 3.12.5
+        java: 91,        // Java JDK 17.0.6
+        cpp: 105,        // C++ GCC 14.1.0
+        c: 103,          // C GCC 14.1.0
+      };
+
+      const langId = languageMap[language];
+
+      if (!langId) {
+        return res.status(400).json({
+          success: false,
+          message: "Unsupported language",
+        });
+      }
+
+      const examples = problem.examples || [];
+      const testCases = examples.length > 0 ? examples : [{ input: "", output: "" }];
+
+      let maxTime = 0;
+      let maxMemory = 0;
+
+      for (let i = 0; i < testCases.length; i++) {
+        const example = testCases[i];
+        const response = await axios.post(
+          "https://ce.judge0.com/submissions?base64_encoded=false&wait=true",
+          {
+            source_code: code,
+            language_id: langId,
+            stdin: example.input || "",
+          }
+        );
+
+        const data = response.data;
+        const compileOutput = data.compile_output;
+        const stderr = data.stderr;
+        const stdout = data.stdout;
+
+        const runTimeNum = parseFloat(data.time) || 0;
+        if (runTimeNum > maxTime) {
+          maxTime = runTimeNum;
+        }
+        const memoryNum = parseInt(data.memory) || 0;
+        if (memoryNum > maxMemory) {
+          maxMemory = memoryNum;
+        }
+
+        if (data.status?.id === 6 || compileOutput) {
+          return res.status(200).json({
+            success: false,
+            status: "Compilation Error",
+            output: compileOutput || stderr || "Compilation Error",
+            message: `Compilation Error on Test Case ${i + 1}:\n${compileOutput || stderr || "Compilation Error"}`,
+          });
+        }
+
+        if (stderr || (data.status?.id > 3 && data.status?.id !== 6)) {
+          return res.status(200).json({
+            success: false,
+            status: data.status?.description || "Runtime Error",
+            output: stderr || stdout || "Execution failed",
+            message: `Runtime Error on Test Case ${i + 1} (${data.status?.description || "Error"}):\n${stderr || stdout || "Execution failed"}`,
+          });
+        }
+
+        const output = (stdout || "").trim();
+        const expectedOutput = (example.output || "").trim();
+
+        if (output !== expectedOutput) {
+          return res.status(200).json({
+            success: false,
+            status: "Wrong Answer",
+            output: output,
+            expectedOutput: expectedOutput,
+            message: `Wrong Answer on Test Case ${i + 1}.\nExpected: ${expectedOutput}\nGot: ${output}`,
+          });
+        }
+      }
+
       const submission =
         await CodeSubmission.create(
           {
@@ -250,8 +330,11 @@ const submitCode =
       res.status(201).json({
         success: true,
         submission,
+        runtime: maxTime ? maxTime.toFixed(3) + " s" : "--",
+        memory: maxMemory ? maxMemory + " KB" : "--",
       });
     } catch (error) {
+      console.error("Submit Code Error:", error.response?.data || error.message);
       res.status(500).json({
         success: false,
         message:
@@ -292,29 +375,6 @@ const getMySubmissions =
   };
 
 
-const pollSubmission = async (token, maxAttempts = 15, intervalMs = 300) => {
-  const judge0Url = process.env.JUDGE0_API_URL || "http://localhost:2358";
-  const url = `${judge0Url}/submissions/${token}?base64_encoded=false`;
-
-  const headers = {};
-  if (process.env.JUDGE0_API_KEY) {
-    headers["X-Auth-Token"] = process.env.JUDGE0_API_KEY;
-    headers["X-Judge0-Token"] = process.env.JUDGE0_API_KEY;
-  }
-
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const response = await axios.get(url, { headers });
-    const data = response.data;
-
-    // Status IDs: 1 (In Queue), 2 (Processing)
-    if (data.status && (data.status.id === 1 || data.status.id === 2)) {
-      await new Promise((resolve) => setTimeout(resolve, intervalMs));
-      continue;
-    }
-    return data;
-  }
-  throw new Error("Submission evaluation timed out");
-};
 const runCode = async (req, res) => {
   try {
     const {
@@ -333,47 +393,26 @@ const runCode = async (req, res) => {
     }
 
     const languageMap = {
-      javascript: {
-        language: "javascript",
-        version: "18.15.0",
-      },
-      python: {
-        language: "python",
-        version: "3.10.0",
-      },
-      java: {
-        language: "java",
-        version: "15.0.2",
-      },
-      cpp: {
-        language: "c++",
-        version: "10.2.0",
-      },
-      c: {
-        language: "c",
-        version: "10.2.0",
-      },
+      javascript: 102, // Node.js 22.08.0
+      python: 100,     // Python 3.12.5
+      java: 91,        // Java JDK 17.0.6
+      cpp: 105,        // C++ GCC 14.1.0
+      c: 103,          // C GCC 14.1.0
     };
 
-    const lang = languageMap[language];
+    const langId = languageMap[language];
 
-    if (!lang) {
+    if (!langId) {
       return res.status(400).json({
         message: "Unsupported language",
       });
     }
 
     const response = await axios.post(
-      "https://emkc.org/api/v2/piston/execute",
+      "https://ce.judge0.com/submissions?base64_encoded=false&wait=true",
       {
-        language: lang.language,
-        version: lang.version,
-        files: [
-          {
-            name: "main",
-            content: code,
-          },
-        ],
+        source_code: code,
+        language_id: langId,
         stdin:
           input ||
           problem.examples?.[0]?.input ||
@@ -381,18 +420,33 @@ const runCode = async (req, res) => {
       }
     );
 
-    const result = response.data.run;
+    const data = response.data;
+    const compileOutput = data.compile_output;
+    const stderr = data.stderr;
+    const stdout = data.stdout;
+    const runTime = data.time ? data.time + " s" : "--";
+    const memory = data.memory ? data.memory + " KB" : "--";
+    const statusDesc = data.status?.description || "";
 
-    if (result.stderr) {
+    if (data.status?.id === 6 || compileOutput) {
       return res.json({
         status: "Compilation Error",
-        output: result.stderr,
-        runtime: result.time + " s",
-        memory: "--",
+        output: compileOutput || stderr || "Compilation Error",
+        runtime: runTime,
+        memory: memory,
       });
     }
 
-    const output = result.stdout.trim();
+    if (stderr || (data.status?.id > 3 && data.status?.id !== 6)) {
+      return res.json({
+        status: statusDesc || "Runtime Error",
+        output: stderr || stdout || "Execution failed",
+        runtime: runTime,
+        memory: memory,
+      });
+    }
+
+    const output = (stdout || "").trim();
 
     let expectedOutput = "";
     let status = "Accepted";
@@ -414,20 +468,19 @@ const runCode = async (req, res) => {
       status,
       output,
       expectedOutput,
-      runtime: result.time + " s",
-      memory: "--",
+      runtime: runTime,
+      memory: memory,
     });
 
   } catch (error) {
     console.error("Run Code Error:");
-
     console.error(error.response?.data || error.message);
 
     return res.status(500).json({
         message: "Code execution failed",
         error: error.response?.data || error.message
     });
-}
+  }
 };
 
 

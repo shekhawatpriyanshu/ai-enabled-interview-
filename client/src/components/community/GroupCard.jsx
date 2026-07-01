@@ -57,7 +57,7 @@ const GroupCard = ({ group }) => {
       <div className="flex justify-between items-center border-t border-slate-100 pt-4 mt-2">
         <button
           onClick={handleJoin}
-          className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-sm font-semibold text-xs transition-all duration-200 hover:scale-[1.02]"
+          className="px-2 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-sm font-semibold text-xs transition-all duration-200 hover:scale-[1.02]"
         >
           Join Group
         </button>

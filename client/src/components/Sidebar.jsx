@@ -13,42 +13,42 @@ const Sidebar = () => {
       name: "Profile",
       path: "/profile",
     },
-   
 
-{
-  name: "Start Interview",
-  path: "/interviews/start",
-},
-   {
-  name: "My Interviews",
-  path: "/interviews",
-},
+
+    {
+      name: "Start Interview",
+      path: "/interviews/start",
+    },
+    {
+      name: "My Interviews",
+      path: "/interviews",
+    },
     {
       name: "Resume Analyzer",
       path: "/resume-analyzer",
     },
-     {
-    name: "Coding Problems",
-    path: "/coding",
-  },
-  {
-    name: "My Submissions",
-    path: "/coding/submissions",
-  },
     {
-  name: "Question Bank",
-  path: "/question-bank/questions",
-},
+      name: "Coding Problems",
+      path: "/coding",
+    },
+    {
+      name: "My Submissions",
+      path: "/coding/submissions",
+    },
+    {
+      name: "Question Bank",
+      path: "/question-bank/questions",
+    },
     {
       name: " Mock Tests",
       path: "/tests",
     },
-    
+
     {
       name: "Community",
       path: "/community",
     },
-     
+
     {
       name: "Contests",
       path: "/contests",
@@ -110,10 +110,9 @@ const Sidebar = () => {
             key={item.name}
             to={item.path}
             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300
-              ${
-                isActive(item.path)
-                  ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg"
-                  : "text-slate-300 hover:bg-white/10 hover:text-white"
+              ${isActive(item.path)
+                ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg"
+                : "text-slate-300 hover:bg-white/10 hover:text-white"
               }`}
           >
             <span className="text-lg">
@@ -128,7 +127,7 @@ const Sidebar = () => {
 
       </nav>
 
-      
+
 
     </aside>
   );

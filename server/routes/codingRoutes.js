@@ -23,7 +23,7 @@ const {
 const router =
   express.Router();
 
-  router.post(
+router.post(
   "/generate",
   protect,
   generateProblem

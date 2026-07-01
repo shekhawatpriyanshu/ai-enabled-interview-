@@ -59,7 +59,52 @@ const validateLogin = [
   },
 ];
 
+const validateForgotPassword = [
+  emailValidation,
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array(),
+      });
+    }
+
+    next();
+  },
+];
+
+const validateResetPassword = [
+  emailValidation,
+  body("otp")
+    .trim()
+    .isNumeric()
+    .withMessage("OTP must be numeric")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("OTP must be exactly 6 digits"),
+  body("newPassword")
+    .matches(/^[A-Z](?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{7,}$/)
+    .withMessage(
+      "Password must start with an uppercase letter, contain at least one number, one special character, and be at least 8 characters long"
+    ),
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array(),
+      });
+    }
+
+    next();
+  },
+];
+
 module.exports = {
   validateRegister,
   validateLogin,
+  validateForgotPassword,
+  validateResetPassword,
 };
