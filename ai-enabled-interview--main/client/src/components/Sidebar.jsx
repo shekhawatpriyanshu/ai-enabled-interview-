@@ -90,10 +90,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   };
 
   return (
-    <aside className={`fixed left-0 top-0 w-72 h-screen bg-slate-950 border-r border-white/10 backdrop-blur-xl overflow-y-auto z-50 transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
+    <aside className={`fixed left-0 top-0 w-72 h-screen flex flex-col bg-slate-950 border-r border-white/10 backdrop-blur-xl z-50 transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
 
       {/* Logo */}
-      <div className="p-6 border-b border-white/10 flex justify-between items-center">
+      <div className="p-6 border-b border-white/10 flex justify-between items-center shrink-0">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
             AI Prep
@@ -114,7 +114,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       </div>
 
       {/* Menu */}
-      <nav className="p-4 space-y-2">
+      <nav className="flex-1 overflow-y-auto scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] p-4 space-y-2">
 
         {menu.map((item, index) => (
           <motion.div

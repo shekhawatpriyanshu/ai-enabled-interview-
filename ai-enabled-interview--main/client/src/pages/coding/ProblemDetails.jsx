@@ -17,6 +17,14 @@ import {
   runCode, // ✅ ADD THIS
 } from "../../services/CodingService";
 
+const defaultBoilerplate = {
+  javascript: `// Write your JavaScript code here\n\nfunction solve() {\n  \n}\n`,
+  python: `# Write your Python code here\n\ndef solve():\n    pass\n`,
+  cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write your C++ code here\n    \n    return 0;\n}\n`,
+  java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // Write your Java code here\n        \n    }\n}\n`,
+  c: `#include <stdio.h>\n\nint main() {\n    // Write your C code here\n    \n    return 0;\n}\n`
+};
+
 const ProblemDetails = () => {
   const { id } = useParams();
 
@@ -48,9 +56,8 @@ const ProblemDetails = () => {
       const defaultLang = res.problem.supportedLanguages?.[0] || "javascript";
       setLanguage(defaultLang);
 
-      if (res.problem.starterCode) {
-        setCode(res.problem.starterCode[defaultLang] || "");
-      }
+      const savedCode = res.problem.starterCode?.[defaultLang];
+      setCode(savedCode || defaultBoilerplate[defaultLang] || "");
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
@@ -62,8 +69,9 @@ const ProblemDetails = () => {
   };
 
   useEffect(() => {
-    if (problem?.starterCode) {
-      setCode(problem.starterCode[language] || "");
+    if (problem) {
+      const savedCode = problem.starterCode?.[language];
+      setCode(savedCode || defaultBoilerplate[language] || "");
     }
   }, [language, problem]);
 
@@ -150,7 +158,7 @@ const ProblemDetails = () => {
   };
 
   const handleReset = () => {
-    setCode(problem?.starterCode?.[language] || "");
+    setCode(problem?.starterCode?.[language] || defaultBoilerplate[language] || "");
 
     setOutput("");
     setStatus("");
