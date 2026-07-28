@@ -200,7 +200,7 @@ const startServer = async () => {
 
     console.log(
       "Server startup failed:",
-      error.message
+      error.stack
     );
 
     process.exit(1);
@@ -210,4 +210,4 @@ const startServer = async () => {
 };
 
 
-startServer();
+startServer(); 

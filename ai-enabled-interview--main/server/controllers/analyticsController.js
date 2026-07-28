@@ -143,13 +143,17 @@ const getMyAnalytics = async (req, res) => {
 const unlockedAchievements =
   await checkAchievements(req.user._id);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       analytics,
       unlockedAchievements,
     });
   } catch (error) {
-    res.status(500).json({
+    if (res.headersSent) {
+      console.error("Error after headers sent in getMyAnalytics:", error);
+      return;
+    }
+    return res.status(500).json({
       success: false,
       message: error.message,
     });

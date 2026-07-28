@@ -21,7 +21,7 @@ const getContests = async (
       );
 
     res.status(200).json({
-      success: true,
+      success: true, 
       contests,
     });
   } catch (error) {
@@ -175,25 +175,29 @@ const submitContest = async (
     }
 
     submission.score = score;
-    submission.solvedProblems =
-      solvedProblems;
+    submission.solvedProblems = solvedProblems;
 
     await submission.save();
 
-    await Leaderboard.create({
-      contest:
-        submission.contest,
-      user:
-        req.user._id,
-      score,
-    });
+    await Leaderboard.findOneAndUpdate(
+      {
+        contest: submission.contest,
+        user: req.user._id,
+      },
+      { score },
+      { upsert: true, new: true }
+    );
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       submission,
     });
   } catch (error) {
-    res.status(500).json({
+    if (res.headersSent) {
+      console.error("Error after headers sent in submitContest:", error);
+      return;
+    }
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
