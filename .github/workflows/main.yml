@@ -1,0 +1,54 @@
+name: Deploy MERN App to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+
+            echo "==============================="
+            echo "Starting Deployment..."
+            echo "==============================="
+
+            cd ~/ai-enabled-interview-/ai-enabled-interview--main
+
+            echo "Pulling latest code..."
+            git fetch origin
+            git reset --hard origin/main
+
+            echo "Installing Backend Dependencies..."
+            cd server
+            npm install
+
+            echo "Creating .env if missing..."
+            touch .env
+
+            echo "Restart Backend..."
+            pm2 restart interview-backend || pm2 start server.js --name interview-backend
+
+            echo "Installing Frontend Dependencies..."
+            cd ../client
+            npm install
+
+            echo "Building React App..."
+            npm run build
+
+            echo "Reloading Nginx..."
+            sudo systemctl reload nginx
+
+            echo "Deployment Finished Successfully"
