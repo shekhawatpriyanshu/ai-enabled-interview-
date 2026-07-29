@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+
+  backend:
+    build:
+      context: ./server
+    container_name: interview-backend
+
+    restart: always
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - ./server/.env
+
+  frontend:
+    build:
+      context: ./client
+
+    container_name: interview-frontend
+
+    restart: always
+
+    depends_on:
+      - backend
+
+    ports:
+      - "80:80"
