@@ -1,8 +1,10 @@
-export const getBackendUrl = () => {
-  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-  return typeof window !== "undefined" &&
-    (window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1")
-    ? "http://localhost:3000"
-    : "https://ai-enabled-interview.onrender.com";
+const getBackendUrl = () => {
+  if (
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+  ) {
+    return "http://localhost:3000";
+  }
+
+  return "http://52.62.40.253:3000";
 };

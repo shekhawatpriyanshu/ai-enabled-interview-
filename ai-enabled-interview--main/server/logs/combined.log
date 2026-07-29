@@ -3427,3 +3427,7 @@
 {"level":"info","message":"POST /api/auth/logout 200 188.719 ms","timestamp":"2026-07-24T07:49:35.156Z"}
 {"level":"info","message":"POST /api/auth/register 201 890.197 ms","timestamp":"2026-07-24T07:50:05.282Z"}
 {"level":"info","message":"POST /api/auth/register 201 687.279 ms","timestamp":"2026-07-24T07:50:56.690Z"}
+{"level":"info","message":"GET /api/analytics/me 401 18.490 ms","timestamp":"2026-07-28T12:59:44.960Z"}
+{"level":"info","message":"GET /api/analytics/rewards 401 10.544 ms","timestamp":"2026-07-28T12:59:44.994Z"}
+{"level":"info","message":"GET /api/analytics/me 401 4.735 ms","timestamp":"2026-07-28T12:59:45.004Z"}
+{"level":"info","message":"GET /api/analytics/rewards 401 6.707 ms","timestamp":"2026-07-28T12:59:45.017Z"}
