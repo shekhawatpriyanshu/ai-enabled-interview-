@@ -23,37 +23,35 @@ jobs:
           timeout: 120s
           command_timeout: 30m
           script_stop: true
+
           script: |
             set -e
 
             echo "==============================="
-            echo "Starting Deployment..."
+            echo "Starting Docker Deployment..."
             echo "==============================="
 
             cd ~/ai-enabled-interview-/ai-enabled-interview--main
 
-            echo "Fetching latest code..."
+            echo "Pull latest code..."
             git fetch origin
             git reset --hard origin/main
 
-            echo "Installing backend dependencies..."
-            cd server
-            npm install
+            echo "Stopping old containers..."
+            docker compose down
 
-            echo "Restarting backend..."
-            pm2 restart interview-backend || pm2 start server.js --name interview-backend
-            pm2 save
+            echo "Building Docker images..."
+            docker compose build
 
-            echo "Installing frontend dependencies..."
-            cd ../client
-            npm install
+            echo "Starting containers..."
+            docker compose up -d
 
-            echo "Building frontend..."
-            npm run build
+            echo "Removing unused images..."
+            docker image prune -f
 
             echo "Reloading Nginx..."
             sudo systemctl reload nginx
 
             echo "==============================="
-            echo "Deployment Completed Successfully!"
+            echo "Deployment Successful"
             echo "==============================="
