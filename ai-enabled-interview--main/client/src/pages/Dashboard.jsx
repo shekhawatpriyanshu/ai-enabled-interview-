@@ -60,7 +60,7 @@ const Dashboard = () => {
         </h1>
 
         <p className="text-slate-500 mt-2">
-          Welcome back to LeetChef platform 🚀
+          Welcome  to the  LeetChef platform 🚀
         </p>
       </motion.div>
 
