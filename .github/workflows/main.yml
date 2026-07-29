@@ -19,7 +19,12 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          timeout: 120s
+          command_timeout: 30m
+          script_stop: true
           script: |
+            set -e
 
             echo "==============================="
             echo "Starting Deployment..."
@@ -27,28 +32,28 @@ jobs:
 
             cd ~/ai-enabled-interview-/ai-enabled-interview--main
 
-            echo "Pulling latest code..."
+            echo "Fetching latest code..."
             git fetch origin
             git reset --hard origin/main
 
-            echo "Installing Backend Dependencies..."
+            echo "Installing backend dependencies..."
             cd server
             npm install
 
-            echo "Creating .env if missing..."
-            touch .env
-
-            echo "Restart Backend..."
+            echo "Restarting backend..."
             pm2 restart interview-backend || pm2 start server.js --name interview-backend
+            pm2 save
 
-            echo "Installing Frontend Dependencies..."
+            echo "Installing frontend dependencies..."
             cd ../client
             npm install
 
-            echo "Building React App..."
+            echo "Building frontend..."
             npm run build
 
             echo "Reloading Nginx..."
             sudo systemctl reload nginx
 
-            echo "Deployment Finished Successfully"
+            echo "==============================="
+            echo "Deployment Completed Successfully!"
+            echo "==============================="
