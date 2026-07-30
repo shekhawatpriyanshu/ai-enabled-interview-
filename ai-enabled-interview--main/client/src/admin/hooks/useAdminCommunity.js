@@ -6,249 +6,249 @@ import AdminCommunityService from "../services/AdminCommunityService";
 
 
 
-const useAdminCommunity = ()=>{
+const useAdminCommunity = () => {
 
 
-const [loading,setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
 
-const [data,setData]=useState(null);
-
-
+  const [data, setData] = useState(null);
 
 
 
-const handleRequest = async(
+
+
+  const handleRequest = async (
     apiCall
-)=>{
+  ) => {
 
-try{
+    try {
 
 
-setLoading(true);
+      setLoading(true);
 
 
-const response =
-await apiCall();
+      const response =
+        await apiCall();
 
 
-setData(
-response.data
-);
+      setData(
+        response.data
+      );
 
 
-return response.data;
+      return response.data;
 
 
-}
-catch(error){
+    }
+    catch (error) {
 
 
-toast.error(
+      toast.error(
 
-error.response?.data?.message ||
-"Something went wrong"
+        error.response?.data?.message ||
+        "Something went wrong"
 
-);
+      );
 
 
-}
-finally{
+    }
+    finally {
 
-setLoading(false);
+      setLoading(false);
 
-}
+    }
 
 
-};
+  };
 
 
 
 
 
-// Dashboard
+  // Dashboard
 
-const getDashboard = ()=>{
+  const getDashboard = () => {
 
-return handleRequest(
-()=>AdminCommunityService.getDashboard()
-);
+    return handleRequest(
+      () => AdminCommunityService.getDashboard()
+    );
 
-};
+  };
 
-const getAnalytics = ()=>{
+  const getAnalytics = () => {
 
-return handleRequest(
-()=>AdminCommunityService.getAnalytics()
-);
+    return handleRequest(
+      () => AdminCommunityService.getAnalytics()
+    );
 
-};
+  };
 
 
 
 
-// Discussions
+  // Discussions
 
-const getDiscussions=(params)=>{
+  const getDiscussions = (params) => {
 
-return handleRequest(
-()=>AdminCommunityService.getDiscussions(params)
-);
+    return handleRequest(
+      () => AdminCommunityService.getDiscussions(params)
+    );
 
-};
+  };
 
 
 
-const deleteDiscussion=(id)=>{
+  const deleteDiscussion = (id) => {
 
-return handleRequest(
-()=>AdminCommunityService.deleteDiscussion(id)
-);
+    return handleRequest(
+      () => AdminCommunityService.deleteDiscussion(id)
+    );
 
-};
+  };
 
 
 
 
 
-// Comments
+  // Comments
 
-const getComments=(params)=>{
+  const getComments = (params) => {
 
-return handleRequest(
-()=>AdminCommunityService.getComments(params)
-);
+    return handleRequest(
+      () => AdminCommunityService.getComments(params)
+    );
 
-};
+  };
 
 
 
-const deleteComment=(id)=>{
+  const deleteComment = (id) => {
 
-return handleRequest(
-()=>AdminCommunityService.deleteComment(id)
-);
+    return handleRequest(
+      () => AdminCommunityService.deleteComment(id)
+    );
 
-};
+  };
 
 
 
 
 
 
-// Groups
+  // Groups
 
-const getGroups=(params)=>{
+  const getGroups = (params) => {
 
-return handleRequest(
-()=>AdminCommunityService.getGroups(params)
-);
+    return handleRequest(
+      () => AdminCommunityService.getGroups(params)
+    );
 
-};
+  };
 
 
 
-const deleteGroup=(id)=>{
+  const deleteGroup = (id) => {
 
-return handleRequest(
-()=>AdminCommunityService.deleteGroup(id)
-);
+    return handleRequest(
+      () => AdminCommunityService.deleteGroup(id)
+    );
 
-};
+  };
 
 
 
 
-const updateGroup=(id,data)=>{
+  const updateGroup = (id, data) => {
 
-return handleRequest(
-()=>AdminCommunityService.updateGroup(id,data)
-);
+    return handleRequest(
+      () => AdminCommunityService.updateGroup(id, data)
+    );
 
-};
+  };
 
-const getGroupById = (id) => {
-  return handleRequest(() => AdminCommunityService.getGroupById(id));
-};
+  const getGroupById = (id) => {
+    return handleRequest(() => AdminCommunityService.getGroupById(id));
+  };
 
-const getGroupMembers = (id) => {
-  return handleRequest(() => AdminCommunityService.getGroupMembers(id));
-};
+  const getGroupMembers = (id) => {
+    return handleRequest(() => AdminCommunityService.getGroupMembers(id));
+  };
 
-const removeMember = (groupId, userId) => {
-  return handleRequest(() => AdminCommunityService.removeMember(groupId, userId));
-};
+  const removeMember = (groupId, userId) => {
+    return handleRequest(() => AdminCommunityService.removeMember(groupId, userId));
+  };
 
 
 
 
 
-// Messages
+  // Messages
 
 
-const getMessages=(params)=>{
+  const getMessages = (params) => {
 
-return handleRequest(
-()=>AdminCommunityService.getMessages(params)
-);
+    return handleRequest(
+      () => AdminCommunityService.getMessages(params)
+    );
 
-};
+  };
 
 
 
-const deleteMessage=(id)=>{
+  const deleteMessage = (id) => {
 
-return handleRequest(
-()=>AdminCommunityService.deleteMessage(id)
-);
+    return handleRequest(
+      () => AdminCommunityService.deleteMessage(id)
+    );
 
-};
+  };
 
 
 
 
 
-return {
+  return {
 
 
-loading,
+    loading,
 
-data,
+    data,
 
 
-getDashboard,
+    getDashboard,
 
-getAnalytics,
+    getAnalytics,
 
 
-getDiscussions,
+    getDiscussions,
 
-deleteDiscussion,
+    deleteDiscussion,
 
 
-getComments,
+    getComments,
 
-deleteComment,
+    deleteComment,
 
 
-getGroups,
+    getGroups,
 
-getGroupById,
+    getGroupById,
 
-deleteGroup,
+    deleteGroup,
 
-updateGroup,
+    updateGroup,
 
-getGroupMembers,
+    getGroupMembers,
 
-removeMember,
+    removeMember,
 
 
-getMessages,
+    getMessages,
 
-deleteMessage
+    deleteMessage
 
 
-};
+  };
 
 
 

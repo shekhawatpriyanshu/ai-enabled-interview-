@@ -3431,3 +3431,29 @@
 {"level":"info","message":"GET /api/analytics/rewards 401 10.544 ms","timestamp":"2026-07-28T12:59:44.994Z"}
 {"level":"info","message":"GET /api/analytics/me 401 4.735 ms","timestamp":"2026-07-28T12:59:45.004Z"}
 {"level":"info","message":"GET /api/analytics/rewards 401 6.707 ms","timestamp":"2026-07-28T12:59:45.017Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"listen EADDRINUSE: address already in use :::3000","port":3000,"stack":"Error: listen EADDRINUSE: address already in use :::3000\n    at Server.setupListenHandle [as _listen2] (node:net:1939:16)\n    at listenInCluster (node:net:1996:12)\n    at Server.listen (node:net:2101:7)\n    at startServer (C:\\Users\\hp\\Downloads\\ai-enabled-interview--main\\ai-enabled-interview--main\\server\\server.js:188:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","syscall":"listen","timestamp":"2026-07-29T12:44:12.383Z"}
+{"address":"::","code":"EADDRINUSE","errno":-4091,"level":"error","message":"listen EADDRINUSE: address already in use :::3000","port":3000,"stack":"Error: listen EADDRINUSE: address already in use :::3000\n    at Server.setupListenHandle [as _listen2] (node:net:1939:16)\n    at listenInCluster (node:net:1996:12)\n    at Server.listen (node:net:2101:7)\n    at startServer (C:\\Users\\hp\\Downloads\\ai-enabled-interview--main\\ai-enabled-interview--main\\server\\server.js:188:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","syscall":"listen","timestamp":"2026-07-29T12:44:33.625Z"}
+{"level":"info","message":"GET /api/analytics/me 401 16.676 ms","timestamp":"2026-07-29T12:46:50.013Z"}
+{"level":"info","message":"GET /api/analytics/me 401 6.342 ms","timestamp":"2026-07-29T12:46:50.032Z"}
+{"level":"info","message":"GET /api/analytics/rewards 401 4.256 ms","timestamp":"2026-07-29T12:46:50.042Z"}
+{"level":"info","message":"GET /api/analytics/rewards 401 4.737 ms","timestamp":"2026-07-29T12:46:50.056Z"}
+{"level":"info","message":"GET /api/users/profile 401 4.275 ms","timestamp":"2026-07-29T12:47:14.356Z"}
+{"level":"info","message":"GET /api/users/profile 401 3.827 ms","timestamp":"2026-07-29T12:47:14.365Z"}
+{"level":"info","message":"POST /api/auth/refresh 401 52.173 ms","timestamp":"2026-07-29T12:47:14.498Z"}
+{"level":"info","message":"POST /api/auth/refresh 401 57.478 ms","timestamp":"2026-07-29T12:47:14.520Z"}
+{"level":"info","message":"POST /api/auth/login 400 67.737 ms","timestamp":"2026-07-29T12:47:20.722Z"}
+{"level":"info","message":"POST /api/auth/login 200 555.184 ms","timestamp":"2026-07-29T12:47:27.331Z"}
+{"level":"info","message":"GET /api/analytics/rewards 200 103.668 ms","timestamp":"2026-07-29T12:47:27.578Z"}
+{"level":"info","message":"GET /api/analytics/rewards 304 84.132 ms","timestamp":"2026-07-29T12:47:27.672Z"}
+{"level":"info","message":"GET /api/analytics/me 200 609.822 ms","timestamp":"2026-07-29T12:47:28.069Z"}
+{"level":"info","message":"GET /api/analytics/me 304 560.519 ms","timestamp":"2026-07-29T12:47:28.635Z"}
+{"level":"info","message":"GET /api/users/profile 200 97.676 ms","timestamp":"2026-07-29T12:47:29.241Z"}
+{"level":"info","message":"GET /api/users/profile 304 93.885 ms","timestamp":"2026-07-29T12:47:29.341Z"}
+{"level":"info","message":"GET /api/analytics/rewards 304 92.816 ms","timestamp":"2026-07-29T12:47:31.700Z"}
+{"level":"info","message":"GET /api/analytics/rewards 304 95.507 ms","timestamp":"2026-07-29T12:47:31.799Z"}
+{"level":"info","message":"GET /api/analytics/me 304 591.960 ms","timestamp":"2026-07-29T12:47:32.192Z"}
+{"level":"info","message":"GET /api/analytics/me 304 574.895 ms","timestamp":"2026-07-29T12:47:32.772Z"}
+{"level":"info","message":"GET /api/analytics/rewards 401 20.816 ms","timestamp":"2026-07-30T06:03:47.765Z"}
+{"level":"info","message":"GET /api/analytics/rewards 401 6.965 ms","timestamp":"2026-07-30T06:03:47.806Z"}
+{"level":"info","message":"GET /api/analytics/me 401 9.005 ms","timestamp":"2026-07-30T06:03:47.822Z"}
+{"level":"info","message":"GET /api/analytics/me 401 5.099 ms","timestamp":"2026-07-30T06:03:47.840Z"}
