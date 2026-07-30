@@ -3457,3 +3457,7 @@
 {"level":"info","message":"GET /api/analytics/rewards 401 6.965 ms","timestamp":"2026-07-30T06:03:47.806Z"}
 {"level":"info","message":"GET /api/analytics/me 401 9.005 ms","timestamp":"2026-07-30T06:03:47.822Z"}
 {"level":"info","message":"GET /api/analytics/me 401 5.099 ms","timestamp":"2026-07-30T06:03:47.840Z"}
+{"level":"info","message":"GET /api/analytics/me 401 5.940 ms","timestamp":"2026-07-30T08:02:27.865Z"}
+{"level":"info","message":"GET /api/analytics/me 401 3.887 ms","timestamp":"2026-07-30T08:02:27.873Z"}
+{"level":"info","message":"GET /api/analytics/rewards 401 2.043 ms","timestamp":"2026-07-30T08:02:27.878Z"}
+{"level":"info","message":"GET /api/analytics/rewards 401 1.708 ms","timestamp":"2026-07-30T08:02:27.883Z"}

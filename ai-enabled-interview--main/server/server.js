@@ -129,6 +129,29 @@ const startServer = async () => {
 
 
 
+      socket.on("logout", async () => {
+        if (!socket.userId) return;
+
+        const sockets = onlineUsers.get(socket.userId);
+
+        if (sockets) {
+          sockets.delete(socket.id);
+
+          if (sockets.size === 0) {
+            onlineUsers.delete(socket.userId);
+
+            await User.findByIdAndUpdate(socket.userId, {
+              isOnline: false,
+              socketId: null,
+              lastSeen: new Date(),
+            });
+          }
+        }
+
+        io.emit("active_users_count", onlineUsers.size);
+        socket.disconnect(true);
+      });
+
       socket.on(
         "disconnect",
         async()=>{

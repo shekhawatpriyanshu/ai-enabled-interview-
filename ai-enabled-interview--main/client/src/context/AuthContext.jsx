@@ -83,6 +83,12 @@ export const AuthProvider = ({
     } catch (e) {
       console.error("Logout error", e);
     }
+
+    if (socket.connected) {
+      socket.emit("logout");
+      socket.disconnect();
+    }
+
     localStorage.removeItem(
       "token"
     );
@@ -94,6 +100,9 @@ export const AuthProvider = ({
 
   useEffect(() => {
     if (user && user._id) {
+      if (!socket.connected) {
+        socket.connect();
+      }
       socket.emit("user_online", user._id);
     }
   }, [user]);

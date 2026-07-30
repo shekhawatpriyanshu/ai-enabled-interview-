@@ -1,7 +1,7 @@
 const requestLogger = require("./middlewares/requestLogger");
 const errorHandler = require("./middlewares/errorHandler");
 const compression = require("compression");
-const helmet=require('helmet')
+const helmet = require('helmet')
 const adminAchievementRoutes = require("./admin/routes/adminAchievementRoutes");
 const adminRewardRoutes = require("./admin/routes/adminRewardRoutes");
 const adminBadgeRoutes = require("./admin/routes/adminBadgeRoutes");
@@ -12,60 +12,61 @@ const questionRoutes = require(
   "./routes/questionRoutes"
 );
 const adminAuthRoutes = require("./admin/routes/adminAuthRoutes");
-const userManagementRoutes=require('./admin/routes/userManagementRoutes')
+const userManagementRoutes = require('./admin/routes/userManagementRoutes')
 const path = require("path");
 const adminCommunityRoutes = require(
- "./admin/routes/adminCommunityRoutes"
+  "./admin/routes/adminCommunityRoutes"
 );
 // coding admin
 const codingAdminRoutes =
-require("./admin//routes/codingAdminRoutes");
+  require("./admin//routes/codingAdminRoutes");
 const adminQuestionRoutes = require("./admin/routes/questionAdminRoutes");
-const adminTestRoutes=require('./admin/routes/adminTestRoutes')
-const test=require('./routes/testRoutes')
+const adminTestRoutes = require('./admin/routes/adminTestRoutes')
+const test = require('./routes/testRoutes')
 const resumeRoutes = require(
   "./routes/resumeRoutes"
 );
 const adminAnalyticsRoutes =
-require("./admin/routes/adminAnalyticsRoutes");
+  require("./admin/routes/adminAnalyticsRoutes");
 const adminContestRoutes = require("./admin/routes/contestAdminRoutes");
 const interviewRoutes =
-require("./routes/interviewRoutes");
+  require("./routes/interviewRoutes");
 const analyticsRoutes =
   require("./routes/analyticsRoutes");
 
-  
-  const codingUserRoutes = require("./routes/codingRoutes");
- 
- 
- const contestRoutes = require("./routes/contestRoutes");
- const userRoutes = require("./routes/userRoutes");
- const authRoutes = require("./routes/authRoutes");
- const communityRoutes =
- require("./routes/communityRoutes");
- 
- const adminInterviewRoutes = require("./admin/routes/interviewRoutes");
- 
- const app = express();
- app.use(helmet());
- app.use(compression());
- app.use(
-   cors({
-     origin: [
-       "http://localhost:5173",
-       "http://localhost:3000",
-       "http://127.0.0.1:5173",
-       "https://ai-enabled-interview-1.onrender.com",
-       "https://ai-enabled-interview.onrender.com"
-     ],
-     credentials: true,
-   })
- );
- app.use(cookieParser());
- app.use(express.json());
- app.use(
-   "/uploads",
-   express.static(
+
+const codingUserRoutes = require("./routes/codingRoutes");
+
+
+const contestRoutes = require("./routes/contestRoutes");
+const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/authRoutes");
+const communityRoutes =
+  require("./routes/communityRoutes");
+
+const adminInterviewRoutes = require("./admin/routes/interviewRoutes");
+
+const app = express();
+app.use(helmet());
+app.use(compression());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "http://127.0.0.1:5173",
+      "http://3.106.61.92",
+      "https://ai-enabled-interview-1.onrender.com",
+      "https://ai-enabled-interview.onrender.com"
+    ],
+    credentials: true,
+  })
+);
+app.use(cookieParser());
+app.use(express.json());
+app.use(
+  "/uploads",
+  express.static(
     path.join(__dirname, "uploads")
   )
 );
@@ -82,7 +83,7 @@ app.use(
 );
 // admin middlewares used here 
 app.use("/api/admin/auth", adminAuthRoutes);
-app.use('/api/admin/users',userManagementRoutes)
+app.use('/api/admin/users', userManagementRoutes)
 app.use("/api/admin/interviews", adminInterviewRoutes);
 
 
@@ -103,8 +104,8 @@ app.use(
 );
 
 app.use(
- "/api/admin/community",
- adminCommunityRoutes
+  "/api/admin/community",
+  adminCommunityRoutes
 );
 app.use(
   "/api/analytics",
@@ -113,12 +114,12 @@ app.use(
 
 
 app.use(
-"/api/admin/analytics",
-adminAnalyticsRoutes
+  "/api/admin/analytics",
+  adminAnalyticsRoutes
 );
-app.use('/api/admin/tests',adminTestRoutes)
+app.use('/api/admin/tests', adminTestRoutes)
 app.use("/api/users", userRoutes);
-app.use('/api/auth',authRoutes)
+app.use('/api/auth', authRoutes)
 app.use(
   "/api/community",
   communityRoutes
@@ -127,8 +128,8 @@ app.use(
   "/api/questions",
   questionRoutes
 );
-app.use('/api/contests',contestRoutes)
-app.use("/api/test",test)
+app.use('/api/contests', contestRoutes)
+app.use("/api/test", test)
 app.use(
   "/api/resumes",
   resumeRoutes
