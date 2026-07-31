@@ -20,7 +20,7 @@ const createProfile = async (req, res) => {
         user: req.user._id,
 
         avatar: req.file
-          ? req.file.path
+          ? req.file.location
           : "",
 
         bio: req.body.bio,
@@ -106,7 +106,7 @@ const updateProfile = async (
 
     if (req.file) {
       updateData.avatar =
-        req.file.path;
+        req.file.location;
     }
 
     const profile =

@@ -10,7 +10,7 @@ const AdminLayout = () => {
 
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
@@ -21,13 +21,13 @@ const AdminLayout = () => {
 
       {/* Main Content */}
       <div className="flex-1 ml-0 md:ml-72 transition-all duration-300 w-full overflow-x-hidden">
-        
+
         {/* Mobile Top Bar */}
         <div className="md:hidden bg-white shadow p-4 flex items-center justify-between sticky top-0 z-30">
           <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
             Admin Panel
           </h1>
-          <button 
+          <button
             onClick={() => setIsSidebarOpen(true)}
             className="text-slate-600 hover:text-slate-900 focus:outline-none"
           >

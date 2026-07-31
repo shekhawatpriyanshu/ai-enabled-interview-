@@ -313,8 +313,8 @@ const sendMessage =
       let fileName = "";
 
       if (req.file) {
-        // Format relative url for frontend serving (Express static serves /uploads)
-        fileUrl = `/uploads/${req.file.filename}`;
+        // fileUrl is now the S3 location
+        fileUrl = req.file.location;
         fileName = req.file.originalname;
 
         const mime = req.file.mimetype || "";

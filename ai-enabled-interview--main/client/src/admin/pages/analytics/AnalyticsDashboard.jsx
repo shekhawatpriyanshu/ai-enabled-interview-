@@ -132,83 +132,31 @@ const AnalyticsDashboard = () => {
 
     <DashboardCards dashboard={dashboard} />
 
-    {/* Quick Stats */}
 
-    <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
-
-      <div className="bg-white rounded-2xl shadow-lg p-6 hover:-translate-y-1 transition">
-
-        <h3 className="text-gray-500 text-sm">
-          Total Users
-        </h3>
-
-        <h2 className="text-4xl font-bold mt-2 text-blue-600">
-          {dashboard.users.totalUsers}
-        </h2>
-
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-lg p-6 hover:-translate-y-1 transition">
-
-        <h3 className="text-gray-500 text-sm">
-          Active Users
-        </h3>
-
-        <h2 className="text-4xl font-bold mt-2 text-green-600">
-          {dashboard.users.activeUsers}
-        </h2>
-
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-lg p-6 hover:-translate-y-1 transition">
-
-        <h3 className="text-gray-500 text-sm">
-          Interviews
-        </h3>
-
-        <h2 className="text-4xl font-bold mt-2 text-purple-600">
-          {dashboard.interviews.totalInterviews}
-        </h2>
-
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-lg p-6 hover:-translate-y-1 transition">
-
-        <h3 className="text-gray-500 text-sm">
-          Coding Problems
-        </h3>
-
-        <h2 className="text-4xl font-bold mt-2 text-pink-600">
-          {dashboard.coding.totalCodingProblems}
-        </h2>
-
-      </div>
-
-    </div>
 
     {/* Analytics */}
 
     <div className="grid gap-6">
       {userAnalytics && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300">
           <UserAnalyticsCard analytics={userAnalytics} />
         </div>
       )}
 
       {interviewAnalytics && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300">
           <InterviewAnalyticsCard analytics={interviewAnalytics} />
         </div>
       )}
 
       {codingAnalytics && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300">
           <CodingAnalyticsCard analytics={codingAnalytics} />
         </div>
       )}
 
       {resumeAnalytics && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300">
           <ResumeAnalyticsCard analytics={resumeAnalytics} />
         </div>
       )}

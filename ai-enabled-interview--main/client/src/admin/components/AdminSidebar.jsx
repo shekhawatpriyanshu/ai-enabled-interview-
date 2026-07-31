@@ -62,41 +62,40 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
 
   return (
     <aside
-      className={`fixed left-0 top-0 w-72 h-screen bg-slate-950 text-white flex flex-col shadow-2xl z-50 transform transition-transform duration-300 md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
+      className={`fixed left-0 top-0 w-72 h-screen bg-slate-900 text-slate-200 border-r border-slate-800 flex flex-col shadow-2xl z-50 transform transition-transform duration-300 md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
     >
-      {/* HEADER */}
-      <div className="border-b border-slate-800 p-6 flex justify-between items-center">
-        <h2 className="text-xl font-bold tracking-wider text-cyan-400">ADMIN</h2>
+      {/* PROFILE (Top Header) */}
+      <div className="p-6 border-b border-slate-800 bg-slate-800/30 hover:bg-slate-800 transition-colors cursor-pointer group flex justify-between items-start">
+        <div className="flex items-center gap-4">
+          <div className="h-14 w-14 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center text-xl font-bold uppercase shadow-md shrink-0 group-hover:scale-110 transition-transform duration-300 text-white">
+            {admin?.name?.charAt(0) || "A"}
+          </div>
+
+          <div className="overflow-hidden flex-1">
+            <h2 className="text-base font-bold text-white truncate group-hover:text-cyan-400 transition-colors">
+              {admin?.name || "admin"}
+            </h2>
+            <p className="text-xs text-slate-400 truncate mt-0.5">
+              {admin?.email || "[EMAIL_ADDRESS]"}
+            </p>
+            <div className="mt-2">
+              <span className="inline-block px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                {admin?.role || "admin"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Close Button */}
         <button
           onClick={() => setIsOpen(false)}
-          className="md:hidden text-slate-400 hover:text-white"
+          className="md:hidden text-slate-400 hover:text-white shrink-0 mt-1 ml-2"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-      </div>
-
-      {/* PROFILE */}
-      <div className="p-6 border-b border-slate-800">
-        <div className="flex items-center gap-4">
-          <div className="h-14 w-14 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center text-xl font-bold uppercase shadow-md shrink-0">
-            {admin?.name?.charAt(0) || "A"}
-          </div>
-
-          <div className="overflow-hidden">
-            <h2 className="text-md font-semibold truncate">
-              {admin?.name || "Admin"}
-            </h2>
-            <p className="text-xs text-slate-400 truncate">
-              {admin?.email || "admin@example.com"}
-            </p>
-            <span className="inline-block mt-1 px-2 py-1 rounded-full bg-cyan-700 text-[10px] uppercase tracking-wide">
-              {admin?.role || "admin"}
-            </span>
-          </div>
-        </div>
       </div>
 
       {/* MENU */}

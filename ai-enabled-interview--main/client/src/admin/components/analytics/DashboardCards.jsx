@@ -60,6 +60,7 @@ const DashboardCards = ({ dashboard }) => {
         }
       />
 
+
       <StatsCard
         title="Discussions"
         value={
@@ -82,6 +83,7 @@ const DashboardCards = ({ dashboard }) => {
             .totalResumeUploads
         }
       />
+
     </div>
   );
 };

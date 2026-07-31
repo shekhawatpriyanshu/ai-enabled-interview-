@@ -49,12 +49,12 @@ const CodingDetails = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+        <div className="flex-1 space-y-3">
+          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight">{problem.title}</h1>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-slate-900">{problem.title}</h1>
             <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+              className={`inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold uppercase tracking-wider shadow-sm ${
                 problem.difficulty === "Easy"
                   ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                   : problem.difficulty === "Medium"
@@ -64,14 +64,18 @@ const CodingDetails = () => {
             >
               {problem.difficulty}
             </span>
+            <span className="text-slate-300">|</span>
+            <p className="text-sm text-slate-500">Topic: <span className="font-semibold text-slate-700">{problem.topic}</span></p>
           </div>
-          <p className="text-sm text-slate-500 mt-1">Topic: <span className="font-semibold text-slate-700">{problem.topic}</span></p>
         </div>
 
         <button
-          className="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition active:scale-95 cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 h-fit sm:mt-2"
           onClick={() => navigate("/admin/coding")}
         >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
           Back
         </button>
       </div>

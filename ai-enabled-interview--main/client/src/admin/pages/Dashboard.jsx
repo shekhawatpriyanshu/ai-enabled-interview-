@@ -119,41 +119,30 @@ const Dashboard = () => {
 
                     <div
                         key={index}
-                        className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition"
+                        className="bg-white rounded-2xl shadow-lg p-5 hover:shadow-xl transition flex flex-col justify-between"
                     >
-
-                        <div className="flex justify-between">
-
-                            <div>
-
-                                <p className="text-slate-500">
+                        <div className="flex items-start justify-between">
+                            <div className="flex-1 pr-3">
+                                <p className="text-slate-500 text-sm font-medium break-words">
                                     {card.title}
                                 </p>
-
-                                <h2 className="text-4xl font-bold mt-3">
+                                <h2 className="text-3xl font-bold mt-2 text-slate-800">
                                     {card.value}
                                 </h2>
-
                             </div>
-
                             <div
-                                className={`${card.color} w-14 h-14 rounded-xl flex items-center justify-center text-white text-2xl`}
+                                className={`${card.color} w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl flex-shrink-0 shadow-sm`}
                             >
                                 {card.icon}
                             </div>
-
                         </div>
 
-                        <div className="flex items-center gap-2 mt-6 text-green-600">
-
+                        <div className="flex items-center gap-2 mt-5 text-green-600 text-sm">
                             <FaArrowUp />
-
                             <span className="font-semibold">
                                 Growing
                             </span>
-
                         </div>
-
                     </div>
 
                 ))}

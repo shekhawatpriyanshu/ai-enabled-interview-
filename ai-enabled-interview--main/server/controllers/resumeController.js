@@ -40,7 +40,7 @@ const uploadResume = async (
           req.file.originalname,
 
         fileUrl:
-          `/uploads/resumes/${req.file.filename}`,
+          req.file.location,
 
         fileType: path
           .extname(
@@ -153,44 +153,17 @@ const analyzeResume =
         resume
       );
 
-      // FIXED FILE PATH
-      const filePath =
-        path.resolve(
-          __dirname,
-          "..",
-          "uploads",
-          "resumes",
-          path.basename(
-            resume.fileUrl
-          )
-        );
+      // fileUrl contains the S3 URL or relative URL
+      const resumeUrl = resume.fileUrl;
 
       console.log(
-        "Generated Path:",
-        filePath
+        "Resume URL:",
+        resumeUrl
       );
-
-      const exists =
-        fs.existsSync(
-          filePath
-        );
-
-      console.log(
-        "File Exists:",
-        exists
-      );
-
-      if (!exists) {
-        return res.status(404).json({
-          success: false,
-          message:
-            "Resume file not found on server",
-        });
-      }
 
       const resumeText =
         await extractResumeText(
-          filePath
+          resumeUrl
         );
 
       console.log(
@@ -235,20 +208,10 @@ const analyzeResume =
         analysis,
       });
     } catch (error) {
-  console.error(
-    
-    error
-  );
-
-  res.status(500).json({
-    success: false,
-    message: error.message,
-  });
-
+      console.error(error);
       res.status(500).json({
         success: false,
-        message:
-          error.message,
+        message: error.message,
       });
     }
   };

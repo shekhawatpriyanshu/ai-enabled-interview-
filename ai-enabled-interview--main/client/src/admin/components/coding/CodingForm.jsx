@@ -224,7 +224,7 @@ const CodingForm = ({ initialValues = {}, onSubmit, loading, onLanguageChange })
               />
               <button
                 type="button"
-                className="px-4 py-2 text-sm font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-transparent rounded-xl transition cursor-pointer"
+                className="px-4 py-2 text-sm font-semibold text-rose-600 hover:text-white hover:bg-rose-500 hover:shadow-sm border border-transparent rounded-xl transition cursor-pointer"
                 onClick={() => removeConstraint(index)}
               >
                 Remove
@@ -257,7 +257,7 @@ const CodingForm = ({ initialValues = {}, onSubmit, loading, onLanguageChange })
                 <h6 className="font-semibold text-slate-700 text-sm">Example {index + 1}</h6>
                 <button
                   type="button"
-                  className="text-xs font-semibold text-rose-600 hover:text-rose-700 cursor-pointer"
+                  className="text-xs font-semibold text-rose-600 hover:text-white hover:bg-rose-500 px-3 py-1.5 rounded-lg transition-all cursor-pointer"
                   onClick={() => removeExample(index)}
                 >
                   Delete Example
@@ -311,20 +311,27 @@ const CodingForm = ({ initialValues = {}, onSubmit, loading, onLanguageChange })
         </div>
 
         <div className="p-6 flex flex-wrap gap-6">
-          {["javascript", "java", "python", "cpp", "c"].map((language) => (
-            <label
-              key={language}
-              className="flex items-center gap-2.5 text-sm font-semibold text-slate-700 uppercase tracking-wide cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                className="h-4.5 w-4.5 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 cursor-pointer"
-                checked={formData.supportedLanguages.includes(language)}
-                onChange={() => handleLanguage(language)}
-              />
-              {language}
-            </label>
-          ))}
+          {["javascript", "java", "python", "cpp", "c"].map((language) => {
+            const isSelected = formData.supportedLanguages.includes(language);
+            return (
+              <label
+                key={language}
+                className={`flex items-center gap-2.5 text-sm font-bold uppercase tracking-wide cursor-pointer px-4 py-2.5 rounded-xl transition-all border ${
+                  isSelected
+                    ? "bg-cyan-50 border-cyan-200 text-cyan-700 shadow-sm"
+                    : "bg-white border-slate-200 text-slate-600 hover:border-cyan-300 hover:bg-slate-50 hover:shadow-sm"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 cursor-pointer transition-colors"
+                  checked={isSelected}
+                  onChange={() => handleLanguage(language)}
+                />
+                {language}
+              </label>
+            );
+          })}
         </div>
       </div>
 

@@ -64,12 +64,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
-app.use(
-  "/uploads",
-  express.static(
-    path.join(__dirname, "uploads")
-  )
-);
+// Local file serving removed for S3 migration
 app.use(
   "/api/coding",
   codingUserRoutes
