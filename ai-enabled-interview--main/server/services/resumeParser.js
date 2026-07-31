@@ -20,15 +20,10 @@ const extractResumeText = async (
       });
       const response = await s3Client.send(command);
       
-      const streamToBuffer = (stream) =>
-        new Promise((resolve, reject) => {
-          const chunks = [];
-          stream.on("data", (chunk) => chunks.push(chunk));
-          stream.on("error", reject);
-          stream.on("end", () => resolve(Buffer.concat(chunks)));
-        });
+      // Use AWS SDK v3 built-in method
+      const byteArray = await response.Body.transformToByteArray();
+      buffer = Buffer.from(byteArray);
       
-      buffer = await streamToBuffer(response.Body);
     } else if (isUrl) {
       const response = await axios.get(fileUrl, { responseType: "arraybuffer" });
       buffer = Buffer.from(response.data);

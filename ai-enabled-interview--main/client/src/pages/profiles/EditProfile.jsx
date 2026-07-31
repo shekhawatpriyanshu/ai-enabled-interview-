@@ -43,7 +43,8 @@ const EditProfile = () => {
 
       navigate("/profile");
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      alert("Failed to save profile. There might be an issue with your AWS S3 Configuration blocking the image upload.");
     }
   };
 
@@ -76,10 +77,11 @@ const EditProfile = () => {
 
               {profile?.avatar ? (
                 <img
-                  src={`${getBackendUrl()}/${profile.avatar.replace(
-                    /\\/g,
-                    "/"
-                  )}`}
+                  src={
+                    profile.avatar.startsWith("http")
+                      ? profile.avatar
+                      : `${getBackendUrl()}/${profile.avatar.replace(/\\/g, "/")}`
+                  }
                   alt="avatar"
                   className="w-full h-full object-cover"
                 />
@@ -114,7 +116,7 @@ const EditProfile = () => {
               Profile Information
             </h2>
 
-            
+
           </div>
 
           <ProfileForm

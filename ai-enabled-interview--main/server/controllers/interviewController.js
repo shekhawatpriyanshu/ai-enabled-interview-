@@ -42,7 +42,9 @@ const experienceLevel =
        questions:
   generatedQuestions.map(
     (q) => ({
-      question: q,
+      question: q.question,
+      options: q.options,
+      correctAnswer: q.correctAnswer,
       answer: "",
     })
   ),

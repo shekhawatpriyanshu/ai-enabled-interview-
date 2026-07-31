@@ -19,7 +19,7 @@ const QuestionCard = ({
           </h3>
 
           <p className="text-sm text-slate-400">
-            Answer in detail
+            Select the correct option
           </p>
         </div>
 
@@ -34,51 +34,28 @@ const QuestionCard = ({
 
       </div>
 
-      {/* Answer Box */}
-      <div>
-
-        <label className="mb-3 block text-sm font-medium text-black">
-          Your Answer
-        </label>
-
-        <textarea
-          rows={8}
-          value={question.answer}
-          onChange={(e) =>
-            onAnswerChange(
-              index,
-              e.target.value
-            )
-          }
-          placeholder="Explain your answer here..."
-          className="
-            w-full
-            rounded-2xl
-            border
-            border-slate-700
-            bg-white-100
-            p-5
-            text-black
-            placeholder:text-slate-500
-            resize-none
-            transition-all
-            duration-300
-            focus:border-cyan-500
-            focus:outline-none
-            focus:ring-2
-            focus:ring-cyan-500/40
-          "
-        />
-
-      </div>
-
-      {/* Character Counter */}
-      <div className="mt-3 flex justify-end ">
-
-        <span className="text-xs text-black">
-          {question.answer?.length || 0} characters
-        </span>
-
+      {/* Options */}
+      <div className="flex flex-col gap-3 mt-4">
+        {question.options && question.options.map((option, i) => (
+          <label 
+            key={i} 
+            className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
+              question.answer === option 
+                ? 'border-cyan-500 bg-cyan-50' 
+                : 'border-slate-200 bg-slate-50 hover:bg-slate-100'
+            }`}
+          >
+            <input 
+              type="radio" 
+              name={`question-${index}`} 
+              value={option}
+              checked={question.answer === option}
+              onChange={(e) => onAnswerChange(index, e.target.value)}
+              className="w-5 h-5 text-cyan-600 focus:ring-cyan-500"
+            />
+            <span className="text-slate-700 font-medium">{option}</span>
+          </label>
+        ))}
       </div>
 
     </div>

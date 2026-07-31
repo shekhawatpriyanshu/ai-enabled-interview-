@@ -67,7 +67,7 @@ const InterviewForm = ({
           <option>
             Aws
           </option>
-           <option>
+          <option>
             PHP
           </option>
 
@@ -84,7 +84,7 @@ const InterviewForm = ({
           </option>
 
           <option>
-          Salesforce
+            Salesforce
           </option>
 
           <option>

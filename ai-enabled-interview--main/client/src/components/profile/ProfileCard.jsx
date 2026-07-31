@@ -23,18 +23,13 @@ const ProfileCard = ({ profile }) => {
         <img
           src={
             profile.avatar
-              ? `${getBackendUrl()}/${profile.avatar.replace(
-                  /\\/g,
-                  "/"
-                )}`
+              ? profile.avatar.startsWith("http")
+                ? profile.avatar
+                : `${getBackendUrl()}/${profile.avatar.replace(/\\/g, "/")}`
               : "https://via.placeholder.com/150"
           }
           alt="Profile"
           className="w-24 h-24 rounded-full object-cover border-4 border-blue-500"
-          onError={(e) => {
-            e.target.src =
-              "https://via.placeholder.com/150";
-          }}
         />
 
         <div>

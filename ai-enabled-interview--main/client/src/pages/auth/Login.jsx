@@ -102,7 +102,7 @@ const Login = () => {
         form.password
       );
 
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.log(error);
 

@@ -47,7 +47,7 @@ const generateQuestions = async (
 ) => {
   try {
     const prompt = `
-Generate exactly 25 technical interview questions.
+Generate exactly 50 multiple choice questions (MCQs) for a technical interview.
 
 Role: ${role}
 Experience Level: ${experienceLevel}
@@ -57,37 +57,25 @@ Rules:
 - No HR questions
 - No aptitude questions
 - No behavioral questions
-- Return ONLY JSON array
+- Each question must have exactly 4 options.
+- Provide the exact correct option string in "correctAnswer".
+- Return ONLY a JSON object containing a "questions" array.
 
 Example:
-
-[
-  "Question 1",
-  "Question 2",
-  "Question 3",
-  "Question 4",
-  "Question 5",
-  "Question 6",
-  "Question 7",
-  "Question 8",
-  "Question 9",
-  "Question 10",
-  "Question 11",
-  "Question 12",
-  "Question 13",
-  "Question 14",
-  "Question 15",
-  "Question 16",
-  "Question 17",
-  "Question 18",
-  "Question 19",
-  "Question 20",
-  "Question 21",
-  "Question 22",
-  "Question 23",
-  "Question 24",
-  "Question 25"
-]
+{
+  "questions": [
+    {
+      "question": "Sample Question 1?",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correctAnswer": "Option B"
+    },
+    {
+      "question": "Sample Question 2?",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correctAnswer": "Option A"
+    }
+  ]
+}
 `;
 
     const completion =
@@ -101,6 +89,8 @@ Example:
           },
         ],
         temperature: 0.4,
+        max_tokens: 8000,
+        response_format: { type: "json_object" },
       });
 
     const text = cleanJSON(
@@ -110,26 +100,44 @@ Example:
 
     const parsed = JSON.parse(text);
 
+let finalQuestions = parsed.questions || parsed;
+if (!Array.isArray(finalQuestions)) {
+  finalQuestions = [];
+}
+
+// Slice if more than 50
+if (finalQuestions.length > 50) {
+  finalQuestions = finalQuestions.slice(0, 50);
+}
+
+// Pad if less than 50
+while (finalQuestions.length < 50) {
+  finalQuestions.push({
+    question: `${role} Technical Question ${finalQuestions.length + 1}`,
+    options: ["Option A", "Option B", "Option C", "Option D"],
+    correctAnswer: "Option A"
+  });
+}
+
 console.log(
   "Questions Generated:",
-  parsed.length
+  finalQuestions.length
 );
 
-return parsed;
+return finalQuestions;
   } catch (error) {
     console.log(
       "Groq Question Error:",
       error.message
     );
-
 return Array.from(
-  { length: 25 },
-  (_, index) =>
-    `${role} Question ${
-      index + 1
-    }`
+  { length: 50 },
+  (_, index) => ({
+    question: `${role} Question ${index + 1}`,
+    options: ["Option A", "Option B", "Option C", "Option D"],
+    correctAnswer: "Option A"
+  })
 );
-    
   }
 };
 
@@ -137,176 +145,46 @@ return Array.from(
 // ===============================
 // EVALUATE INTERVIEW
 // ===============================
-const evaluateInterview =
-  async (
-    role,
-    questions
-  ) => {
-    try {
+const evaluateInterview = async (
+  role,
+  questions
+) => {
+  try {
+    let correctAnswers = 0;
+    const totalQuestions = questions.length;
 
-      // Count meaningful answers
-      const meaningfulAnswers =
-        questions.filter((q) =>
-          isMeaningfulAnswer(
-            q.answer
-          )
-        );
-
-      // No valid answers
-      if (
-        meaningfulAnswers.length ===
-        0
-      ) {
-        return {
-          score: 0,
-          communication: 0,
-          technicalKnowledge: 0,
-          problemSolving: 0,
-          strengths: [],
-          weaknesses: [
-            "No meaningful answers provided",
-          ],
-          suggestions: [
-            "Answer questions with proper explanations",
-          ],
-        };
+    questions.forEach((q) => {
+      if (q.answer && q.answer === q.correctAnswer) {
+        correctAnswers++;
       }
+    });
 
-      // Very poor interview
-      if (
-        meaningfulAnswers.length <
-        3
-      ) {
-        return {
-          score: 10,
-          communication: 10,
-          technicalKnowledge: 10,
-          problemSolving: 10,
-          strengths: [],
-          weaknesses: [
-            "Most answers were too short or invalid",
-          ],
-          suggestions: [
-            "Provide detailed technical answers",
-            "Explain concepts clearly",
-          ],
-        };
-      }
+    const percentage = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
+    
+    // Construct local feedback instead of using AI
+    return {
+      score: Math.round(percentage),
+      communication: Math.round(percentage), 
+      technicalKnowledge: Math.round(percentage),
+      problemSolving: Math.round(percentage),
+      strengths: percentage > 70 ? ["Good understanding of technical concepts", "Accurate answers"] : ["Attempted the questions"],
+      weaknesses: percentage < 70 ? ["Needs improvement in core concepts", "Many incorrect answers"] : ["Minor knowledge gaps"],
+      suggestions: ["Review incorrect options", "Practice more MCQs in this domain"],
+    };
+  } catch (error) {
+    console.error("Evaluation Error:", error);
+    return {
+      score: 0,
+      communication: 0,
+      technicalKnowledge: 0,
+      problemSolving: 0,
+      strengths: [],
+      weaknesses: ["Error during evaluation"],
+      suggestions: ["Please try again"],
+    };
+  }
+};
 
-      const prompt = `
-You are a STRICT technical interviewer.
-
-Role:
-${role}
-
-Interview Questions & Answers:
-
-${JSON.stringify(
-  questions,
-  null,
-  2
-)}
-
-Scoring Rules:
-
-- Empty answer = 0 marks
-- Random letters/symbols = 0 marks
-- Gibberish text = 0 marks
-- Very short answer (<10 words) = low marks
-- Incorrect answer = low marks
-- Partially correct answer = medium marks
-- Detailed correct answer = high marks
-
-Evaluate honestly.
-
-Return ONLY valid JSON:
-
-{
-  "score": 0,
-  "communication": 0,
-  "technicalKnowledge": 0,
-  "problemSolving": 0,
-  "strengths": [],
-  "weaknesses": [],
-  "suggestions": []
-}
-`;
-
-      const completion =
-        await groq.chat.completions.create({
-          model:
-            "llama-3.3-70b-versatile",
-          messages: [
-            {
-              role: "user",
-              content: prompt,
-            },
-          ],
-          temperature: 0.1,
-        });
-
-      const text = cleanJSON(
-        completion.choices[0]
-          .message.content
-      );
-
-      const feedback =
-        JSON.parse(text);
-
-      return {
-        score:
-          Number(
-            feedback.score
-          ) || 0,
-
-        communication:
-          Number(
-            feedback.communication
-          ) || 0,
-
-        technicalKnowledge:
-          Number(
-            feedback.technicalKnowledge
-          ) || 0,
-
-        problemSolving:
-          Number(
-            feedback.problemSolving
-          ) || 0,
-
-        strengths:
-          feedback.strengths ||
-          [],
-
-        weaknesses:
-          feedback.weaknesses ||
-          [],
-
-        suggestions:
-          feedback.suggestions ||
-          [],
-      };
-    } catch (error) {
-      console.log(
-        "Groq Feedback Error:",
-        error.message
-      );
-
-      return {
-        score: 0,
-        communication: 0,
-        technicalKnowledge: 0,
-        problemSolving: 0,
-        strengths: [],
-        weaknesses: [
-          "Interview evaluation failed",
-        ],
-        suggestions: [
-          "Please retry the interview",
-        ],
-      };
-    }
-  };
 
 module.exports = {
   generateQuestions,

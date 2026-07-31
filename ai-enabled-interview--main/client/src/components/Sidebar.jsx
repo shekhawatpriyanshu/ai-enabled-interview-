@@ -1,111 +1,108 @@
-import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
-
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import {
+  FaTachometerAlt,
+  FaUser,
+  FaMicrophone,
+  FaUserTie,
+  FaFileAlt,
+  FaCode,
+  FaHistory,
+  FaQuestionCircle,
+  FaClipboardList,
+  FaComments,
+  FaTrophy,
+  FaChartBar,
+  FaMedal,
+  FaGift,
+  FaSignOutAlt
+} from "react-icons/fa";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
+  const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
+
+  const [loading, setLoading] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      setLoading(true);
+      await logout();
+      navigate("/login");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNavClick = () => {
+    if (setIsOpen) setIsOpen(false);
+  };
 
   const menu = [
-    {
-      name: "Dashboard",
-      path: "/",
-    },
-    {
-      name: "Profile",
-      path: "/profile",
-    },
-
-
-    {
-      name: "Start Interview",
-      path: "/interviews/start",
-    },
-    {
-      name: "My Interviews",
-      path: "/interviews",
-    },
-    {
-      name: "Resume Analyzer",
-      path: "/resume-analyzer",
-    },
-    {
-      name: "Coding Problems",
-      path: "/coding",
-    },
-    {
-      name: "My Submissions",
-      path: "/coding/submissions",
-    },
-    {
-      name: "Question Bank",
-      path: "/question-bank/questions",
-    },
-    {
-      name: " Mock Tests",
-      path: "/tests",
-    },
-
-    {
-      name: "Community",
-      path: "/community",
-    },
-
-    {
-      name: "Contests",
-      path: "/contests",
-    },
-    {
-      name: "Analytics",
-      path: "/analytics",
-    },
-    {
-      name: "Achievements",
-      path: "/achievements",
-    },
-    {
-      name: "Rewards",
-      path: "/rewards",
-    },
+    { name: "Dashboard", icon: <FaTachometerAlt />, path: "/dashboard" },
+    { name: "Profile", icon: <FaUser />, path: "/profile" },
+    { name: "Start Interview", icon: <FaMicrophone />, path: "/interviews/start" },
+    { name: "My Interviews", icon: <FaUserTie />, path: "/interviews" },
+    { name: "Resume Analyzer", icon: <FaFileAlt />, path: "/resume-analyzer" },
+    { name: "Coding Problems", icon: <FaCode />, path: "/coding" },
+    { name: "My Submissions", icon: <FaHistory />, path: "/coding/submissions" },
+    { name: "Question Bank", icon: <FaQuestionCircle />, path: "/question-bank/questions" },
+    { name: "Mock Tests", icon: <FaClipboardList />, path: "/tests" },
+    { name: "Community", icon: <FaComments />, path: "/community" },
+    { name: "Contests", icon: <FaTrophy />, path: "/contests" },
+    { name: "Analytics", icon: <FaChartBar />, path: "/analytics" },
+    { name: "Achievements", icon: <FaMedal />, path: "/achievements" },
+    { name: "Rewards", icon: <FaGift />, path: "/rewards" },
   ];
 
   const isActive = (path) => {
-    const matches = menu.filter((item) => {
-      if (item.path === "/") {
-        return location.pathname === "/";
-      }
-      if (item.path === "/resume-analyzer" && location.pathname.startsWith("/resume-report")) {
-        return true;
-      }
-      return location.pathname === item.path || location.pathname.startsWith(item.path + "/");
-    });
-
-    if (matches.length === 0) return false;
-
-    const bestMatch = matches.reduce(
-      (best, current) => (current.path.length > best.path.length ? current : best),
-      matches[0]
-    );
-
-    return bestMatch.path === path;
+    if (path === "/dashboard") {
+      return location.pathname === "/dashboard" || location.pathname === "/";
+    }
+    if (path === "/resume-analyzer" && location.pathname.startsWith("/resume-report")) {
+      return true;
+    }
+    // Prevent "/interviews" from matching "/interviews/start"
+    if (path === "/interviews") {
+      return location.pathname === "/interviews" || (location.pathname.startsWith("/interviews/") && !location.pathname.startsWith("/interviews/start"));
+    }
+    return location.pathname === path || location.pathname.startsWith(path + "/");
   };
 
   return (
-    <aside className={`fixed left-0 top-0 w-72 h-screen flex flex-col bg-slate-950 border-r border-white/10 backdrop-blur-xl z-50 transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
+    <aside
+      className={`fixed left-0 top-0 w-72 h-screen bg-slate-900 text-slate-200 border-r border-slate-800 flex flex-col shadow-2xl z-50 transform transition-transform duration-300 md:translate-x-0 ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      }`}
+    >
+      {/* PROFILE (Top Header) */}
+      <div className="p-6 border-b border-slate-800 bg-slate-800/30 hover:bg-slate-800 transition-colors cursor-pointer group flex justify-between items-start">
+        <div className="flex items-center gap-4">
+          <div className="h-14 w-14 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center text-xl font-bold uppercase shadow-md shrink-0 group-hover:scale-110 transition-transform duration-300 text-white">
+            {user?.name?.charAt(0) || "U"}
+          </div>
 
-      {/* Logo */}
-      <div className="p-6 border-b border-white/10 flex justify-between items-center shrink-0">
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-            AI Prep
-          </h1>
-
-          <p className="text-slate-400 text-sm mt-1 font-bold">
-            Interview Preparation Platform
-          </p>
+          <div className="overflow-hidden flex-1">
+            <h2 className="text-base font-bold text-white truncate group-hover:text-cyan-400 transition-colors">
+              {user?.name || "User"}
+            </h2>
+            <p className="text-xs text-slate-400 truncate mt-0.5">
+              {user?.email || "user@example.com"}
+            </p>
+            <div className="mt-2">
+              <span className="inline-block px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                Student
+              </span>
+            </div>
+          </div>
         </div>
-        <button 
-          className="md:hidden text-slate-400 hover:text-white focus:outline-none"
+
+        {/* Mobile Close Button */}
+        <button
           onClick={() => setIsOpen(false)}
+          className="md:hidden text-slate-400 hover:text-white shrink-0 mt-1 ml-2"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -113,41 +110,43 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         </button>
       </div>
 
-      {/* Menu */}
-      <nav className="flex-1 overflow-y-auto scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] p-4 space-y-2">
-
-        {menu.map((item, index) => (
-          <motion.div
-            key={item.name}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.02, duration: 0.2 }}
-            whileHover={{ x: 4 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Link
+      {/* MENU */}
+      <nav className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-hide">
+        {menu.map((item) => {
+          const active = isActive(item.path);
+          return (
+            <NavLink
+              key={item.name}
               to={item.path}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300
-                ${isActive(item.path)
-                  ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg"
-                  : "text-slate-300 hover:bg-white/10 hover:text-white"
-                }`}
+              onClick={handleNavClick}
+              className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group
+              ${
+                active
+                  ? "bg-cyan-600 text-white shadow-md scale-[1.02]"
+                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
+              }`}
             >
-              <span className="text-lg">
+              <span className="text-lg group-hover:scale-110 transition">
                 {item.icon}
               </span>
 
-              <span className="font-medium">
-                {item.name}
-              </span>
-            </Link>
-          </motion.div>
-        ))}
-
+              <span className="font-medium">{item.name}</span>
+            </NavLink>
+          );
+        })}
       </nav>
 
-
-
+      {/* LOGOUT */}
+      <div className="border-t border-slate-800 p-4">
+        <button
+          onClick={handleLogout}
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 disabled:opacity-60 py-3 rounded-xl transition-all"
+        >
+          <FaSignOutAlt />
+          {loading ? "Logging out..." : "Logout"}
+        </button>
+      </div>
     </aside>
   );
 };

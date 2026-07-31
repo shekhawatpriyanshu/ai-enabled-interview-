@@ -28,6 +28,8 @@ const interviewSessionSchema =
       questions: [
         {
           question: String,
+          options: [String],
+          correctAnswer: String,
           answer: String,
         },
       ],

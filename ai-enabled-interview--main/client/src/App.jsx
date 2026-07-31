@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -184,8 +184,10 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Protected Routes */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <Dashboard />
