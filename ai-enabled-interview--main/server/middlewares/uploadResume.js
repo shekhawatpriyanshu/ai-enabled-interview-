@@ -6,7 +6,7 @@ const { s3Client } = require("../config/s3");
 module.exports = multer({
   storage: multerS3({
     s3: s3Client,
-    bucket: process.env.AWS_S3_BUCKET_NAME,
+    bucket: process.env.AWS_S3_BUCKET_NAME || "ai-interview-storage-1",
     contentType: multerS3.AUTO_CONTENT_TYPE,
     key: function (req, file, cb) {
       cb(
