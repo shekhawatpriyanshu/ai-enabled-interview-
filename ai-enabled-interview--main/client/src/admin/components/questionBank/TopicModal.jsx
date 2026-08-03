@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, BookOpen, AlignLeft, CheckCircle, Save, Loader2 } from "lucide-react";
 
 const TopicModal = ({
   isOpen,
@@ -19,181 +20,151 @@ const TopicModal = ({
     if (isOpen) {
       setFormData({
         name: initialData?.name || "",
-        description:
-          initialData?.description || "",
+        description: initialData?.description || "",
       });
-
       setErrors({});
     }
   }, [isOpen, initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const validate = () => {
     const newErrors = {};
-
     if (!formData.name.trim()) {
-      newErrors.name =
-        "Topic name is required .";
+      newErrors.name = "Topic name is required.";
     }
-
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (!validate()) return;
 
     onSubmit({
       name: formData.name.trim(),
-      description:
-        formData.description.trim(),
+      description: formData.description.trim(),
     });
   };
 
   const handleClose = () => {
-    setFormData({
-      name: "",
-      description: "",
-    });
-
+    setFormData({ name: "", description: "" });
     setErrors({});
-
     onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex justify-center items-center p-4">
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 flex justify-center items-center p-4 sm:p-6">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={handleClose}
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        />
 
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-xl">
-
-        {/* Header */}
-
-        <div className="flex justify-between items-center border-b px-6 py-4">
-
-          <h2 className="text-xl font-semibold">
-
-            {initialData
-              ? "Edit Topic"
-              : "Add Topic"}
-
-          </h2>
-
-          <button
-            onClick={handleClose}
-            className="text-gray-500 hover:text-red-500"
-          >
-            <FaTimes size={20} />
-          </button>
-
-        </div>
-
-        {/* Body */}
-
-        <form
-          onSubmit={handleSubmit}
-          className="p-6 space-y-5"
+        <motion.div 
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.95 }}
+          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          className="relative w-full max-w-xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800"
         >
-
-          {/* Topic Name */}
-
-          <div>
-
-            <label className="block font-medium mb-2">
-              Topic Name
-            </label>
-
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Arrays"
-              className={`w-full border rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.name
-                  ? "border-red-500"
-                  : ""
-              }`}
-            />
-
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.name}
+          {/* Header */}
+          <div className="flex-shrink-0 px-6 py-5 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-gray-900 dark:to-gray-800">
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-2">
+                <BookOpen className="text-blue-500" size={24} />
+                {initialData ? "Edit Topic" : "Add New Topic"}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">
+                {initialData ? "Update the details of this topic." : "Create a new topic category for coding questions."}
               </p>
-            )}
-
-          </div>
-
-          {/* Description */}
-
-          <div>
-
-            <label className="block font-medium mb-2">
-              Description
-            </label>
-
-            <textarea
-              rows={5}
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Write topic description..."
-              className="w-full border rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            />
-
-          </div>
-
-          {/* Footer */}
-
-          <div className="flex justify-end gap-3 pt-3 border-t">
-
+            </div>
             <button
-              type="button"
               onClick={handleClose}
-              disabled={loading}
-              className="px-5 py-2 rounded-lg border hover:bg-gray-100"
+              className="p-2 rounded-full hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition-colors text-gray-500 hover:text-red-500"
             >
-              Cancel
+              <X size={24} />
             </button>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
-            >
-              {loading
-                ? "Saving..."
-                : initialData
-                ? "Update Topic"
-                : "Create Topic"}
-            </button>
-
           </div>
 
-        </form>
+          {/* Body */}
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            
+            {/* Topic Name */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                <BookOpen size={16} className="text-blue-500" /> Topic Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="e.g. Arrays and Hashing"
+                className={`w-full bg-gray-50 dark:bg-gray-800/50 border ${errors.name ? 'border-red-400 focus:ring-red-500/50' : 'border-gray-200 dark:border-gray-700 focus:ring-blue-500/50 focus:border-blue-500'} rounded-xl px-4 py-3 outline-none focus:ring-2 transition-all dark:text-white`}
+              />
+              {errors.name && (
+                <motion.p initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} className="text-red-500 text-xs font-medium mt-1 ml-1">
+                  {errors.name}
+                </motion.p>
+              )}
+            </div>
 
+            {/* Description */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                <AlignLeft size={16} className="text-indigo-500" /> Description
+              </label>
+              <textarea
+                rows={5}
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Write a brief description of what this topic covers..."
+                className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all dark:text-white resize-none"
+              />
+            </div>
+
+            {/* Footer */}
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
+              <button
+                type="button"
+                onClick={handleClose}
+                disabled={loading}
+                className="w-full sm:w-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-2.5 font-semibold text-gray-700 dark:text-gray-300 transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-sm"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-2.5 font-semibold text-white shadow-md transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {loading ? (
+                  <><Loader2 className="animate-spin" size={18} /> Saving...</>
+                ) : initialData ? (
+                  <><CheckCircle size={18} /> Update Topic</>
+                ) : (
+                  <><Save size={18} /> Create Topic</>
+                )}
+              </button>
+            </div>
+          </form>
+        </motion.div>
       </div>
-
-    </div>
+    </AnimatePresence>
   );
 };
 

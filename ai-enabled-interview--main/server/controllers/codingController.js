@@ -18,8 +18,14 @@ const getProblems = async (req, res) => {
     const difficulty = req.query.difficulty;
     const topic = req.query.topic;
 
+    const Admin = require("../models/admin");
     const admins = await User.find({ role: { $in: ["admin", "super_admin"] } }).select("_id");
-    const adminIds = admins ? admins.map(a => a._id) : [];
+    const adminDocs = await Admin.find().select("_id");
+    
+    const adminIds = [
+      ...(admins ? admins.map(a => a._id) : []),
+      ...(adminDocs ? adminDocs.map(a => a._id) : [])
+    ];
 
     const filter = {
       status: { $ne: false },

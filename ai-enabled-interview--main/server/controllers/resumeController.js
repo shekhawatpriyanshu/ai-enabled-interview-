@@ -19,10 +19,7 @@ const uploadResume = async (
   res
 ) => {
   try {
-    console.log(
-      "Uploaded File:",
-      req.file
-    );
+    console.log(req.file);
 
     if (!req.file) {
       return res.status(400).json({

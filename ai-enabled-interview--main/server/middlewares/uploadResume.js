@@ -9,9 +9,10 @@ module.exports = multer({
     bucket: process.env.AWS_S3_BUCKET_NAME || "ai-interview-storage-1",
     contentType: multerS3.AUTO_CONTENT_TYPE,
     key: function (req, file, cb) {
+      const safeName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, "_");
       cb(
         null,
-        `uploads/resumes/${Date.now()}_${path.basename(file.originalname)}`
+        `uploads/resumes/${Date.now()}_${safeName}`
       );
     },
   }),

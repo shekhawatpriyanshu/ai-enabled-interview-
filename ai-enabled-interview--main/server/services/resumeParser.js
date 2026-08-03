@@ -13,7 +13,9 @@ const extractResumeText = async (
     let buffer;
     
     if (isUrl && fileUrl.includes("amazonaws.com")) {
-      const key = fileUrl.split(".com/")[1];
+      const key = decodeURIComponent(
+        new URL(fileUrl).pathname.substring(1)
+      );
       const command = new GetObjectCommand({
         Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: key

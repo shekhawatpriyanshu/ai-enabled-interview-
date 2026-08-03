@@ -61,7 +61,7 @@ const Dashboard = () => {
             color: "bg-blue-500",
         },
         {
-            title: "Interviews",
+            title: "Interviews submitted",
             value: stats.totalInterviews,
             icon: <FaUserTie />,
             color: "bg-green-500",
