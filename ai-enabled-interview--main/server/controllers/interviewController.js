@@ -6,6 +6,7 @@ const {
   evaluateInterview,
   generateAdaptiveCodingQuestions,
   generateVoiceQuestions,
+  handleVoiceChat,
   evaluateComprehensiveInterview
 } = require("../services/aiInterviewService");
 const { executeCode } = require("../services/judge0Services");
@@ -211,20 +212,13 @@ const submitCodingRound = async (req, res) => {
       });
     }
 
-    // Passed Round 2: Generate Voice Questions for Round 3
+    // Passed Round 2: Setup Round 3
     interview.currentRound = 3;
-    const resumeDetails = "Candidate Profile"; // In reality, fetch from User's resume
-    const voiceData = await generateVoiceQuestions(
-      interview.role, 
-      resumeDetails, 
-      "Missed some MCQ concepts", 
-      "Average coding performance"
-    );
     
     interview.voiceInterview = {
       transcript: [],
-      technicalQuestions: voiceData.technicalQuestions || [],
-      hrQuestions: voiceData.hrQuestions || []
+      technicalQuestions: [],
+      hrQuestions: []
     };
     
     await interview.save();
@@ -292,6 +286,40 @@ const runInterviewCode = async (req, res) => {
       errorOutput
     });
 
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// CHAT VOICE ROUND (Dynamic conversation step)
+const chatVoiceRound = async (req, res) => {
+  try {
+    const interview = await InterviewSession.findById(req.params.id);
+    if (!interview) return res.status(404).json({ success: false, message: "Interview not found" });
+
+    const transcript = req.body.transcript || [];
+    
+    const aiResponseText = await handleVoiceChat(
+      interview.role,
+      transcript,
+      interview.mcqScore || 0,
+      interview.codingScore || 0
+    );
+
+    const updatedTranscript = [
+      ...transcript,
+      { speaker: "AI", text: aiResponseText }
+    ];
+
+    interview.voiceInterview.transcript = updatedTranscript;
+    await interview.save();
+
+    return res.status(200).json({
+      success: true,
+      transcript: updatedTranscript,
+      aiResponse: aiResponseText
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: error.message });
@@ -459,6 +487,7 @@ module.exports = {
   submitInterview,
   submitCodingRound,
   runInterviewCode,
+  chatVoiceRound,
   submitVoiceRound,
   getFeedback,
   getMyInterviews,

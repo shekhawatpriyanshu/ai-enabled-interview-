@@ -8,32 +8,20 @@ import GroupForm from "../../components/community/GroupForm";
 const CreateGroup = () => {
   return (
     <MainLayout>
-      <div className="py-2">
+      <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-10 px-4">
+        <div className="max-w-4xl mx-auto">
+          {/* Back Button */}
+          <Link
+            to="/community/groups"
+            className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-semibold mb-8 transition-colors bg-white/50 px-4 py-2 rounded-full shadow-sm hover:bg-white"
+          >
+            <ArrowLeft size={18} />
+            Back to Study Groups
+          </Link>
 
-        {/* Back Button */}
-        <Link
-          to="/community/groups"
-          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6"
-        >
-          <ArrowLeft size={18} />
-          Back to Study Groups
-        </Link>
-
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Create Study Group
-          </h1>
-
-          <p className="text-gray-500 mt-2">
-            Create a study group to collaborate, prepare for interviews, and
-            learn together.
-          </p>
+          {/* Form */}
+          <GroupForm />
         </div>
-
-        {/* Form */}
-        <GroupForm />
-
       </div>
     </MainLayout>
   );

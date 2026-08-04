@@ -23,6 +23,7 @@ const ProblemDetails = () => {
 
   const [language, setLanguage] = useState("javascript");
   const [code, setCode] = useState("");
+  const [editorTheme, setEditorTheme] = useState("vs-dark");
 
   const [output, setOutput] = useState("");
   const [status, setStatus] = useState("");
@@ -170,17 +171,17 @@ const ProblemDetails = () => {
           <button
             onClick={handleRun}
             disabled={evaluating || submitting}
-            className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50"
+            className="flex items-center gap-2 bg-slate-700/80 hover:bg-slate-600 text-slate-200 px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-green-500/20 active:scale-95 border border-transparent hover:border-slate-500 cursor-pointer"
           >
-            <FaPlay className="text-green-400 text-xs" />
-            {evaluating ? "Running..." : "Run"}
+            <FaPlay className={`text-green-400 text-xs ${evaluating ? 'animate-pulse' : ''}`} />
+            {evaluating ? "Running..." : "Run Code"}
           </button>
           <button
             onClick={handleSubmit}
             disabled={evaluating || submitting}
-            className="flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50"
+            className="group flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-cyan-500/40 active:scale-95 cursor-pointer"
           >
-            <FaCloudUploadAlt className="text-lg" />
+            <FaCloudUploadAlt className={`text-lg group-hover:-translate-y-1 transition-transform duration-300 ${submitting ? 'animate-bounce' : ''}`} />
             {submitting ? "Submitting..." : "Submit"}
           </button>
         </div>
@@ -189,16 +190,16 @@ const ProblemDetails = () => {
       {/* Main Content */}
       <div className="flex-1 flex gap-2 p-2 overflow-hidden">
         {/* Left Pane: Problem Description */}
-        <div className="w-1/2 flex flex-col bg-[#282828] rounded-xl border border-slate-700 overflow-hidden">
-          <div className="flex bg-[#333333] px-2 pt-2 gap-1 border-b border-slate-700">
+        <div className="w-1/2 flex flex-col bg-[#282828] rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden hover:border-slate-600 transition-colors duration-300">
+          <div className="flex bg-[#333333] px-3 pt-2 gap-2 border-b border-slate-700/80">
             <button 
-              className={`px-4 py-2 text-sm font-medium rounded-t-lg transition ${activeTab === 'description' ? 'bg-[#282828] text-white' : 'text-slate-400 hover:text-slate-200'}`}
+              className={`px-5 py-2.5 text-sm font-semibold rounded-t-xl transition-all duration-300 flex items-center gap-2 ${activeTab === 'description' ? 'bg-[#282828] text-cyan-400 shadow-[0_-2px_0_0_#06b6d4]' : 'text-slate-400 hover:text-slate-200 hover:bg-[#2e2e2e]'}`}
               onClick={() => setActiveTab('description')}
             >
               Description
             </button>
           </div>
-          <div className="flex-1 p-6 overflow-y-auto">
+          <div className="flex-1 p-6 overflow-y-auto scrollbar-hide">
             {activeTab === 'description' && (
               <>
                 <div className="flex items-center justify-between mb-4">
@@ -212,14 +213,17 @@ const ProblemDetails = () => {
                   {problem.description}
                 </div>
                 
-                <div className="mt-8">
+                <div className="mt-8 space-y-6">
                   {problem.examples?.map((tc, idx) => (
-                    <div key={idx} className="mb-6">
-                      <h3 className="text-white font-semibold mb-2">Example {idx + 1}:</h3>
-                      <div className="bg-[#1e1e1e] p-4 rounded-lg border-l-4 border-cyan-500 font-mono text-sm shadow-inner">
-                        <div className="mb-2"><span className="text-slate-500 select-none">Input: </span><span className="text-slate-300">{tc.input}</span></div>
-                        <div className="mb-2"><span className="text-slate-500 select-none">Output: </span><span className="text-slate-300">{tc.output}</span></div>
-                        {tc.explanation && (<div><span className="text-slate-500 select-none">Explanation: </span><span className="text-slate-300">{tc.explanation}</span></div>)}
+                    <div key={idx} className="group">
+                      <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                        <span className="bg-slate-700 text-slate-300 w-6 h-6 rounded-full flex items-center justify-center text-xs group-hover:bg-cyan-600 group-hover:text-white transition-colors duration-300">{idx + 1}</span>
+                        Example {idx + 1}:
+                      </h3>
+                      <div className="bg-[#1e1e1e] p-5 rounded-xl border-l-4 border-cyan-500/50 group-hover:border-cyan-400 font-mono text-sm shadow-inner transition-all duration-300 hover:shadow-lg hover:shadow-cyan-900/10">
+                        <div className="mb-2"><span className="text-slate-500 select-none mr-2">Input:</span><span className="text-slate-200 bg-slate-800 px-2 py-1 rounded">{tc.input}</span></div>
+                        <div className="mb-2"><span className="text-slate-500 select-none mr-2">Output:</span><span className="text-green-400/90 bg-slate-800 px-2 py-1 rounded">{tc.output}</span></div>
+                        {tc.explanation && (<div className="mt-4 pt-3 border-t border-slate-800/50 leading-relaxed"><span className="text-slate-500 select-none block mb-1">Explanation:</span><span className="text-slate-400 text-xs font-sans">{tc.explanation}</span></div>)}
                       </div>
                     </div>
                   ))}
@@ -243,28 +247,54 @@ const ProblemDetails = () => {
         {/* Right Pane: Editor & Console */}
         <div className="w-1/2 flex flex-col gap-2 overflow-hidden">
           {/* Editor Area */}
-          <div className="flex-1 flex flex-col bg-[#282828] rounded-xl border border-slate-700 overflow-hidden min-h-[50%]">
-            <div className="flex items-center justify-between px-4 py-2 bg-[#333333] border-b border-slate-700">
-              <select
-                value={language}
-                onChange={handleLanguageChange}
-                className="bg-[#333333] text-slate-200 text-xs font-medium px-2 py-1 outline-none cursor-pointer hover:bg-slate-700 rounded transition"
-              >
-                {problem.supportedLanguages?.map(lang => (
-                   <option key={lang} value={lang}>{lang === 'cpp' ? 'C++' : lang === 'javascript' ? 'JavaScript' : lang.charAt(0).toUpperCase() + lang.slice(1)}</option>
-                ))}
-                {(!problem.supportedLanguages || problem.supportedLanguages.length === 0) && (
-                   <>
-                    <option value="javascript">JavaScript</option>
-                    <option value="python">Python</option>
-                    <option value="java">Java</option>
-                    <option value="cpp">C++</option>
-                    <option value="c">C</option>
-                   </>
-                )}
-              </select>
-              <div className="text-slate-400 text-xs flex gap-2">
-                 <button onClick={handleReset} className="hover:text-white transition flex items-center gap-1" title="Reset to default code"><FaRedo/></button>
+          <div className="flex-1 flex flex-col bg-[#282828] rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden min-h-[50%] hover:border-slate-600 transition-colors duration-300">
+            <div className="flex items-center justify-between px-5 py-2.5 bg-[#333333] border-b border-slate-700/80">
+              <div className="relative group">
+                <select
+                  value={language}
+                  onChange={handleLanguageChange}
+                  className="appearance-none bg-[#404040] text-slate-200 text-xs font-semibold pl-3 pr-8 py-1.5 rounded-lg outline-none cursor-pointer hover:bg-[#4a4a4a] hover:text-white transition-all shadow-sm border border-slate-600/50 focus:border-cyan-500/50"
+                >
+                  {problem.supportedLanguages?.map(lang => (
+                     <option key={lang} value={lang}>{lang === 'cpp' ? 'C++' : lang === 'javascript' ? 'JavaScript' : lang.charAt(0).toUpperCase() + lang.slice(1)}</option>
+                  ))}
+                  {(!problem.supportedLanguages || problem.supportedLanguages.length === 0) && (
+                     <>
+                      <option value="javascript">JavaScript</option>
+                      <option value="python">Python</option>
+                      <option value="java">Java</option>
+                      <option value="cpp">C++</option>
+                      <option value="c">C</option>
+                     </>
+                  )}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400 group-hover:text-white transition-colors">
+                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                </div>
+              </div>
+
+              <div className="relative group ml-3">
+                <select
+                  value={editorTheme}
+                  onChange={(e) => setEditorTheme(e.target.value)}
+                  className="appearance-none bg-[#404040] text-slate-200 text-xs font-semibold pl-3 pr-8 py-1.5 rounded-lg outline-none cursor-pointer hover:bg-[#4a4a4a] hover:text-white transition-all shadow-sm border border-slate-600/50 focus:border-cyan-500/50"
+                >
+                  <option value="vs-dark">Dark Theme</option>
+                  <option value="light">Light Theme</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400 group-hover:text-white transition-colors">
+                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                </div>
+              </div>
+              
+              <div className="flex-1 flex justify-end">
+                <button 
+                  onClick={handleReset} 
+                  className="text-slate-400 hover:text-cyan-400 p-1.5 rounded-lg hover:bg-slate-700 transition-all duration-300 cursor-pointer group" 
+                  title="Reset to default code"
+                >
+                  <FaRedo className="group-hover:-rotate-180 transition-transform duration-500" />
+                </button>
               </div>
             </div>
             <div className="flex-1 bg-[#1e1e1e]">
@@ -272,27 +302,28 @@ const ProblemDetails = () => {
                 code={code}
                 setCode={setCode}
                 language={language}
+                theme={editorTheme}
               />
             </div>
           </div>
 
           {/* Console Area */}
-          <div className="h-64 flex flex-col bg-[#282828] rounded-xl border border-slate-700 overflow-hidden shrink-0">
-            <div className="flex bg-[#333333] px-2 pt-2 gap-1 border-b border-slate-700">
+          <div className="h-64 flex flex-col bg-[#282828] rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden shrink-0 hover:border-slate-600 transition-colors duration-300">
+            <div className="flex bg-[#333333] px-3 pt-2 gap-2 border-b border-slate-700/80">
               <button 
-                className={`px-4 py-2 text-sm font-medium rounded-t-lg transition flex items-center gap-2 ${consoleTab === 'testcases' ? 'bg-[#282828] text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                className={`px-5 py-2.5 text-sm font-semibold rounded-t-xl transition-all duration-300 flex items-center gap-2 ${consoleTab === 'testcases' ? 'bg-[#282828] text-white shadow-[0_-2px_0_0_#3b82f6]' : 'text-slate-400 hover:text-slate-200 hover:bg-[#2e2e2e]'}`}
                 onClick={() => setConsoleTab('testcases')}
               >
                 Testcases
               </button>
               <button 
-                className={`px-4 py-2 text-sm font-medium rounded-t-lg transition flex items-center gap-2 ${consoleTab === 'result' ? 'bg-[#282828] text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                className={`px-5 py-2.5 text-sm font-semibold rounded-t-xl transition-all duration-300 flex items-center gap-2 ${consoleTab === 'result' ? 'bg-[#282828] text-green-400 shadow-[0_-2px_0_0_#22c55e]' : 'text-slate-400 hover:text-slate-200 hover:bg-[#2e2e2e]'}`}
                 onClick={() => setConsoleTab('result')}
               >
                 Test Result
               </button>
             </div>
-            <div className="flex-1 p-4 overflow-y-auto">
+            <div className="flex-1 p-4 overflow-y-auto scrollbar-hide">
               {consoleTab === 'testcases' && (
                 <div className="flex flex-col gap-4">
                   {problem.examples?.map((tc, idx) => (

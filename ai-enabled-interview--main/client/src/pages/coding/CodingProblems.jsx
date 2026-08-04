@@ -124,17 +124,17 @@ const CodingProblems = () => {
     <MainLayout>
       <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-white to-indigo-50 py-10 px-4">
         {/* Hero */}
-        <div className="max-w-5xl mx-auto text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-cyan-100 text-cyan-700 px-5 py-2 rounded-full mb-5 font-semibold text-sm">
-            <Sparkles size={16} />
+        <div className="max-w-5xl mx-auto text-center mb-10 animate-fade-in-down">
+          <div className="inline-flex items-center gap-2 bg-cyan-100 text-cyan-700 px-5 py-2 rounded-full mb-5 font-semibold text-sm hover:scale-105 transition-transform duration-300 cursor-pointer shadow-sm hover:shadow-cyan-200">
+            <Sparkles size={16} className="animate-pulse" />
             AI Powered Coding Platform (LeetChef)
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight hover:text-cyan-800 transition-colors duration-300">
             Practice Coding Challenges
           </h1>
 
-          <p className="mt-4 text-base md:text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="mt-4 text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Enhance your coding skills by solving cataloged challenges or generating customizable AI problems.
           </p>
         </div>
@@ -144,22 +144,20 @@ const CodingProblems = () => {
           <div className="bg-gray-100/80 backdrop-blur p-1.5 rounded-2xl flex gap-1 shadow-sm border border-gray-200">
             <button
               onClick={() => setActiveTab("explore")}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition cursor-pointer ${
-                activeTab === "explore"
-                  ? "bg-white text-cyan-700 shadow-md"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition cursor-pointer ${activeTab === "explore"
+                ? "bg-white text-cyan-700 shadow-md"
+                : "text-gray-600 hover:text-gray-900"
+                }`}
             >
               <BookOpen size={16} />
               Explore Problems
             </button>
             <button
               onClick={() => setActiveTab("generate")}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition cursor-pointer ${
-                activeTab === "generate"
-                  ? "bg-white text-cyan-700 shadow-md"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition cursor-pointer ${activeTab === "generate"
+                ? "bg-white text-cyan-700 shadow-md"
+                : "text-gray-600 hover:text-gray-900"
+                }`}
             >
               <Sparkles size={16} />
               Generate with AI
@@ -232,16 +230,16 @@ const CodingProblems = () => {
             {exploreLoading ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <div className="h-10 w-10 border-4 border-cyan-500/20 border-t-cyan-600 rounded-full animate-spin"></div>
-                <p className="mt-4 text-sm font-medium text-gray-500">Loading cataloged problems...</p>
+                <p className="mt-4 text-sm font-medium text-gray-500 animate-pulse">Loading cataloged problems...</p>
               </div>
             ) : problems.length === 0 ? (
-              <div className="text-center py-16 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+              <div className="text-center py-16 bg-gray-50 rounded-2xl border border-dashed border-gray-200 hover:border-cyan-300 hover:bg-white transition-colors duration-300">
                 <p className="text-gray-500 font-medium">No problems found. Try adjusting your filters.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto border border-gray-100 rounded-2xl shadow-sm">
-                <table className="w-full text-left border-collapse">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+              <div className="overflow-hidden border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                <table className="w-full text-left border-collapse bg-white">
+                  <thead className="bg-gray-50/80 border-b border-gray-200 backdrop-blur-sm">
                     <tr>
                       <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 w-[75px]">#</th>
                       <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Problem Title</th>
@@ -252,27 +250,26 @@ const CodingProblems = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {problems.map((prob, idx) => (
-                      <tr key={prob._id} className="hover:bg-gray-50/50 transition">
-                        <td className="px-6 py-4 text-sm text-gray-500">{(page - 1) * 10 + idx + 1}</td>
-                        <td className="px-6 py-4 text-sm font-bold text-gray-900">{prob.title}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{prob.topic}</td>
+                      <tr key={prob._id} className="group hover:bg-cyan-50/30 transition-colors duration-200 cursor-pointer" onClick={() => navigate(`/coding/${prob._id}`)}>
+                        <td className="px-6 py-4 text-sm text-gray-500 group-hover:text-cyan-700 transition-colors">{(page - 1) * 10 + idx + 1}</td>
+                        <td className="px-6 py-4 text-sm font-bold text-gray-900 group-hover:text-cyan-700 transition-colors">{prob.title}</td>
+                        <td className="px-6 py-4 text-sm text-gray-600 group-hover:text-cyan-600 transition-colors">{prob.topic}</td>
                         <td className="px-6 py-4">
                           <span
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${
-                              prob.difficulty === "Easy"
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                : prob.difficulty === "Medium"
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold shadow-sm transition-transform duration-300 group-hover:scale-105 ${prob.difficulty === "Easy"
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                              : prob.difficulty === "Medium"
                                 ? "bg-amber-50 text-amber-700 border border-amber-200"
                                 : "bg-rose-50 text-rose-700 border border-rose-200"
-                            }`}
+                              }`}
                           >
                             {prob.difficulty}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
                           <button
-                            onClick={() => navigate(`/coding/${prob._id}`)}
-                            className="inline-flex items-center gap-1 text-sm font-bold text-cyan-600 hover:text-cyan-700 transition cursor-pointer"
+                            onClick={(e) => { e.stopPropagation(); navigate(`/coding/${prob._id}`); }}
+                            className="inline-flex items-center gap-1 text-sm font-bold text-cyan-600 hover:text-white hover:bg-cyan-600 px-3 py-1.5 rounded-lg transition-all duration-300 cursor-pointer shadow-sm hover:shadow-cyan-200 group-hover:translate-x-1"
                           >
                             Solve <ArrowRight size={14} />
                           </button>
@@ -313,17 +310,19 @@ const CodingProblems = () => {
         ) : (
           /* TAB 2: AI GENERATOR FORM */
           <div className="max-w-4xl mx-auto bg-white/80 backdrop-blur-xl shadow-2xl rounded-3xl border border-gray-200 p-8 md:p-10">
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 gap-6">
               {/* Topic */}
-              <div>
-                <label className="flex items-center gap-2 font-semibold mb-3">
-                  <Code2 size={18} />
+              <div className="group bg-white/50 hover:bg-white rounded-2xl p-5 border border-gray-200 hover:border-cyan-400 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <label className="flex items-center gap-2 font-semibold mb-3 text-gray-700 group-hover:text-cyan-600 transition-colors">
+                  <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-cyan-100 transition-colors">
+                    <Code2 size={18} className="group-hover:scale-110 transition-transform" />
+                  </div>
                   Topic
                 </label>
                 <select
                   value={genTopic}
                   onChange={(e) => setGenTopic(e.target.value)}
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-cyan-500 outline-none text-sm bg-white"
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-cyan-500 outline-none text-sm bg-gray-50/50 hover:bg-white focus:bg-white cursor-pointer transition-colors shadow-inner"
                 >
                   {topics.map((item) => (
                     <option key={item}>{item}</option>
@@ -332,15 +331,17 @@ const CodingProblems = () => {
               </div>
 
               {/* Difficulty */}
-              <div>
-                <label className="flex items-center gap-2 font-semibold mb-3">
-                  <BrainCircuit size={18} />
+              <div className="group bg-white/50 hover:bg-white rounded-2xl p-5 border border-gray-200 hover:border-indigo-400 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <label className="flex items-center gap-2 font-semibold mb-3 text-gray-700 group-hover:text-indigo-600 transition-colors">
+                  <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-indigo-100 transition-colors">
+                    <BrainCircuit size={18} className="group-hover:scale-110 transition-transform" />
+                  </div>
                   Difficulty
                 </label>
                 <select
                   value={genDifficulty}
                   onChange={(e) => setGenDifficulty(e.target.value)}
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-cyan-500 outline-none text-sm bg-white"
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm bg-gray-50/50 hover:bg-white focus:bg-white cursor-pointer transition-colors shadow-inner"
                 >
                   <option>Easy</option>
                   <option>Medium</option>
@@ -349,15 +350,17 @@ const CodingProblems = () => {
               </div>
 
               {/* Language */}
-              <div>
-                <label className="flex items-center gap-2 font-semibold mb-3">
-                  <Cpu size={18} />
+              <div className="group bg-white/50 hover:bg-white rounded-2xl p-5 border border-gray-200 hover:border-emerald-400 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <label className="flex items-center gap-2 font-semibold mb-3 text-gray-700 group-hover:text-emerald-600 transition-colors">
+                  <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-emerald-100 transition-colors">
+                    <Cpu size={18} className="group-hover:scale-110 transition-transform" />
+                  </div>
                   Programming Language
                 </label>
                 <select
                   value={genLanguage}
                   onChange={(e) => setGenLanguage(e.target.value)}
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-cyan-500 outline-none text-sm bg-white"
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-emerald-500 outline-none text-sm bg-gray-50/50 hover:bg-white focus:bg-white cursor-pointer transition-colors shadow-inner"
                 >
                   <option value="javascript">JavaScript</option>
                   <option value="java">Java</option>
@@ -367,15 +370,17 @@ const CodingProblems = () => {
               </div>
 
               {/* Company */}
-              <div>
-                <label className="flex items-center gap-2 font-semibold mb-3">
-                  <Building2 size={18} />
+              <div className="group bg-white/50 hover:bg-white rounded-2xl p-5 border border-gray-200 hover:border-amber-400 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <label className="flex items-center gap-2 font-semibold mb-3 text-gray-700 group-hover:text-amber-600 transition-colors">
+                  <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-amber-100 transition-colors">
+                    <Building2 size={18} className="group-hover:scale-110 transition-transform" />
+                  </div>
                   Company
                 </label>
                 <select
                   value={genCompany}
                   onChange={(e) => setGenCompany(e.target.value)}
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-cyan-500 outline-none text-sm bg-white"
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-500 outline-none text-sm bg-gray-50/50 hover:bg-white focus:bg-white cursor-pointer transition-colors shadow-inner"
                 >
                   {companies.map((item) => (
                     <option key={item} value={item}>
@@ -395,12 +400,12 @@ const CodingProblems = () => {
               {genLoading ? (
                 <div className="flex justify-center items-center gap-3">
                   <div className="h-6 w-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Generating AI Problem...
+                  Generating  Problem...
                 </div>
               ) : (
                 <div className="flex justify-center items-center gap-3">
                   <Sparkles size={22} />
-                  Generate AI Coding Problem
+                  Generate Coding Problem
                 </div>
               )}
             </button>
@@ -409,21 +414,27 @@ const CodingProblems = () => {
 
         {/* Bottom Features */}
         <div className="max-w-6xl mx-auto mt-14 grid md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
-            <Code2 className="mx-auto text-cyan-600 mb-4" size={35} />
-            <h3 className="font-bold text-lg">AI Generated Problems</h3>
+          <div className="group bg-white rounded-2xl shadow-lg hover:shadow-cyan-200 p-6 text-center transform transition-all duration-300 hover:-translate-y-2 border border-transparent hover:border-cyan-100">
+            <div className="inline-block p-4 bg-cyan-50 rounded-full group-hover:bg-cyan-100 transition-colors duration-300 mb-4">
+              <Code2 className="text-cyan-600 group-hover:scale-110 transition-transform duration-300" size={35} />
+            </div>
+            <h3 className="font-bold text-lg group-hover:text-cyan-700 transition-colors">AI Generated Problems</h3>
             <p className="text-gray-500 mt-2">Fresh interview questions every time.</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
-            <BrainCircuit className="mx-auto text-indigo-600 mb-4" size={35} />
-            <h3 className="font-bold text-lg">Company Specific</h3>
+          <div className="group bg-white rounded-2xl shadow-lg hover:shadow-indigo-200 p-6 text-center transform transition-all duration-300 hover:-translate-y-2 border border-transparent hover:border-indigo-100">
+            <div className="inline-block p-4 bg-indigo-50 rounded-full group-hover:bg-indigo-100 transition-colors duration-300 mb-4">
+              <BrainCircuit className="text-indigo-600 group-hover:scale-110 transition-transform duration-300" size={35} />
+            </div>
+            <h3 className="font-bold text-lg group-hover:text-indigo-700 transition-colors">Company Specific</h3>
             <p className="text-gray-500 mt-2">Practice questions inspired by top tech companies.</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
-            <Cpu className="mx-auto text-green-600 mb-4" size={35} />
-            <h3 className="font-bold text-lg">Multi Language</h3>
+          <div className="group bg-white rounded-2xl shadow-lg hover:shadow-green-200 p-6 text-center transform transition-all duration-300 hover:-translate-y-2 border border-transparent hover:border-green-100">
+            <div className="inline-block p-4 bg-green-50 rounded-full group-hover:bg-green-100 transition-colors duration-300 mb-4">
+              <Cpu className="text-green-600 group-hover:scale-110 transition-transform duration-300" size={35} />
+            </div>
+            <h3 className="font-bold text-lg group-hover:text-green-700 transition-colors">Multi Language</h3>
             <p className="text-gray-500 mt-2">Solve problems in Java, JavaScript, Python, or C++.</p>
           </div>
         </div>

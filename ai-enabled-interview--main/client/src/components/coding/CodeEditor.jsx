@@ -35,10 +35,8 @@ const CodeEditor = ({
   language,
   code,
   setCode,
+  theme = "vs-dark"
 }) => {
-  const [theme, setTheme] =
-    useState("vs-dark");
-
   useEffect(() => {
     if (!code) {
       setCode(
@@ -65,7 +63,7 @@ const CodeEditor = ({
         height="100%"
         language={language}
         value={code}
-        theme="vs-dark"
+        theme={theme}
         onChange={handleEditorChange}
         options={{
           minimap: { enabled: false },

@@ -275,6 +275,50 @@ Return JSON ONLY:
 };
 
 // ===============================
+// HANDLE VOICE CHAT (Conversational)
+// ===============================
+const handleVoiceChat = async (role, transcript, mcqScore, codingScore) => {
+  try {
+    const conversationHistory = transcript.map(t => `${t.speaker}: ${t.text}`).join('\n');
+    
+    const prompt = `
+You are an expert AI Interviewer for a ${role} role. 
+The candidate has completed the first two rounds of the interview process.
+Their Round 1 (MCQ) score was ${mcqScore}%.
+Their Round 2 (Coding) score was ${codingScore}%.
+
+Your goal is to conduct a conversational interview by asking a mix of Technical and HR questions.
+Here is the conversation so far:
+${conversationHistory}
+
+Based on the conversation above, provide your next statement or question.
+Rules:
+1. Speak directly to the candidate as a professional interviewer.
+2. If the conversation is just starting, introduce yourself and ask the first question.
+3. Keep your responses concise and conversational (1-3 sentences max).
+4. Acknowledge their previous answer before asking the next question.
+5. Do NOT include prefixes like "AI: " or quotes. Just output the raw text you want spoken.
+`;
+
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "system", content: "You are an AI Interviewer." }, { role: "user", content: prompt }],
+      temperature: 0.6,
+    });
+    
+    let text = completion.choices[0].message.content.trim();
+    // Clean up any stray quotes or speaker prefixes just in case
+    text = text.replace(/^AI:\s*/i, "").replace(/^Interviewer:\s*/i, "").replace(/^"|"$/g, "").trim();
+    
+    return text;
+  } catch (error) {
+    console.error("Voice Chat Gen Error:", error);
+    return "Could you please elaborate on that?";
+  }
+};
+
+
+// ===============================
 // EVALUATE COMPREHENSIVE INTERVIEW
 // ===============================
 const evaluateComprehensiveInterview = async (
@@ -342,5 +386,6 @@ module.exports = {
   evaluateInterview,
   generateAdaptiveCodingQuestions,
   generateVoiceQuestions,
+  handleVoiceChat,
   evaluateComprehensiveInterview,
 };

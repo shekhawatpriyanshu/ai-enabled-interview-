@@ -105,9 +105,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
   return (
     <aside
-      className={`fixed left-0 top-0 w-72 h-screen bg-slate-900 text-slate-200 border-r border-slate-800 flex flex-col shadow-2xl z-50 transform transition-transform duration-300 md:translate-x-0 ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      }`}
+      className={`fixed left-0 top-0 w-72 h-screen bg-slate-900 text-slate-200 border-r border-slate-800 flex flex-col shadow-2xl z-50 transform transition-transform duration-300 md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
     >
       {/* PROFILE (Top Header) */}
       <div className="p-6 border-b border-slate-800 bg-slate-800/30 hover:bg-slate-800 transition-colors cursor-pointer group flex justify-between items-start">
@@ -156,11 +155,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               to={item.path}
               onClick={handleNavClick}
               className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group
-              ${
-                active
+              ${active
                   ? "bg-cyan-600 text-white shadow-md scale-[1.02]"
                   : "text-slate-300 hover:bg-slate-800 hover:text-white"
-              }`}
+                }`}
             >
               <span className="text-lg group-hover:scale-110 transition">
                 {item.icon}
@@ -172,28 +170,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         })}
       </nav>
 
-      {/* LOGOUT */}
-      <div className="border-t border-slate-800 p-4 flex justify-center items-center">
-        <button
-          onClick={handleLogout}
-          disabled={loading}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm text-purple-600 font-semibold rounded-full border border-purple-200 bg-white transition-transform duration-300 ease-in-out hover:bg-purple-600 hover:border-transparent hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 disabled:opacity-60"
-        >
-          <FaSignOutAlt />
-          {loading ? (
-            "Logging out..."
-          ) : (
-            <div className="text-animation">
-              <span>L</span>
-              <span>o</span>
-              <span>g</span>
-              <span>o</span>
-              <span>u</span>
-              <span>t</span>
-            </div>
-          )}
-        </button>
-      </div>
     </aside>
   );
 };

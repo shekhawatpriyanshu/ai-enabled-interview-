@@ -9,12 +9,15 @@ import {
     FaComments,
     FaChartLine,
     FaArrowUp,
+    FaSignOutAlt,
 } from "react-icons/fa";
 
 import adminApi from "../services/adminApi";
+import { useAdminAuth } from "../context/AdminAuthContext";
 
 const Dashboard = () => {
     const navigate = useNavigate();
+    const { logout } = useAdminAuth();
     const [stats, setStats] = useState({
         totalUsers: 0,
         totalInterviews: 0,
@@ -94,21 +97,40 @@ const Dashboard = () => {
         );
     }
 
+    const handleLogout = async () => {
+        await logout();
+        navigate("/admin/login");
+    };
+
     return (
         <div>
-
             {/* Heading */}
+            <div className="mb-8 flex justify-between items-center">
+                <div>
+                    <h1 className="text-3xl font-bold text-slate-800">
+                        Dashboard
+                    </h1>
+                    <p className="text-slate-500">
+                        LeetChef Overview
+                    </p>
+                </div>
 
-            <div className="mb-8">
-
-                <h1 className="text-3xl font-bold text-slate-800">
-                    Dashboard
-                </h1>
-
-                <p className="text-slate-500">
-                    LeetChef Overview
-                </p>
-
+                <button
+                    onClick={handleLogout}
+                    className="px-4 py-2 text-sm text-purple-600 font-semibold rounded-full border border-purple-200 bg-white transition-transform duration-300 ease-in-out hover:bg-purple-600 hover:border-transparent hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2"
+                >
+                    <div className="flex items-center gap-2">
+                        <FaSignOutAlt />
+                        <div className="text-animation hidden sm:flex">
+                            <span>L</span>
+                            <span>o</span>
+                            <span>g</span>
+                            <span>o</span>
+                            <span>u</span>
+                            <span>t</span>
+                        </div>
+                    </div>
+                </button>
             </div>
 
             {/* Cards */}

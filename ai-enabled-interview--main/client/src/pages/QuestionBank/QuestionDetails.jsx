@@ -81,7 +81,7 @@ const QuestionDetails = () => {
 
   return (
     <MainLayout>
-      <motion.div 
+      <motion.div
         className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6"
         variants={containerVariants}
         initial="hidden"
@@ -99,12 +99,12 @@ const QuestionDetails = () => {
         </motion.div>
 
         {/* Header Card */}
-        <motion.div 
+        <motion.div
           variants={itemVariants}
           className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-6 sm:p-8 relative overflow-hidden"
         >
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
-          
+
           <div className="flex flex-col gap-5">
             <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight">
               {question.title}
@@ -132,10 +132,10 @@ const QuestionDetails = () => {
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
+
           {/* Left Column - Details */}
           <div className="lg:col-span-2 space-y-6">
-            
+
             {/* Description */}
             <motion.div variants={itemVariants} className="bg-white dark:bg-gray-900 rounded-2xl shadow-md border border-gray-100 dark:border-gray-800 p-6 sm:p-8">
               <div className="flex items-center gap-2 mb-6">
@@ -144,7 +144,7 @@ const QuestionDetails = () => {
                   Problem Description
                 </h2>
               </div>
-              
+
               <div className="prose prose-blue dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
                 {question.description ? (
                   <p className="whitespace-pre-wrap">{question.description}</p>
@@ -163,7 +163,7 @@ const QuestionDetails = () => {
                     Solution Guide
                   </h2>
                 </div>
-                
+
                 <div className="bg-slate-900 rounded-xl p-5 border border-slate-800 shadow-inner overflow-x-auto">
                   <pre className="text-emerald-400 font-mono text-sm leading-7 whitespace-pre-wrap">
                     <code>{question.answer}</code>
@@ -175,7 +175,7 @@ const QuestionDetails = () => {
 
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
-            
+
             {/* Detailed Spec / Code Outline (if exists) */}
             {question.question && (
               <motion.div variants={itemVariants} className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl shadow-md border border-indigo-100 dark:border-indigo-800/50 p-6">
@@ -199,7 +199,7 @@ const QuestionDetails = () => {
                   Related Tags
                 </h2>
               </div>
-              
+
               <div className="flex flex-wrap gap-2">
                 {question.tags?.length > 0 ? (
                   question.tags.map((tag, index) => (

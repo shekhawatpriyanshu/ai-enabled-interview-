@@ -120,7 +120,7 @@ const Questions = () => {
             >
               Previous
             </button>
-            
+
             <span className="text-slate-600 text-sm font-medium mx-2">
               Page <strong className="text-slate-900">{currentPage}</strong> of <strong className="text-slate-900">{totalPages}</strong>
             </span>

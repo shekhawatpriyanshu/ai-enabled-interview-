@@ -6,6 +6,7 @@ const {
   submitInterview,
   submitCodingRound,
   runInterviewCode,
+  chatVoiceRound,
   submitVoiceRound,
   getFeedback,
   getMyInterviews,
@@ -61,6 +62,12 @@ router.post(
   "/submit-voice/:id",
   protect,
   submitVoiceRound
+);
+
+router.post(
+  "/chat-voice/:id",
+  protect,
+  chatVoiceRound
 );
 
 router.get(

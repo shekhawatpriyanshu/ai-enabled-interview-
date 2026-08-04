@@ -65,39 +65,29 @@ const DiscussionForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 py-12 px-4">
+    <div className="w-full relative">
+      {/* Decorative Blurs */}
+      <div className="absolute -top-10 -right-20 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-10 -left-20 w-64 h-64 bg-indigo-400/20 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto">
+      <div className="bg-white/70 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white overflow-hidden relative z-10">
 
-        <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
-
-          {/* Header */}
-
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-white">
-
-            <div className="flex items-center gap-4">
-
-              <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
-
-                <FaComments size={28} />
-
-              </div>
-
-              <div>
-
-                <h1 className="text-3xl font-bold">
-                  Start a Discussion
-                </h1>
-
-                <p className="text-blue-100 mt-2">
-                  Ask questions, share ideas, and help the community grow.
-                </p>
-
-              </div>
-
+        {/* Header */}
+        <div className="p-8 md:p-10 border-b border-gray-100/50">
+          <div className="flex items-center gap-5">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 transform hover:rotate-6 transition-transform duration-300">
+              <FaComments size={28} />
             </div>
-
+            <div>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 mb-1">
+                Start a Discussion
+              </h1>
+              <p className="text-gray-500 font-medium">
+                Ask questions, share ideas, and help the community grow.
+              </p>
+            </div>
           </div>
+        </div>
 
           <form
             onSubmit={handleSubmit}
@@ -111,143 +101,110 @@ const DiscussionForm = () => {
             )}
 
             {/* Title */}
-
-            <div>
-
-              <label className="flex items-center gap-2 mb-3 font-semibold text-gray-700">
-
-                <FaHeading className="text-blue-600" />
+            <div className="group">
+              <label className="flex items-center gap-2 mb-2 font-bold text-gray-700 group-hover:text-blue-600 transition-colors">
+                <FaHeading className="text-blue-500" />
                 Discussion Title
-
               </label>
-
               <input
                 type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Example: Best way to prepare for DSA interviews?"
-                className="w-full rounded-xl border border-gray-300 px-5 py-4 transition-all duration-300 focus:ring-4 focus:ring-blue-200 focus:border-blue-500 outline-none hover:border-blue-400"
+                className="w-full rounded-xl border border-gray-200 bg-white/50 px-5 py-4 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all duration-300 shadow-sm placeholder-gray-400"
               />
-
-              <div className="text-right mt-2 text-sm text-gray-400">
+              <div className="text-right mt-1.5 text-sm text-gray-400 font-medium">
                 {formData.title.length}/100
               </div>
-
             </div>
 
             {/* Content */}
-
-            <div>
-
-              <label className="block mb-3 font-semibold text-gray-700">
+            <div className="group">
+              <label className="block mb-2 font-bold text-gray-700 group-hover:text-indigo-600 transition-colors">
                 Discussion Description
               </label>
-
               <textarea
-                rows={8}
+                rows={7}
                 name="content"
                 value={formData.content}
                 onChange={handleChange}
                 placeholder="Describe your question or share your knowledge..."
-                className="w-full rounded-xl border border-gray-300 px-5 py-4 transition-all duration-300 resize-none focus:ring-4 focus:ring-blue-200 focus:border-blue-500 outline-none hover:border-blue-400"
+                className="w-full rounded-xl border border-gray-200 bg-white/50 px-5 py-4 resize-none focus:bg-white focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 outline-none transition-all duration-300 shadow-sm placeholder-gray-400"
               />
-
-              <div className="flex justify-between mt-2">
-
-                <span className="text-gray-400 text-sm">
-                  Markdown supported (if enabled)
+              <div className="flex justify-between mt-1.5">
+                <span className="text-gray-400 text-sm font-medium">
+                  Markdown supported
                 </span>
-
-                <span className="text-gray-400 text-sm">
-                  {formData.content.length} characters
+                <span className="text-gray-400 text-sm font-medium">
+                  {formData.content.length} chars
                 </span>
-
               </div>
-
             </div>
 
             {/* Tags */}
-
-            <div>
-
-              <label className="flex items-center gap-2 mb-3 font-semibold text-gray-700">
-
-                <FaTags className="text-green-600" />
+            <div className="group">
+              <label className="flex items-center gap-2 mb-2 font-bold text-gray-700 group-hover:text-teal-600 transition-colors">
+                <FaTags className="text-teal-500" />
                 Tags
-
               </label>
-
               <input
                 type="text"
                 name="tags"
                 value={formData.tags}
                 onChange={handleChange}
-                placeholder="React, Node.js, MongoDB, DSA"
-                className="w-full rounded-xl border border-gray-300 px-5 py-4 transition-all duration-300 focus:ring-4 focus:ring-green-200 focus:border-green-500 outline-none hover:border-green-400"
+                placeholder="React, Node.js, System Design"
+                className="w-full rounded-xl border border-gray-200 bg-white/50 px-5 py-4 focus:bg-white focus:border-teal-400 focus:ring-4 focus:ring-teal-100 outline-none transition-all duration-300 shadow-sm placeholder-gray-400"
               />
-
-              <p className="text-sm text-gray-500 mt-3">
+              <p className="text-sm text-gray-500 mt-2 font-medium">
                 Separate tags using commas.
               </p>
-
-              <div className="flex flex-wrap gap-2 mt-4">
-
-                {formData.tags
-                  .split(",")
-                  .map((tag) => tag.trim())
-                  .filter(Boolean)
-                  .map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-
-              </div>
-
+              
+              {formData.tags && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {formData.tags
+                    .split(",")
+                    .map((tag) => tag.trim())
+                    .filter(Boolean)
+                    .map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1.5 rounded-lg bg-teal-50 border border-teal-100 text-teal-700 text-sm font-semibold shadow-sm"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                </div>
+              )}
             </div>
 
             {/* Buttons */}
-
-            <div className="flex justify-end gap-4 pt-6 border-t">
-
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-4 pt-4 border-t border-gray-100/50">
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl border border-gray-300 hover:bg-gray-100 transition-all duration-300"
+                className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl border-2 border-gray-200 text-gray-600 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all duration-300"
               >
                 <FaArrowLeft />
                 Cancel
               </button>
-
+              
               <button
                 type="submit"
                 disabled={loading}
-                className={`flex items-center gap-2 px-8 py-3 rounded-xl font-semibold text-white transition-all duration-300 transform ${
+                className={`flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl font-bold text-white transition-all duration-300 shadow-lg ${
                   loading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:scale-105 hover:shadow-xl"
+                    ? "bg-gray-400 cursor-not-allowed shadow-none"
+                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 hover:shadow-blue-500/40 hover:-translate-y-1 active:scale-95"
                 }`}
               >
                 <FaPaperPlane />
-
-                {loading
-                  ? "Creating..."
-                  : "Create Discussion"}
+                {loading ? "Creating..." : "Create Discussion"}
               </button>
-
             </div>
-
           </form>
-
         </div>
-
       </div>
-
-    </div>
   );
 };
 

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import DifficultyBadge from "./DifficultyBadge";
 
 const QuestionRow = ({ question }) => {
-    console.log(question);
+  console.log(question);
   return (
     <tr className="border-b hover:bg-gray-50 transition">
 

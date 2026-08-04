@@ -54,21 +54,24 @@ const GroupForm = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md border p-8">
+    <div className="w-full bg-white/70 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-8 md:p-10 relative overflow-hidden">
+      
+      {/* Decorative Blur Backgrounds */}
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-purple-400/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-400/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header */}
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center">
-          <Users size={24} />
+      <div className="flex flex-col md:flex-row md:items-center gap-5 mb-10 relative z-10">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/30 transform hover:rotate-6 transition-transform duration-300">
+          <Users size={32} />
         </div>
 
         <div>
-          <h2 className="text-3xl font-bold text-gray-800">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 mb-1">
             Create Study Group
           </h2>
-
-          <p className="text-gray-500">
-            Build a community and learn together.
+          <p className="text-gray-500 font-medium">
+            Build a community, share knowledge, and learn together.
           </p>
         </div>
       </div>
@@ -81,47 +84,44 @@ const GroupForm = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-6"
+        className="space-y-8 relative z-10"
       >
         {/* Group Name */}
-        <div>
-          <label className="block mb-2 font-medium">
+        <div className="group">
+          <label className="block mb-2 font-bold text-gray-700 group-hover:text-indigo-600 transition-colors">
             Group Name
           </label>
-
           <input
             type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Enter study group name"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
+            placeholder="e.g. System Design Interview Prep"
+            className="w-full rounded-xl border border-gray-200 bg-white/50 px-5 py-4 focus:bg-white focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 outline-none transition-all duration-300 shadow-sm placeholder-gray-400"
           />
         </div>
 
         {/* Description */}
-        <div>
-          <label className="block mb-2 font-medium">
+        <div className="group">
+          <label className="block mb-2 font-bold text-gray-700 group-hover:text-purple-600 transition-colors">
             Description
           </label>
-
           <textarea
-            rows={6}
+            rows={5}
             name="description"
             value={formData.description}
             onChange={handleChange}
-            placeholder="Describe your study group..."
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 resize-none focus:ring-2 focus:ring-blue-500 outline-none"
+            placeholder="Describe what your group will study, schedule, prerequisites..."
+            className="w-full rounded-xl border border-gray-200 bg-white/50 px-5 py-4 resize-none focus:bg-white focus:border-purple-400 focus:ring-4 focus:ring-purple-100 outline-none transition-all duration-300 shadow-sm placeholder-gray-400"
           />
         </div>
 
         {/* Buttons */}
-        <div className="flex justify-end gap-4">
-
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-4 pt-4 border-t border-gray-100">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-6 py-3 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+            className="px-8 py-3.5 rounded-xl border-2 border-gray-200 text-gray-600 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 text-center"
           >
             Cancel
           </button>
@@ -129,17 +129,16 @@ const GroupForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`px-6 py-3 rounded-lg text-white transition ${
+            className={`px-8 py-3.5 rounded-xl text-white font-bold transition-all duration-300 shadow-lg text-center ${
               loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
+                ? "bg-gray-400 cursor-not-allowed shadow-none"
+                : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 hover:shadow-indigo-500/40 hover:-translate-y-1 active:scale-95"
             }`}
           >
             {loading
               ? "Creating..."
-              : "Create Group"}
+              : "Create Group ✨"}
           </button>
-
         </div>
       </form>
 
