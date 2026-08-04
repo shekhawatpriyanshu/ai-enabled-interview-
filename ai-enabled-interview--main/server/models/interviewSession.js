@@ -34,6 +34,55 @@ const interviewSessionSchema =
         },
       ],
 
+      currentRound: {
+        type: Number,
+        default: 1,
+      },
+      
+      mcqScore: {
+        type: Number,
+        default: 0,
+      },
+
+      codingQuestions: [
+        {
+          problemTitle: String,
+          problemDescription: String,
+          starterCode: String,
+          testCases: [
+            {
+              input: String,
+              output: String,
+            }
+          ],
+          codeSubmitted: String,
+          languageSubmitted: String,
+          status: String,
+          score: { type: Number, default: 0 },
+        }
+      ],
+
+      codingScore: {
+        type: Number,
+        default: 0,
+      },
+
+      voiceInterview: {
+        transcript: [
+          {
+            speaker: String, // 'AI' or 'User'
+            text: String,
+          }
+        ],
+        technicalQuestions: [String],
+        hrQuestions: [String],
+      },
+
+      overallScore: {
+        type: Number,
+        default: 0,
+      },
+
       status: {
         type: String,
         enum: [

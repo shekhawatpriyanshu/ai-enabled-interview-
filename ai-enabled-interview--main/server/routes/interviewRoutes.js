@@ -4,6 +4,9 @@ const {
   startInterview,
   getInterview,
   submitInterview,
+  submitCodingRound,
+  runInterviewCode,
+  submitVoiceRound,
   getFeedback,
   getMyInterviews,
 } = require(
@@ -40,6 +43,24 @@ router.post(
   "/submit/:id",
   protect,
   submitInterview
+);
+
+router.post(
+  "/submit-coding/:id",
+  protect,
+  submitCodingRound
+);
+
+router.post(
+  "/run-code",
+  protect,
+  runInterviewCode
+);
+
+router.post(
+  "/submit-voice/:id",
+  protect,
+  submitVoiceRound
 );
 
 router.get(

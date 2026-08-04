@@ -128,14 +128,25 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
       </nav>
 
       {/* LOGOUT */}
-      <div className="border-t border-slate-800 p-4">
+      <div className="border-t border-slate-800 p-4 flex justify-center items-center">
         <button
           onClick={handleLogout}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 disabled:opacity-60 py-3 rounded-xl transition-all"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm text-purple-600 font-semibold rounded-full border border-purple-200 bg-white transition-transform duration-300 ease-in-out hover:bg-purple-600 hover:border-transparent hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 disabled:opacity-60"
         >
           <FaSignOutAlt />
-          {loading ? "Logging out..." : "Logout"}
+          {loading ? (
+            "Logging out..."
+          ) : (
+            <div className="text-animation">
+              <span>L</span>
+              <span>o</span>
+              <span>g</span>
+              <span>o</span>
+              <span>u</span>
+              <span>t</span>
+            </div>
+          )}
         </button>
       </div>
     </aside>

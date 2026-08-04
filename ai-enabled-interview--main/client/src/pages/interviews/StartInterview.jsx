@@ -37,7 +37,7 @@ const StartInterview = () => {
         alert(
           error?.response?.data
             ?.message ||
-            "Failed to start interview"
+          "Failed to start interview"
         );
       } finally {
         setLoading(false);
@@ -53,16 +53,17 @@ const StartInterview = () => {
           <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-10 md:p-14">
 
             <div className="text-center mb-10">
-
-              <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center text-5xl mb-6">
+              <div className="w-28 h-28 mx-auto rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center text-6xl mb-6 shadow-[0_0_40px_rgba(6,182,212,0.4)] animate-[pulse_3s_ease-in-out_infinite] hover:scale-110 transition-transform duration-300 cursor-default">
                 🤖
               </div>
 
-              <h1 className="text-5xl font-bold text-white mb-4">
-                AI Mock Interview
+              <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-400 mb-4 tracking-tight">
+                Mock Interview
               </h1>
 
-
+              <p className="text-slate-300 text-lg mb-2 max-w-xl mx-auto font-medium">
+                Customize your interview settings and prepare to be challenged by our advanced AI interviewer.
+              </p>
             </div>
 
             <InterviewForm

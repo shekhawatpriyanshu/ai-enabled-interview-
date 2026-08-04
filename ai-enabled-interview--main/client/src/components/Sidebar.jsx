@@ -16,7 +16,9 @@ import {
   FaGift,
   FaSignOutAlt
 } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getProfile } from "../services/ProfileService";
+import { getBackendUrl } from "../api/config";
 import { useAuth } from "../context/AuthContext";
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -25,6 +27,32 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const { user, logout } = useAuth();
 
   const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await getProfile();
+        if (data && data.profile) {
+          setProfile(data.profile);
+        }
+      } catch (error) {
+        console.log("Failed to fetch profile for sidebar", error);
+      }
+    };
+    if (user) {
+      fetchProfile();
+    }
+  }, [user]);
+
+  const getAvatarUrl = () => {
+    if (profile?.avatar) {
+      return profile.avatar.startsWith("http")
+        ? profile.avatar
+        : `${getBackendUrl()}/${profile.avatar.replace(/\\/g, "/")}`;
+    }
+    return null;
+  };
 
   const handleLogout = async () => {
     try {
@@ -68,6 +96,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     if (path === "/interviews") {
       return location.pathname === "/interviews" || (location.pathname.startsWith("/interviews/") && !location.pathname.startsWith("/interviews/start"));
     }
+    // Prevent "/coding" from matching "/coding/submissions"
+    if (path === "/coding") {
+      return location.pathname === "/coding" || (location.pathname.startsWith("/coding/") && !location.pathname.startsWith("/coding/submissions"));
+    }
     return location.pathname === path || location.pathname.startsWith(path + "/");
   };
 
@@ -80,12 +112,16 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       {/* PROFILE (Top Header) */}
       <div className="p-6 border-b border-slate-800 bg-slate-800/30 hover:bg-slate-800 transition-colors cursor-pointer group flex justify-between items-start">
         <div className="flex items-center gap-4">
-          <div className="h-14 w-14 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center text-xl font-bold uppercase shadow-md shrink-0 group-hover:scale-110 transition-transform duration-300 text-white">
-            {user?.name?.charAt(0) || "U"}
+          <div className="h-14 w-14 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center text-xl font-bold uppercase shadow-md shrink-0 group-hover:scale-110 transition-transform duration-300 text-white overflow-hidden">
+            {getAvatarUrl() ? (
+              <img src={getAvatarUrl()} alt="User Avatar" className="w-full h-full object-cover" />
+            ) : (
+              user?.name?.charAt(0) || "U"
+            )}
           </div>
 
           <div className="overflow-hidden flex-1">
-            <h2 className="text-base font-bold text-white truncate group-hover:text-cyan-400 transition-colors">
+            <h2 className="text-base font-bold !text-white truncate group-hover:!text-cyan-400 transition-colors">
               {user?.name || "User"}
             </h2>
             <p className="text-xs text-slate-400 truncate mt-0.5">
@@ -137,14 +173,25 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       </nav>
 
       {/* LOGOUT */}
-      <div className="border-t border-slate-800 p-4">
+      <div className="border-t border-slate-800 p-4 flex justify-center items-center">
         <button
           onClick={handleLogout}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 disabled:opacity-60 py-3 rounded-xl transition-all"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm text-purple-600 font-semibold rounded-full border border-purple-200 bg-white transition-transform duration-300 ease-in-out hover:bg-purple-600 hover:border-transparent hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 disabled:opacity-60"
         >
           <FaSignOutAlt />
-          {loading ? "Logging out..." : "Logout"}
+          {loading ? (
+            "Logging out..."
+          ) : (
+            <div className="text-animation">
+              <span>L</span>
+              <span>o</span>
+              <span>g</span>
+              <span>o</span>
+              <span>u</span>
+              <span>t</span>
+            </div>
+          )}
         </button>
       </div>
     </aside>

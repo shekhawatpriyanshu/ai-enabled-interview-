@@ -126,9 +126,9 @@ const Profile = () => {
 
             <Link
               to="/profile/create"
-              className={`px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300 ${profile
-                ? "bg-gray-400 pointer-events-none"
-                : "bg-green-600 hover:bg-green-700 hover:scale-105"
+              className={`px-6 py-3 rounded-full border bg-white font-semibold transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 ${profile
+                ? "text-gray-400 border-gray-200 pointer-events-none"
+                : "text-green-600 border-green-200 hover:bg-green-600 hover:border-transparent hover:text-white focus:ring-green-600 hover:scale-105"
                 }`}
             >
               Create Profile
@@ -136,9 +136,9 @@ const Profile = () => {
 
             <Link
               to="/profile/edit"
-              className={`px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300 ${!profile
-                ? "bg-gray-400 pointer-events-none"
-                : "bg-blue-600 hover:bg-blue-700 hover:scale-105"
+              className={`px-6 py-3 rounded-full border bg-white font-semibold transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 ${!profile
+                ? "text-gray-400 border-gray-200 pointer-events-none"
+                : "text-blue-600 border-blue-200 hover:bg-blue-600 hover:border-transparent hover:text-white focus:ring-blue-600 hover:scale-105"
                 }`}
             >
               Edit Profile
@@ -149,22 +149,14 @@ const Profile = () => {
                 handleDelete
               }
               disabled={!profile}
-              className={`px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300 cursor-pointer ${!profile
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-red-600 hover:bg-red-700 hover:scale-105"
+              className={`px-6 py-3 rounded-full border bg-white font-semibold transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer ${!profile
+                ? "text-gray-400 border-gray-200 cursor-not-allowed"
+                : "text-red-600 border-red-200 hover:bg-red-600 hover:border-transparent hover:text-white focus:ring-red-600 hover:scale-105"
                 }`}
             >
               Delete Profile
             </button>
 
-            <button
-              onClick={
-                handleLogout
-              }
-              className="px-6 py-3 rounded-xl font-semibold  cursor-pointer text-white bg-black hover:bg-gray-800 transition-all duration-300 hover:scale-105"
-            >
-              Logout
-            </button>
 
           </div>
         </div>

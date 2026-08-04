@@ -105,10 +105,34 @@ const FeedbackScreen = () => {
 
         {/* Feedback Cards */}
         <motion.div variants={itemVariants} className="grid md:grid-cols-3 gap-8 mb-12">
-          <FeedbackCard title="💪 Strengths" items={feedback.strengths} />
-          <FeedbackCard title="⚠️ Weaknesses" items={feedback.weaknesses} />
-          <FeedbackCard title="🚀 Suggestions" items={feedback.suggestions} />
+          <FeedbackCard title="💪 Strengths" items={feedback.strengths || []} />
+          <FeedbackCard title="⚠️ Weaknesses" items={feedback.weaknesses || []} />
+          <FeedbackCard title="🚀 Suggestions" items={feedback.suggestions || []} />
         </motion.div>
+
+        {/* Comprehensive Metrics (Only for Multi-Round) */}
+        {feedback.learningRoadmap && (
+          <motion.div variants={itemVariants} className="bg-white/60 backdrop-blur-md border border-white/50 rounded-3xl p-8 shadow-xl mb-12">
+            <h3 className="text-2xl font-bold text-slate-800 mb-6 text-center">Your 4-Week Learning Roadmap</h3>
+            <div className="grid md:grid-cols-4 gap-4">
+              {Object.entries(feedback.learningRoadmap).map(([week, topic], idx) => (
+                <div key={week} className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 p-5 rounded-2xl border border-cyan-200 text-center">
+                  <h4 className="text-cyan-700 font-bold uppercase tracking-wider text-sm mb-2">Week {idx + 1}</h4>
+                  <p className="text-slate-700 font-medium">{topic}</p>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-8 flex flex-wrap justify-center gap-6">
+              <div className="bg-green-100 border border-green-200 px-6 py-3 rounded-full text-green-800 font-semibold shadow-sm">
+                Recommended Level: {feedback.recommendedLevel}
+              </div>
+              <div className="bg-blue-100 border border-blue-200 px-6 py-3 rounded-full text-blue-800 font-semibold shadow-sm">
+                Probability of Selection: {feedback.probabilityOfSelection}%
+              </div>
+            </div>
+          </motion.div>
+        )}
         
         {/* Action Button */}
         <motion.div variants={itemVariants} className="flex justify-center">
