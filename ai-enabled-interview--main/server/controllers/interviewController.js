@@ -144,7 +144,18 @@ const submitInterview = async (req, res) => {
 
     // Passed Round 1: Generate Coding Questions for Round 2
     interview.currentRound = 2;
-    const codingQuestions = await generateAdaptiveCodingQuestions(interview.role, interview.experienceLevel);
+
+    const pastSessions = await InterviewSession.find({ user: req.user._id, _id: { $ne: interview._id } });
+    const pastTitles = [];
+    pastSessions.forEach(session => {
+      if (session.codingQuestions) {
+        session.codingQuestions.forEach(q => {
+          if (q.problemTitle) pastTitles.push(q.problemTitle);
+        });
+      }
+    });
+
+    const codingQuestions = await generateAdaptiveCodingQuestions(interview.role, interview.experienceLevel, pastTitles);
     interview.codingQuestions = codingQuestions;
     
     await interview.save();
@@ -255,13 +266,19 @@ const runInterviewCode = async (req, res) => {
 
       if (result.statusId === 6 || result.compileOutput) {
         finalStatus = "Compilation Error";
-        errorOutput = result.compileOutput || result.stderr;
+        let visualLog = "";
+        for (let i = 1; i <= passed; i++) visualLog += `✅ Test Case ${i} Passed\n`;
+        visualLog += `❌ Test Case ${passed + 1} Compilation Error:\n${result.compileOutput || result.stderr}`;
+        errorOutput = visualLog;
         break;
       }
 
       if (result.stderr || (result.statusId > 3 && result.statusId !== 6)) {
         finalStatus = result.status || "Runtime Error";
-        errorOutput = result.stderr || result.stdout;
+        let visualLog = "";
+        for (let i = 1; i <= passed; i++) visualLog += `✅ Test Case ${i} Passed\n`;
+        visualLog += `❌ Test Case ${passed + 1} Runtime Error:\n${result.stderr || result.stdout}`;
+        errorOutput = visualLog;
         break;
       }
 
@@ -272,7 +289,10 @@ const runInterviewCode = async (req, res) => {
         passed++;
       } else {
         finalStatus = "Wrong Answer";
-        errorOutput = `Expected ${expectedOutput} but got ${actualOutput}`;
+        let visualLog = "";
+        for (let i = 1; i <= passed; i++) visualLog += `✅ Test Case ${i} Passed\n`;
+        visualLog += `❌ Test Case ${passed + 1} Failed\n\nExpected: ${expectedOutput}\nBut got: ${actualOutput}`;
+        errorOutput = visualLog;
         break;
       }
     }

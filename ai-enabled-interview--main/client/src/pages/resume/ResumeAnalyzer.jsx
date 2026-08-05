@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import MainLayout from "../../layouts/MainLayout";
 import UploadResumeCard from "../../components/resume/UploadResumeCard";
 import { uploadResume, analyzeResume } from "../../services/ResumeService";
 
@@ -41,8 +42,9 @@ const ResumeAnalyzer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-sky-200 p-4 md:p-10 relative overflow-hidden">
-      {/* Decorative Blobs */}
+    <MainLayout showNavbar={false}>
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-sky-200 p-4 md:p-10 relative overflow-hidden">
+        {/* Decorative Blobs */}
       <div className="absolute top-10 left-10 w-72 h-72 bg-white/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-200/40 rounded-full blur-3xl pointer-events-none" />
 
@@ -79,6 +81,7 @@ const ResumeAnalyzer = () => {
         />
       </motion.div>
     </div>
+    </MainLayout>
   );
 };
 

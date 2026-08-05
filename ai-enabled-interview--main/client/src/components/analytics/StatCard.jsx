@@ -20,9 +20,8 @@ const StatCard = ({
       <div>
         {/* Icon */}
         <div
-          className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto text-2xl border ${
-            colorClasses[color] || colorClasses.blue
-          }`}
+          className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto text-2xl border ${colorClasses[color] || colorClasses.blue
+            }`}
         >
           {icon}
         </div>

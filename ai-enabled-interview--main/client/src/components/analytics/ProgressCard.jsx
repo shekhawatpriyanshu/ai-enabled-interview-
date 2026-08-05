@@ -27,7 +27,7 @@ const ProgressCard = ({
 
   return (
     <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300">
-      
+
       {/* Header */}
       <div className="flex justify-between items-center mb-3">
         <h6 className="text-sm font-bold text-slate-700 mb-0">
@@ -49,9 +49,8 @@ const ProgressCard = ({
       {/* Progress Bar */}
       <div className="w-full bg-slate-100 rounded-full h-2">
         <div
-          className={`h-2 rounded-full transition-all duration-700 ease-out ${
-            progressColors[color] || progressColors.blue
-          }`}
+          className={`h-2 rounded-full transition-all duration-700 ease-out ${progressColors[color] || progressColors.blue
+            }`}
           style={{ width: `${percentage}%` }}
         />
       </div>

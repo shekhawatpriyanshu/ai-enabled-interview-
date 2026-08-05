@@ -50,6 +50,61 @@ function extractFirstJSONObject(text) {
   throw new Error("Incomplete JSON object.");
 }
 
+// ==========================================
+// Retry Groq Request
+// ==========================================
+
+async function requestGroq(prompt) {
+  const MAX_RETRIES = 3;
+
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const completion = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        temperature: 0.85,
+        max_tokens: 4096,
+        response_format: {
+          type: "json_object",
+        },
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+      });
+
+      if (
+        completion &&
+        completion.choices &&
+        completion.choices.length
+      ) {
+        return completion;
+      }
+
+      throw new Error("Empty response from Groq.");
+
+    } catch (err) {
+      lastError = err;
+
+      console.warn(
+        `Groq attempt ${attempt} failed:`,
+        err.message
+      );
+
+      if (attempt < MAX_RETRIES) {
+        await new Promise(resolve =>
+          setTimeout(resolve, 1000 * attempt)
+        );
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 const generateCodingProblem = async (
   topic,
   difficulty,
@@ -120,23 +175,12 @@ Ensure the response is a valid, parseable JSON object. Any double quotes inside 
 
 `;
 
-    const completion =
-      await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
-        temperature: 0.85,
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        response_format: { type: "json_object" },
-      });
+    const completion = await requestGroq(prompt);
 
     let response =
       completion.choices[0].message.content;
 
-  
+
 
     // Remove markdown if Groq adds it
     response = response
@@ -148,15 +192,209 @@ Ensure the response is a valid, parseable JSON object. Any double quotes inside 
     const json =
       extractFirstJSONObject(response);
 
-   
     const parsed = JSON.parse(json);
 
-    return parsed;
+    if (
+      typeof parsed !== "object" ||
+      parsed === null
+    ) {
+      throw new Error(
+        "Groq returned invalid JSON."
+      );
+    }
+
+    if (!parsed.solution) {
+      throw new Error(
+        "Solution missing."
+      );
+    }
+
+    if (
+      parsed.solution.length < 20
+    ) {
+      throw new Error(
+        "Generated solution is too short."
+      );
+    }
+
+    parsed.topic = topic;
+    parsed.difficulty = difficulty;
+    parsed.company = company || "General";
+
+    parsed.generatedAt = new Date();
+    parsed.aiModel = "llama-3.3-70b-versatile";
+    parsed.version = 1;
+
+    return normalizeProblem(parsed);
   } catch (error) {
     console.error("Groq Error:", error);
     throw error;
   }
 };
+
+// ==========================================
+// Validation Helpers
+// ==========================================
+
+const VALID_TYPES = [
+  "int",
+  "string",
+  "boolean",
+  "intArray",
+  "stringArray",
+  "ListNode",
+  "TreeNode",
+];
+
+function normalizeType(type = "") {
+  const t = String(type).trim();
+
+  const map = {
+    "int[]": "intArray",
+    "integer[]": "intArray",
+    "array<int>": "intArray",
+    "vector<int>": "intArray",
+    "list<int>": "intArray",
+    "List<Integer>": "intArray",
+
+    "string[]": "stringArray",
+    "array<string>": "stringArray",
+    "vector<string>": "stringArray",
+    "List<String>": "stringArray",
+
+    integer: "int",
+    Integer: "int",
+    bool: "boolean",
+    Boolean: "boolean",
+  };
+
+  return map[t] || t;
+}
+
+function validateParameter(param) {
+  return {
+    name:
+      param?.name ||
+      `param${Math.floor(Math.random() * 1000)}`,
+
+    type: VALID_TYPES.includes(normalizeType(param?.type))
+      ? normalizeType(param.type)
+      : "string",
+  };
+}
+
+function validateExample(example = {}) {
+  return {
+    input:
+      typeof example.input === "string"
+        ? example.input.trim()
+        : "",
+
+    output:
+      typeof example.output === "string"
+        ? example.output.trim()
+        : "",
+
+    explanation:
+      typeof example.explanation === "string"
+        ? example.explanation.trim()
+        : "",
+  };
+}
+
+function normalizeHelperClasses(problem) {
+  const helpers = [];
+
+  if (
+    problem.returnType === "ListNode" ||
+    (problem.parameters && problem.parameters.some(
+      (p) => p.type === "ListNode"
+    ))
+  ) {
+    helpers.push("ListNode");
+  }
+
+  if (
+    problem.returnType === "TreeNode" ||
+    (problem.parameters && problem.parameters.some(
+      (p) => p.type === "TreeNode"
+    ))
+  ) {
+    helpers.push("TreeNode");
+  }
+
+  return [...new Set(helpers)];
+}
+
+function normalizeProblem(problem) {
+  problem.title =
+    String(problem.title || "").trim();
+
+  problem.description =
+    String(problem.description || "").trim();
+
+  problem.topic =
+    String(problem.topic || "").trim();
+
+  problem.difficulty =
+    String(problem.difficulty || "").trim();
+
+  problem.functionName =
+    String(problem.functionName || "solve").trim();
+
+  //-----------------------------------------
+  // Parameters
+  //-----------------------------------------
+  if (!Array.isArray(problem.parameters)) {
+    problem.parameters = [];
+  }
+  problem.parameters =
+    problem.parameters.map(validateParameter);
+
+  //-----------------------------------------
+  // Return Type
+  //-----------------------------------------
+  problem.returnType =
+    normalizeType(problem.returnType);
+
+  if (!VALID_TYPES.includes(problem.returnType)) {
+    problem.returnType = "string";
+  }
+
+  //-----------------------------------------
+  // Examples
+  //-----------------------------------------
+  if (!Array.isArray(problem.examples)) {
+    problem.examples = [];
+  }
+  problem.examples =
+    problem.examples.map(validateExample);
+
+  //-----------------------------------------
+  // Constraints
+  //-----------------------------------------
+  if (!Array.isArray(problem.constraints)) {
+    problem.constraints = [];
+  }
+  problem.constraints =
+    problem.constraints
+      .map(String)
+      .filter(Boolean);
+
+  //-----------------------------------------
+  // Helper Classes
+  //-----------------------------------------
+  problem.helperClasses =
+    normalizeHelperClasses(problem);
+
+  //-----------------------------------------
+  // Solution
+  //-----------------------------------------
+  problem.solution =
+    String(problem.solution || "").trim();
+
+  return problem;
+}
 
 module.exports = {
   generateCodingProblem,

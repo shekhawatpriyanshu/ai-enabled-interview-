@@ -247,6 +247,7 @@ const Register = () => {
               <input
                 name="email"
                 type="email"
+                autoComplete="email"
                 value={form.email}
                 placeholder="john@example.com"
                 onChange={handleChange}
@@ -277,6 +278,7 @@ const Register = () => {
               <input
                 name="password"
                 type="password"
+                autoComplete="new-password"
                 value={form.password}
                 placeholder="Password@123"
                 onChange={handleChange}

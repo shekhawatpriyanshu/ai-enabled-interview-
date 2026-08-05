@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 import useContest from "../../hooks/useContest";
 
+import MainLayout from "../../layouts/MainLayout";
 import ContestHeader from "../../components/contests/ContestHeader";
 import ContestStats from "../../components/contests/ContestStats";
 import ContestTimer from "../../components/contests/ContestTimer";
@@ -34,17 +35,24 @@ const ContestDetails = () => {
 
   if (loading && !contest) {
     return (
-      <div className="p-10 text-center text-gray-500">
-        Loading contest details...
-      </div>
+      <MainLayout>
+        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+        </div>
+      </MainLayout>
     );
   }
 
   if (!contest) {
     return (
-      <div className="p-10 text-center text-red-500">
-        Contest not found
-      </div>
+      <MainLayout>
+        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+          <div className="bg-white p-8 rounded-2xl shadow-sm border text-center">
+            <h2 className="text-2xl font-bold text-red-500 mb-2">Contest Not Found</h2>
+            <p className="text-gray-500">The contest you are looking for does not exist.</p>
+          </div>
+        </div>
+      </MainLayout>
     );
   }
 
@@ -71,7 +79,15 @@ const ContestDetails = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-8">
+    <MainLayout>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/50 py-8 relative">
+        {/* Decorative background blobs */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-indigo-200/40 rounded-full blur-3xl" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-200/40 rounded-full blur-3xl" />
+        </div>
+
+        <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-8 relative z-10">
 
       {/* Contest Header */}
       <ContestHeader contest={contest} />
@@ -113,7 +129,9 @@ const ContestDetails = () => {
       {/* Leaderboard */}
       <LeaderboardTable leaderboard={leaderboard} />
 
-    </div>
+        </div>
+      </div>
+    </MainLayout>
   );
 };
 

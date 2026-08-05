@@ -36,7 +36,7 @@ const analyticsRoutes =
 
 
 const codingUserRoutes = require("./routes/codingRoutes");
-
+const submissionRoutes = require("./routes/submissionRoutes");
 
 const contestRoutes = require("./routes/contestRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -53,8 +53,11 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:5175",
       "http://localhost:3000",
       "http://127.0.0.1:5173",
+      "http://127.0.0.1:5174",
       "http://3.106.61.92",
       "https://ai-enabled-interview-1.onrender.com",
       "https://ai-enabled-interview.onrender.com"
@@ -68,6 +71,10 @@ app.use(express.json());
 app.use(
   "/api/coding",
   codingUserRoutes
+);
+app.use(
+  "/api/submissions",
+  submissionRoutes
 );
 app.use("/api/admin/questions", adminQuestionRoutes);
 

@@ -1,79 +1,54 @@
-const mongoose = require("mongoose");
+const mongoose=require("mongoose");
 
-const codeSubmissionSchema = new mongoose.Schema(
-  {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+const submissionSchema = new mongoose.Schema({
 
-    problem: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "CodingProblem",
-      required: true,
-    },
+user:{
+type:mongoose.Schema.Types.ObjectId,
+ref:"User",
+required:true
+},
 
-    language: {
-      type: String,
-      enum: [
-        "javascript",
-        "java",
-        "python",
-        "cpp",
-        "c",
-      ],
-      required: true,
-    },
+problem:{
+type:mongoose.Schema.Types.ObjectId,
+ref:"CodingProblem",
+required:true
+},
 
-    code: {
-      type: String,
-      required: true,
-    },
+language:{
+type:String,
+required:true
+},
 
-    status: {
-      type: String,
-      enum: [
-        "Accepted",
-        "Wrong Answer",
-        "Compilation Error",
-        "Runtime Error",
-        "Time Limit Exceeded",
-      ],
-      default: "Accepted",
-    },
+sourceCode:{
+type:String,
+required:true
+},
 
-    score: {
-      type: Number,
-      default: 0,
-    },
+status:{
+type:String,
+enum:[
+"Accepted",
+"Wrong Answer",
+"COMPILATION_ERROR",
+"RUNTIME_ERROR",
+"TIME_LIMIT",
+"MEMORY_LIMIT"
+]
+},
 
-    runtime: {
-      type: String,
-      default: "--",
-    },
+executionTime:Number,
+memoryUsed:Number,
+testCasesPassed:Number,
+totalTestCases:Number,
 
-    memory: {
-      type: String,
-      default: "--",
-    },
+createdAt:{
+type:Date,
+default:Date.now
+}
 
-    passedTestCases: {
-      type: Number,
-      default: 0,
-    },
-
-    totalTestCases: {
-      type: Number,
-      default: 0,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+});
 
 module.exports = mongoose.model(
-  "CodeSubmission",
-  codeSubmissionSchema
+"CodeSubmission",
+submissionSchema
 );

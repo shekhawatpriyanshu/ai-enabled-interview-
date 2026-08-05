@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 
-const exampleSchema = new mongoose.Schema(
+const testCaseSchema = new mongoose.Schema(
   {
     input: {
-      type: String,
+      type: mongoose.Schema.Types.Mixed,
       default: "",
     },
 
     output: {
-      type: String,
+      type: mongoose.Schema.Types.Mixed,
       default: "",
     },
 
@@ -64,7 +64,12 @@ const codingProblemSchema = new mongoose.Schema(
       },
     ],
 
-    examples: [exampleSchema],
+    testCases: [testCaseSchema],
+
+    limits: {
+      time: { type: Number, default: 2 },
+      memory: { type: Number, default: 128 },
+    },
 
     starterCode: {
       javascript: {
@@ -112,15 +117,7 @@ const codingProblemSchema = new mongoose.Schema(
       },
     ],
 
-    timeLimit: {
-      type: Number,
-      default: 1,
-    },
 
-    memoryLimit: {
-      type: Number,
-      default: 256,
-    },
 
     status: {
       type: Boolean,

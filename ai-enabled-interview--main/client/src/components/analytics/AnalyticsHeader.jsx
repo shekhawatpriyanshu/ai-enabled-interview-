@@ -47,13 +47,13 @@ const AnalyticsHeader = ({ analytics }) => {
           </div>
         </div>
 
-        <div className="flex flex-col items-start md:items-end gap-2 text-blue-100">
-          <div className="hidden md:block bg-white/10 p-3 rounded-2xl border border-white/15">
-            <FaTrophy className="text-yellow-300" size={36} />
+        <div className="flex flex-col items-center gap-2 text-blue-100">
+          <div className="hidden md:flex bg-white/10 p-4 rounded-2xl border border-white/15 items-center justify-center">
+            <FaTrophy className="text-yellow-300 drop-shadow-md" size={40} />
           </div>
-          <div className="flex items-center gap-2 text-sm mt-2">
+          <div className="flex items-center gap-2 text-sm mt-1 bg-black/10 px-3 py-1.5 rounded-full border border-white/5 shadow-inner">
             <FaCalendarAlt className="text-cyan-300" />
-            <span>Updated: {updatedDate}</span>
+            <span className="font-medium tracking-wide">Updated: {updatedDate}</span>
           </div>
         </div>
       </div>

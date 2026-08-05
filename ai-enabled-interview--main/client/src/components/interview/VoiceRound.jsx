@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Mic, MicOff, Send, CheckCircle2 } from "lucide-react";
+import { Mic, MicOff, Send, CheckCircle2, Volume2, VolumeX } from "lucide-react";
 
 const VoiceRound = ({ interview, onSubmit, submitting }) => {
   const [transcript, setTranscript] = useState(interview?.voiceInterview?.transcript || []);
@@ -9,6 +9,8 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
   const [isListening, setIsListening] = useState(false);
   const [isAiSpeaking, setIsAiSpeaking] = useState(false);
   const [isAiThinking, setIsAiThinking] = useState(false);
+  const [isAiVoiceEnabled, setIsAiVoiceEnabled] = useState(true);
+  const [initialReadDone, setInitialReadDone] = useState(false);
   
   const recognitionRef = useRef(null);
   const scrollRef = useRef(null);
@@ -20,6 +22,7 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'en-US';
 
       recognitionRef.current.onresult = (event) => {
         let interimTranscript = '';
@@ -71,11 +74,14 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
   const speakText = (text) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
+      if (!isAiVoiceEnabled) return;
+      
       const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
       
       // Try to find a good English voice
       const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = voices.find(voice => voice.name.includes("Google") || voice.name.includes("Natural")) || voices[0];
+      const preferredVoice = voices.find(voice => voice.name.includes("Google") || voice.name.includes("Natural") || voice.lang === 'en-US') || voices[0];
       if (preferredVoice) {
         utterance.voice = preferredVoice;
       }
@@ -85,11 +91,25 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
       
       utterance.onstart = () => setIsAiSpeaking(true);
       utterance.onend = () => setIsAiSpeaking(false);
-      utterance.onerror = () => setIsAiSpeaking(false);
+      utterance.onerror = (e) => {
+        console.error("SpeechSynthesis error:", e);
+        setIsAiSpeaking(false);
+      };
       
       window.speechSynthesis.speak(utterance);
     }
   };
+
+  useEffect(() => {
+    if (!initialReadDone && transcript.length > 0) {
+      const lastMsg = transcript[transcript.length - 1];
+      if (lastMsg.speaker === 'AI' && !isAiSpeaking) {
+        // Attempt to auto-play (may be blocked by browser autoplay policy if no interaction occurred)
+        setTimeout(() => speakText(lastMsg.text), 500); 
+      }
+      setInitialReadDone(true);
+    }
+  }, [transcript, initialReadDone, isAiVoiceEnabled]);
 
   const toggleListen = () => {
     if (isListening) {
@@ -114,11 +134,22 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
   };
 
   const startConversation = async () => {
+    if ('speechSynthesis' in window) {
+      const unlock = new SpeechSynthesisUtterance(' ');
+      unlock.volume = 0;
+      window.speechSynthesis.speak(unlock);
+    }
     await sendToAi([], true);
   };
 
   const handleSend = async () => {
     if (!currentAnswer.trim()) return;
+    
+    if ('speechSynthesis' in window) {
+      const unlock = new SpeechSynthesisUtterance(' ');
+      unlock.volume = 0;
+      window.speechSynthesis.speak(unlock);
+    }
     
     if (isListening) {
       recognitionRef.current?.stop();
@@ -271,13 +302,32 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
           </div>
 
           <div className="flex justify-between items-center px-2">
-            <button
-              onClick={handleSend}
-              disabled={!currentAnswer.trim() || isAiThinking || isAiSpeaking}
-              className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2 rounded-xl font-medium transition disabled:opacity-50 flex items-center gap-2"
-            >
-              <Send size={18} /> Send Answer
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={handleSend}
+                disabled={!currentAnswer.trim() || isAiThinking || isAiSpeaking}
+                className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2 rounded-xl font-medium transition disabled:opacity-50 flex items-center gap-2"
+              >
+                <Send size={18} /> Send Answer
+              </button>
+              <button
+                onClick={() => {
+                  if (isAiSpeaking && isAiVoiceEnabled && 'speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    setIsAiSpeaking(false);
+                  }
+                  setIsAiVoiceEnabled(!isAiVoiceEnabled);
+                }}
+                className={`px-4 py-2 rounded-xl font-medium transition flex items-center gap-2 ${
+                  isAiVoiceEnabled 
+                    ? 'bg-slate-700 hover:bg-slate-600 text-cyan-400' 
+                    : 'bg-red-500/20 hover:bg-red-500/30 text-red-400'
+                }`}
+                title={isAiVoiceEnabled ? "Mute AI Voice" : "Unmute AI Voice"}
+              >
+                {isAiVoiceEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+              </button>
+            </div>
 
             <button
               onClick={handleFinalSubmit}

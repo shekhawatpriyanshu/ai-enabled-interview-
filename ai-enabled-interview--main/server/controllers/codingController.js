@@ -1,12 +1,46 @@
 // =============================================
 // Get All Active Coding Problems
 // =============================================
-const axios = require("axios");
+const {
+  createSubmission,
+  waitForResult
+} = require("../services/judge0Service");
+const {
+  processJudgeResult
+} = require("../utils/judgeResultHandler");
 const { executeCode } = require("../services/judge0Services");
 const CodingProblem = require("../models/codingProblem");
-const CodeSubmission = require("../models/codeSubmission");
+const Submission = require("../models/codeSubmission");
 const { generateCodingProblem } = require("../services/codingAIService");
 const User = require("../models/user");
+const {
+  generateWrapper
+} = require("../services/wrapperService");
+
+//----------------------------------------------------
+// Judge0 Configuration
+//----------------------------------------------------
+
+const JUDGE0_URL = process.env.JUDGE0_URL;
+const JUDGE0_KEY = process.env.JUDGE0_API_KEY;
+
+//----------------------------------------------------
+// Language Mapping
+//----------------------------------------------------
+
+const languageMap = {
+  javascript: 102,
+  python: 100,
+  java: 91,
+  cpp: 105,
+  c: 103
+};
+
+//----------------------------------------------------
+// Wrapper Dispatcher
+//----------------------------------------------------
+
+
 const getProblems = async (req, res) => {
   try {
 
@@ -21,7 +55,7 @@ const getProblems = async (req, res) => {
     const Admin = require("../models/admin");
     const admins = await User.find({ role: { $in: ["admin", "super_admin"] } }).select("_id");
     const adminDocs = await Admin.find().select("_id");
-    
+
     const adminIds = [
       ...(admins ? admins.map(a => a._id) : []),
       ...(adminDocs ? adminDocs.map(a => a._id) : [])
@@ -85,6 +119,16 @@ const getProblems = async (req, res) => {
 // Get Single Problem
 // =============================================
 
+const getProblemById = async (req, res) => {
+  try {
+    const problem = await CodingProblem.findById(req.params.id);
+    if (!problem) return res.status(404).json({ success: false, message: "Problem not found" });
+    res.status(200).json({ success: true, problem });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error", error: error.message });
+  }
+};
+
 const getProblem = async (req, res) => {
 
   try {
@@ -124,112 +168,112 @@ const getProblem = async (req, res) => {
 // =============================================
 
 const getSubmissionById =
-async (req, res) => {
+  async (req, res) => {
 
-  try {
+    try {
 
-    const submission =
-      await CodeSubmission.findOne({
+      const submission =
+        await CodeSubmission.findOne({
 
-        _id: req.params.id,
+          _id: req.params.id,
 
-        user: req.user._id,
+          user: req.user._id,
 
-      })
-      .populate(
-        "problem",
-        "title difficulty topic"
-      );
+        })
+          .populate(
+            "problem",
+            "title difficulty topic"
+          );
 
-    if (!submission) {
+      if (!submission) {
 
-      return res.status(404).json({
+        return res.status(404).json({
 
-        success: false,
+          success: false,
 
-        message:
-          "Submission not found",
+          message:
+            "Submission not found",
+
+        });
+
+      }
+
+      return res.status(200).json({
+
+        success: true,
+
+        submission,
 
       });
 
     }
 
-    return res.status(200).json({
+    catch (error) {
 
-      success: true,
+      return res.status(500).json({
 
-      submission,
+        success: false,
 
-    });
+        message:
+          error.message,
 
-  }
+      });
 
-  catch (error) {
+    }
 
-    return res.status(500).json({
-
-      success: false,
-
-      message:
-        error.message,
-
-    });
-
-  }
-
-};
+  };
 // =============================================
 // Get My Submissions
 // =============================================
 
 const getMySubmissions =
-async (req, res) => {
+  async (req, res) => {
 
-  try {
+    try {
 
-    const submissions =
-      await CodeSubmission.find({
+      const submissions =
+        await CodeSubmission.find({
 
-        user: req.user._id,
+          user: req.user._id,
 
-      })
+        })
 
-      .populate(
-        "problem",
-        "title difficulty topic"
-      )
+          .populate(
+            "problem",
+            "title difficulty topic"
+          )
 
-      .sort({
-        createdAt: -1,
+          .sort({
+            createdAt: -1,
+          });
+
+      return res.status(200).json({
+
+        success: true,
+
+        count:
+          submissions.length,
+
+        submissions,
+
       });
 
-    return res.status(200).json({
+    }
 
-      success: true,
+    catch (error) {
 
-      count:
-        submissions.length,
+      return res.status(500).json({
 
-      submissions,
+        success: false,
 
-    });
+        message:
+          error.message,
 
-  }
+      });
 
-  catch (error) {
+    }
 
-    return res.status(500).json({
-
-      success: false,
-
-      message:
-        error.message,
-
-    });
-
-  }
-
-};
+  };
 // ============================================
 // Run Code
 // ============================================
@@ -313,7 +357,7 @@ const runCode = async (req, res) => {
     const usingCustomInput =
       input &&
       input !==
-        problem.examples?.[0]?.input;
+      problem.examples?.[0]?.input;
 
     if (!usingCustomInput) {
       expectedOutput =
@@ -352,176 +396,138 @@ const runCode = async (req, res) => {
 // =============================================
 
 const submitCode = async (req, res) => {
+
   try {
 
-    const { code, language } = req.body;
+    const {
+      problemId,
+      language,
+      code
+    } = req.body;
 
-    const problem = await CodingProblem.findById(req.params.id);
+    //--------------------------------
+    // Validate
+    //--------------------------------
+
+    if (
+      !problemId ||
+      !language ||
+      !code
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields"
+      });
+    }
+
+    //--------------------------------
+    // Fetch Problem
+    //--------------------------------
+
+    const problem = await CodingProblem.findById(problemId);
 
     if (!problem) {
       return res.status(404).json({
         success: false,
-        message: "Problem not found",
+        message: "Problem not found"
       });
     }
 
-    if (!code || !language) {
-      return res.status(400).json({
-        success: false,
-        message: "Code and language are required.",
-      });
-    }
+    //--------------------------------
+    // Generate Wrapper
+    //--------------------------------
 
-    const testCases = problem.examples || [];
-
-    if (testCases.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "No test cases available.",
-      });
-    }
-
-    let passed = 0;
-    let total = testCases.length;
-
-    let finalStatus = "Accepted";
-
-    let maxRuntime = "--";
-    let maxMemory = "--";
-
-    let compileOutput = "";
-    let runtimeOutput = "";
-
-    for (const testCase of testCases) {
-
-      const result = await executeCode({
-        code,
-        language,
-        input: testCase.input,
-      });
-
-      maxRuntime = result.runtime;
-      maxMemory = result.memory;
-
-      // Compilation Error
-      if (
-        result.statusId === 6 ||
-        result.compileOutput
-      ) {
-
-        finalStatus = "Compilation Error";
-
-        compileOutput =
-          result.compileOutput ||
-          result.stderr;
-
-        break;
-      }
-
-      // Runtime Error
-      if (
-        result.stderr ||
-        (result.statusId > 3 &&
-          result.statusId !== 6)
-      ) {
-
-        finalStatus =
-          result.status ||
-          "Runtime Error";
-
-        runtimeOutput =
-          result.stderr ||
-          result.stdout;
-
-        break;
-      }
-
-      const actualOutput =
-        result.stdout.trim();
-
-      const expectedOutput =
-        testCase.output.trim();
-
-      if (
-        actualOutput === expectedOutput
-      ) {
-        passed++;
-      } else {
-        finalStatus = "Wrong Answer";
-      }
-    }
-
-    const score = Math.round(
-      (passed / total) * 100
+    const wrappedCode = generateWrapper(
+      language,
+      code,
+      problem
     );
 
-    const submission =
-      await CodeSubmission.create({
+    const testResults = [];
 
-        user: req.user._id,
+    const visibleCases = problem.testCases.filter(tc => !tc.isHidden);
+    const hiddenCases = problem.testCases.filter(tc => tc.isHidden);
+    const allCases = [...visibleCases, ...hiddenCases];
 
-        problem: problem._id,
+    for (const testCase of allCases) {
+      const token = await createSubmission(
+        wrappedCode,
+        languageMap[language],
+        JSON.stringify(testCase.input),
+        problem.limits
+      );
 
-        code,
+      const result = await waitForResult(token);
+      const execution = processJudgeResult(result);
 
-        language,
-
-        status: finalStatus,
-
-        score,
-
-        runtime: maxRuntime,
-
-        memory: maxMemory,
-
-        passedTestCases: passed,
-
-        totalTestCases: total,
-
+      testResults.push({
+        input: testCase.input,
+        expected: testCase.output,
+        actual: execution.output || "",
+        status: execution.type,
+        message: execution.message || ""
       });
+    }
 
-    return res.status(201).json({
+    let passed = true;
+    let finalStatus = "Accepted";
 
-      success: finalStatus === "Accepted",
+    for (const test of testResults) {
+      if (test.status !== "SUCCESS") {
+        passed = false;
+        finalStatus = test.status;
+        break;
+      }
 
+      const actual = test.actual.trim();
+      const expected = JSON.stringify(test.expected).trim();
+
+      if (actual !== expected) {
+        passed = false;
+        finalStatus = "WRONG_ANSWER";
+        break;
+      }
+    }
+
+    //--------------------------------
+    // Save Submission
+    //--------------------------------
+
+    const submission = await Submission.create({
+      user: req.user._id,
+      problem: problemId,
+      language,
+      sourceCode: code,
+      status: finalStatus,
+      testCasesPassed: testResults.filter(t => t.status === "SUCCESS").length,
+      totalTestCases: testResults.length,
+      executionTime: testResults.reduce((acc, t) => acc + (t.time || 0), 0),
+      memoryUsed: testResults.reduce((acc, t) => acc + (t.memory || 0), 0)
+    });
+
+    return res.json({
+      success: true,
+      status: finalStatus,
+      passed,
+      testCases: testResults.map((test, index) => {
+        return {
+          status: test.status,
+          actual: allCases[index].isHidden ? null : test.actual,
+          expected: allCases[index].isHidden ? null : test.expected
+        };
+      }),
       submission,
-
-      result: {
-
-        status: finalStatus,
-
-        score,
-
-        passedTestCases: passed,
-
-        totalTestCases: total,
-
-        runtime: maxRuntime,
-
-        memory: maxMemory,
-
-        compileOutput,
-
-        runtimeOutput,
-
-      },
-
+      runtime: `${submission.executionTime} ms`,
+      memory: `${submission.memoryUsed} KB`
     });
 
   }
-
   catch (error) {
-
-    console.log(error);
-
+    console.log("Submit Error:", error.message);
     return res.status(500).json({
-
       success: false,
-
-      message: error.message,
-
+      message: "Execution failed"
     });
-
   }
 
 };
@@ -570,9 +576,9 @@ const generateProblem = async (req, res) => {
 
     const starterTemplates = {
       javascript: `function solve() {\n\n}`,
-      java: `public class Main {\n    public static void main(String[] args) {\n\n    }\n}`,
-      python: `def solve():\n    pass\n\nsolve()`,
-      cpp: `#include<bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    return 0;\n}`,
+      java: `class Solution {\n    public int solve() {\n        return 0;\n    }\n}`,
+      python: `def solve():\n    pass\n`,
+      cpp: `class Solution {\npublic:\n    int solve() {\n        return 0;\n    }\n};`,
       c: `#include<stdio.h>\n\nint main(){\n    return 0;\n}`,
     };
 
@@ -608,6 +614,8 @@ module.exports = {
   getProblems,
 
   getProblem,
+
+  getProblemById,
 
   runCode,
 

@@ -78,15 +78,8 @@ export const deleteProblem = async (
 // ===============================
 // Submit Code
 // ===============================
-export const submitCode = async (
-  id,
-  submission
-) => {
-  const res = await API.post(
-    `/coding/submit/${id}`,
-    submission
-  );
-
+export const submitCode = async (data) => {
+  const res = await API.post("/coding/submit", data);
   return res.data;
 };
 

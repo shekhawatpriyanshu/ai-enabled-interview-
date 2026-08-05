@@ -45,12 +45,12 @@ const CodingForm = ({ initialValues = {}, onSubmit, loading, onLanguageChange })
     } else {
       updated = [...formData.supportedLanguages, language];
     }
-    
+
     setFormData({
       ...formData,
       supportedLanguages: updated,
     });
-    
+
     if (onLanguageChange) {
       onLanguageChange(updated);
     }
@@ -316,11 +316,10 @@ const CodingForm = ({ initialValues = {}, onSubmit, loading, onLanguageChange })
             return (
               <label
                 key={language}
-                className={`flex items-center gap-2.5 text-sm font-bold uppercase tracking-wide cursor-pointer px-4 py-2.5 rounded-xl transition-all border ${
-                  isSelected
+                className={`flex items-center gap-2.5 text-sm font-bold uppercase tracking-wide cursor-pointer px-4 py-2.5 rounded-xl transition-all border ${isSelected
                     ? "bg-cyan-50 border-cyan-200 text-cyan-700 shadow-sm"
                     : "bg-white border-slate-200 text-slate-600 hover:border-cyan-300 hover:bg-slate-50 hover:shadow-sm"
-                }`}
+                  }`}
               >
                 <input
                   type="checkbox"

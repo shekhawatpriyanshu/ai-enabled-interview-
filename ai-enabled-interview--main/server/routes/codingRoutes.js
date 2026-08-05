@@ -5,12 +5,14 @@ const router = express.Router();
 const {
   getProblems,
   getProblem,
-  runCode,
+  getProblemById,
   submitCode,
   getMySubmissions,
   getSubmissionById,
   generateProblem,
 } = require("../controllers/codingController");
+
+const { runCode } = require("../controllers/runController");
 
 const {
   protect,
@@ -18,14 +20,16 @@ const {
 
 // Public
 router.get("/", getProblems);
+router.get("/problems", getProblems);
 router.get("/:id", getProblem);
+router.get("/problems/:id", getProblemById);
 
 // User
 router.post("/generate", protect, generateProblem);
 
 router.post("/run", protect, runCode);
 
-router.post("/submit/:id", protect, submitCode);
+router.post("/submit", protect, submitCode);
 
 router.get(
   "/submissions/my",

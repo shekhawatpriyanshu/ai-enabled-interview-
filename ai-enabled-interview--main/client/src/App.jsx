@@ -63,7 +63,9 @@ const ResumeReport = lazy(() => import("./pages/resume/ResumeReport"));
 // Coding Pages
 const CodingProblems = lazy(() => import("./pages/coding/CodingProblems"));
 const ProblemDetails = lazy(() => import("./pages/coding/ProblemDetails"));
-const SubmissionHistory = lazy(() => import("./pages/coding/SubmissionHistory"));
+const CodingMySubmissions = lazy(() => import("./pages/coding/MySubmissions"));
+const SubmissionDetails = lazy(() => import("./pages/coding/SubmissionDetails"));
+const CodingDashboard = lazy(() => import("./pages/coding/CodingDashboard"));
 
 // Profile Pages
 const Profile = lazy(() => import("./pages/profiles/Profile"));
@@ -255,7 +257,25 @@ function App() {
           path="/coding/submissions"
           element={
             <ProtectedRoute>
-              <SubmissionHistory />
+              <CodingMySubmissions />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/coding/submission/:id"
+          element={
+            <ProtectedRoute>
+              <SubmissionDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/coding/dashboard"
+          element={
+            <ProtectedRoute>
+              <CodingDashboard />
             </ProtectedRoute>
           }
         />

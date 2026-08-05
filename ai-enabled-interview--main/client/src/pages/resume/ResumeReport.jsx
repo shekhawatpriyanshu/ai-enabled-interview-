@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getAnalysis } from "../../services/ResumeService";
 import { motion } from "framer-motion";
+import MainLayout from "../../layouts/MainLayout";
 
 const ResumeReport = () => {
   const { id } = useParams();
@@ -27,23 +28,27 @@ const ResumeReport = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-sky-200 flex items-center justify-center">
-        <motion.div 
-          animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="text-6xl drop-shadow-lg"
-        >
-          📄
-        </motion.div>
-      </div>
+      <MainLayout showNavbar={false}>
+        <div className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-sky-200 flex items-center justify-center">
+          <motion.div 
+            animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            className="text-6xl drop-shadow-lg"
+          >
+            📄
+          </motion.div>
+        </div>
+      </MainLayout>
     );
   }
 
   if (!analysis) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-sky-200 flex items-center justify-center text-slate-800">
-        <h1 className="text-3xl font-bold text-red-500">Report Not Found</h1>
-      </div>
+      <MainLayout showNavbar={false}>
+        <div className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-sky-200 flex items-center justify-center text-slate-800">
+          <h1 className="text-3xl font-bold text-red-500">Report Not Found</h1>
+        </div>
+      </MainLayout>
     );
   }
 
@@ -61,9 +66,10 @@ const ResumeReport = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-sky-200 p-6 md:p-12 overflow-hidden relative">
-      
-      {/* Background Decor */}
+    <MainLayout showNavbar={false}>
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-sky-200 p-6 md:p-12 overflow-hidden relative">
+        
+        {/* Background Decor */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-white/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-200/40 rounded-full blur-3xl pointer-events-none" />
 
@@ -151,6 +157,7 @@ const ResumeReport = () => {
 
       </motion.div>
     </div>
+    </MainLayout>
   );
 };
 

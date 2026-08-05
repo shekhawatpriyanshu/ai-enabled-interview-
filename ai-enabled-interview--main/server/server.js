@@ -217,6 +217,22 @@ const startServer = async () => {
       }
     );
 
+    // Graceful shutdown handlers to fix Windows EADDRINUSE
+    const shutdown = () => {
+      server.close(() => {
+        process.exit(0);
+      });
+    };
+    
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
+    
+    process.once('SIGUSR2', () => {
+      server.close(() => {
+        process.kill(process.pid, 'SIGUSR2');
+      });
+    });
+
 
   }
   catch(error){

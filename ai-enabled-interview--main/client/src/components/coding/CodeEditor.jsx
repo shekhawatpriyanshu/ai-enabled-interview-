@@ -2,40 +2,38 @@ import { useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 
 const languageTemplates = {
-  javascript: `function solve() {
-
-}`,
-  java: `public class Main {
-
-    public static void main(String[] args) {
-
+  javascript: `/**
+ * @param {any} input
+ * @return {any}
+ */
+var solve = function(input) {
+    
+};`,
+  java: `class Solution {
+    public int solve(String input) {
+        return 0;
     }
-
 }`,
-  python: `def solve():
-    pass
-
-solve()`,
-  cpp: `#include <bits/stdc++.h>
-using namespace std;
-
-int main() {
-
+  python: `class Solution:
+    def solve(self, input):
+        pass`,
+  cpp: `class Solution {
+public:
+    int solve(string input) {
+        return 0;
+    }
+};`,
+  c: `int solve(char* input) {
     return 0;
-}`,
-  c: `#include <stdio.h>
-
-int main() {
-
-    return 0;
-}`,
+}`
 };
 
 const CodeEditor = ({
   language,
   code,
   setCode,
-  theme = "vs-dark"
+  theme = "vs-dark",
+  onMount
 }) => {
   useEffect(() => {
     if (!code) {
@@ -65,15 +63,21 @@ const CodeEditor = ({
         value={code}
         theme={theme}
         onChange={handleEditorChange}
+        onMount={onMount}
         options={{
           minimap: { enabled: false },
           fontSize: 15,
           automaticLayout: true,
-          scrollBeyondLastLine: true,
+          scrollBeyondLastLine: false,
           roundedSelection: true,
           wordWrap: "on",
           padding: { top: 15 },
           scrollbar: { alwaysConsumeMouseWheel: false },
+          suggestOnTriggerCharacters: true,
+          quickSuggestions: false,
+          formatOnPaste: false,
+          formatOnType: false,
+          bracketPairColorization: { enabled: true }
         }}
       />
     </div>

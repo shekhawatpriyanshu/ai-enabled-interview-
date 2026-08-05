@@ -189,12 +189,17 @@ const evaluateInterview = async (
 // ===============================
 // ADAPTIVE CODING QUESTIONS
 // ===============================
-const generateAdaptiveCodingQuestions = async (role, experienceLevel) => {
+const generateAdaptiveCodingQuestions = async (role, experienceLevel, pastTitles = []) => {
   try {
+    const avoidPrompt = pastTitles.length > 0 
+      ? `\nCRITICAL RULE: The candidate has ALREADY solved the following questions in past interviews: ${pastTitles.join(", ")}. DO NOT generate these questions again. You MUST generate entirely NEW questions.`
+      : "";
+
     const prompt = `
 Generate exactly 2 coding questions for a ${role} (${experienceLevel} level).
 One must be a Data Structures & Algorithms (DSA) question.
 One must be a practical implementation problem related to ${role}.
+${avoidPrompt}
 
 Return a JSON object with a "codingQuestions" array.
 Each object must contain:
@@ -298,6 +303,7 @@ Rules:
 3. Keep your responses concise and conversational (1-3 sentences max).
 4. Acknowledge their previous answer before asking the next question.
 5. Do NOT include prefixes like "AI: " or quotes. Just output the raw text you want spoken.
+6. ALWAYS respond exclusively in the English language.
 `;
 
     const completion = await groq.chat.completions.create({

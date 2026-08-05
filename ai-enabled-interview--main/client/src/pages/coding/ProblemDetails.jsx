@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { FaPlay, FaCloudUploadAlt, FaCode, FaChevronLeft, FaRedo } from "react-icons/fa";
+import { FiMaximize, FiMinimize } from "react-icons/fi";
 
 import CodeEditor from "../../components/coding/CodeEditor";
 import { getProblem, submitCode, runCode } from "../../services/CodingService";
@@ -9,8 +10,8 @@ import { getProblem, submitCode, runCode } from "../../services/CodingService";
 const defaultBoilerplate = {
   javascript: `// Write your JavaScript code here\n\nfunction solve() {\n  \n}\n`,
   python: `# Write your Python code here\n\ndef solve():\n    pass\n`,
-  cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write your C++ code here\n    \n    return 0;\n}\n`,
-  java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // Write your Java code here\n        \n    }\n}\n`,
+  cpp: `class Solution {\npublic:\n    int solve() {\n        // Write your C++ code here\n        return 0;\n    }\n};`,
+  java: `class Solution {\n    public int solve() {\n        // Write your Java code here\n        return 0;\n    }\n}`,
   c: `#include <stdio.h>\n\nint main() {\n    // Write your C code here\n    \n    return 0;\n}\n`
 };
 
@@ -31,12 +32,23 @@ const ProblemDetails = () => {
   const [runtime, setRuntime] = useState("");
   const [memory, setMemory] = useState("");
   const [expectedOutput, setExpectedOutput] = useState("");
-  
+
   const [evaluating, setEvaluating] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [activeTab, setActiveTab] = useState("description"); // "description"
   const [consoleTab, setConsoleTab] = useState("testcases"); // "testcases" or "result"
+
+  const [selectedCase, setSelectedCase] = useState(0);
+  const [isCustomInput, setIsCustomInput] = useState(false);
+  const [customInput, setCustomInput] = useState("");
+  const [fullscreen, setFullscreen] = useState(false);
+
+  const getTemplate = (lang) => {
+    const saved = localStorage.getItem(`draft_${id}_${lang}`);
+    if (saved) return saved;
+    return problem?.starterCode?.[lang] || defaultBoilerplate[lang] || "";
+  };
 
   useEffect(() => {
     fetchProblem();
@@ -60,31 +72,60 @@ const ProblemDetails = () => {
 
   useEffect(() => {
     if (problem) {
-      const savedCode = problem.starterCode?.[language];
-      setCode(savedCode || defaultBoilerplate[language] || "");
+      setCode(getTemplate(language));
     }
   }, [language, problem]);
 
+  useEffect(() => {
+    if (code && problem) {
+      localStorage.setItem(`draft_${id}_${language}`, code);
+    }
+  }, [code, language, id, problem]);
+
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value);
+  };
+
+  const editorMount = (editor, monaco) => {
+    editor.addCommand(
+      monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+      () => {
+        localStorage.setItem(`draft_${id}_${language}`, editor.getValue());
+        toast.success("Code saved to draft!");
+      }
+    );
   };
 
   const handleRun = async () => {
     try {
       setEvaluating(true);
       setConsoleTab("result");
-      const res = await runCode({ problemId: id, code, language });
-      setOutput(res.output || "");
-      setStatus(res.status);
-      setRuntime(res.runtime || "");
-      setMemory(res.memory || "");
+
+      const executeInput = isCustomInput
+        ? customInput
+        : (problem?.examples?.[selectedCase]?.input || problem?.testCases?.[selectedCase]?.input || []);
+
+      const res = await runCode({
+        problemId: id,
+        language,
+        code,
+        input: executeInput
+      });
+
+      if (res.error) {
+        setOutput(res.error);
+      } else {
+        setOutput(res.output);
+      }
+      setStatus(res.status || "Unknown");
+      setRuntime(res.runtime || "--");
+      setMemory(res.memory || "--");
       setExpectedOutput(res.expectedOutput || "");
       setScore(res.status === "Accepted" ? 100 : 0);
-      if (res.error) toast.error(res.error);
     } catch (error) {
-      setStatus("Compilation Error");
-      setOutput(error.response?.data?.message || "Server Error");
-      setScore(0);
+      console.log(error);
+      setOutput("Run failed");
+      setStatus("Error");
     } finally {
       setEvaluating(false);
     }
@@ -94,7 +135,7 @@ const ProblemDetails = () => {
     try {
       setSubmitting(true);
       setConsoleTab("result");
-      const res = await submitCode(id, { code, language });
+      const res = await submitCode({ problemId: id, code, language });
       if (!res.success) {
         setStatus(res.status || "Wrong Answer");
         setOutput(res.output || res.message || "Submission failed.");
@@ -127,7 +168,9 @@ const ProblemDetails = () => {
   };
 
   const handleReset = () => {
-    setCode(problem?.starterCode?.[language] || defaultBoilerplate[language] || "");
+    const defaultCode = problem?.starterCode?.[language] || defaultBoilerplate[language] || "";
+    setCode(defaultCode);
+    localStorage.setItem(`draft_${id}_${language}`, defaultCode);
     setOutput("");
     setStatus("");
     setScore(0);
@@ -192,7 +235,7 @@ const ProblemDetails = () => {
         {/* Left Pane: Problem Description */}
         <div className="w-1/2 flex flex-col bg-[#282828] rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden hover:border-slate-600 transition-colors duration-300">
           <div className="flex bg-[#333333] px-3 pt-2 gap-2 border-b border-slate-700/80">
-            <button 
+            <button
               className={`px-5 py-2.5 text-sm font-semibold rounded-t-xl transition-all duration-300 flex items-center gap-2 ${activeTab === 'description' ? 'bg-[#282828] text-cyan-400 shadow-[0_-2px_0_0_#06b6d4]' : 'text-slate-400 hover:text-slate-200 hover:bg-[#2e2e2e]'}`}
               onClick={() => setActiveTab('description')}
             >
@@ -212,7 +255,7 @@ const ProblemDetails = () => {
                 <div className="mb-6 whitespace-pre-wrap leading-relaxed text-sm">
                   {problem.description}
                 </div>
-                
+
                 <div className="mt-8 space-y-6">
                   {problem.examples?.map((tc, idx) => (
                     <div key={idx} className="group">
@@ -247,7 +290,7 @@ const ProblemDetails = () => {
         {/* Right Pane: Editor & Console */}
         <div className="w-1/2 flex flex-col gap-2 overflow-hidden">
           {/* Editor Area */}
-          <div className="flex-1 flex flex-col bg-[#282828] rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden min-h-[50%] hover:border-slate-600 transition-colors duration-300">
+          <div className={fullscreen ? "fixed inset-0 z-50 bg-[#1a1a1a] flex flex-col" : "flex-1 flex flex-col bg-[#282828] rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden min-h-[50%] hover:border-slate-600 transition-colors duration-300"}>
             <div className="flex items-center justify-between px-5 py-2.5 bg-[#333333] border-b border-slate-700/80">
               <div className="relative group">
                 <select
@@ -255,21 +298,14 @@ const ProblemDetails = () => {
                   onChange={handleLanguageChange}
                   className="appearance-none bg-[#404040] text-slate-200 text-xs font-semibold pl-3 pr-8 py-1.5 rounded-lg outline-none cursor-pointer hover:bg-[#4a4a4a] hover:text-white transition-all shadow-sm border border-slate-600/50 focus:border-cyan-500/50"
                 >
-                  {problem.supportedLanguages?.map(lang => (
-                     <option key={lang} value={lang}>{lang === 'cpp' ? 'C++' : lang === 'javascript' ? 'JavaScript' : lang.charAt(0).toUpperCase() + lang.slice(1)}</option>
-                  ))}
-                  {(!problem.supportedLanguages || problem.supportedLanguages.length === 0) && (
-                     <>
-                      <option value="javascript">JavaScript</option>
-                      <option value="python">Python</option>
-                      <option value="java">Java</option>
-                      <option value="cpp">C++</option>
-                      <option value="c">C</option>
-                     </>
-                  )}
+                  <option value="javascript">JavaScript</option>
+                  <option value="python">Python</option>
+                  <option value="java">Java</option>
+                  <option value="cpp">C++</option>
+                  <option value="c">C</option>
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400 group-hover:text-white transition-colors">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
                 </div>
               </div>
 
@@ -283,14 +319,21 @@ const ProblemDetails = () => {
                   <option value="light">Light Theme</option>
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400 group-hover:text-white transition-colors">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
                 </div>
               </div>
-              
-              <div className="flex-1 flex justify-end">
-                <button 
-                  onClick={handleReset} 
-                  className="text-slate-400 hover:text-cyan-400 p-1.5 rounded-lg hover:bg-slate-700 transition-all duration-300 cursor-pointer group" 
+
+              <div className="flex-1 flex justify-end gap-3">
+                <button
+                  onClick={() => setFullscreen(!fullscreen)}
+                  className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-700 transition-all duration-300 cursor-pointer"
+                  title="Toggle Fullscreen"
+                >
+                  {fullscreen ? <FiMinimize /> : <FiMaximize />}
+                </button>
+                <button
+                  onClick={handleReset}
+                  className="text-slate-400 hover:text-cyan-400 p-1.5 rounded-lg hover:bg-slate-700 transition-all duration-300 cursor-pointer group"
                   title="Reset to default code"
                 >
                   <FaRedo className="group-hover:-rotate-180 transition-transform duration-500" />
@@ -303,6 +346,7 @@ const ProblemDetails = () => {
                 setCode={setCode}
                 language={language}
                 theme={editorTheme}
+                onMount={editorMount}
               />
             </div>
           </div>
@@ -310,13 +354,13 @@ const ProblemDetails = () => {
           {/* Console Area */}
           <div className="h-64 flex flex-col bg-[#282828] rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden shrink-0 hover:border-slate-600 transition-colors duration-300">
             <div className="flex bg-[#333333] px-3 pt-2 gap-2 border-b border-slate-700/80">
-              <button 
+              <button
                 className={`px-5 py-2.5 text-sm font-semibold rounded-t-xl transition-all duration-300 flex items-center gap-2 ${consoleTab === 'testcases' ? 'bg-[#282828] text-white shadow-[0_-2px_0_0_#3b82f6]' : 'text-slate-400 hover:text-slate-200 hover:bg-[#2e2e2e]'}`}
                 onClick={() => setConsoleTab('testcases')}
               >
                 Testcases
               </button>
-              <button 
+              <button
                 className={`px-5 py-2.5 text-sm font-semibold rounded-t-xl transition-all duration-300 flex items-center gap-2 ${consoleTab === 'result' ? 'bg-[#282828] text-green-400 shadow-[0_-2px_0_0_#22c55e]' : 'text-slate-400 hover:text-slate-200 hover:bg-[#2e2e2e]'}`}
                 onClick={() => setConsoleTab('result')}
               >
@@ -325,18 +369,57 @@ const ProblemDetails = () => {
             </div>
             <div className="flex-1 p-4 overflow-y-auto scrollbar-hide">
               {consoleTab === 'testcases' && (
-                <div className="flex flex-col gap-4">
-                  {problem.examples?.map((tc, idx) => (
-                    <div key={idx} className="flex gap-4 items-start">
-                      <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 shrink-0">{idx+1}</div>
-                      <div className="flex-1 bg-[#1e1e1e] p-3 rounded-lg border border-slate-700 font-mono text-sm">
-                        <div className="mb-1 text-slate-500">Input</div>
-                        <div className="text-slate-200 mb-2">{tc.input}</div>
-                        <div className="mb-1 text-slate-500">Expected Output</div>
-                        <div className="text-slate-200">{tc.output}</div>
+                <div className="flex flex-col h-full">
+                  <div className="flex gap-2 mb-4 overflow-x-auto scrollbar-hide pb-2 shrink-0">
+                    {problem.examples?.map((tc, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setIsCustomInput(false);
+                          setSelectedCase(idx);
+                        }}
+                        className={`px-4 py-1.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-300 shrink-0 ${!isCustomInput && selectedCase === idx
+                            ? 'bg-slate-700 text-white shadow-lg shadow-slate-900/20'
+                            : 'bg-[#2a2a2a] text-slate-400 hover:text-slate-200 hover:bg-[#333]'
+                          }`}
+                      >
+                        Case {idx + 1}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setIsCustomInput(true)}
+                      className={`px-4 py-1.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-300 shrink-0 ${isCustomInput
+                        ? 'bg-slate-700 text-white shadow-lg shadow-slate-900/20'
+                        : 'bg-[#2a2a2a] text-slate-400 hover:text-slate-200 hover:bg-[#333]'
+                        }`}
+                    >
+                      Custom
+                    </button>
+                  </div>
+
+                  {isCustomInput ? (
+                    <div className="flex-1 flex flex-col h-full">
+                      <textarea
+                        value={customInput}
+                        onChange={(e) => setCustomInput(e.target.value)}
+                        placeholder="Enter custom input here..."
+                        className="flex-1 bg-[#1e1e1e] border border-slate-700/50 rounded-lg p-3 text-slate-200 font-mono text-sm focus:outline-none focus:border-purple-500/50 resize-none h-full"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-4">
+                      <div className="bg-[#1e1e1e] p-3 rounded-lg border border-slate-700 font-mono text-sm max-h-48 overflow-y-auto">
+                        <div className="mb-2 text-slate-500 font-semibold">Input</div>
+                        <div className="text-slate-200 mb-4 whitespace-pre-wrap">
+                          {JSON.stringify(problem.examples?.[selectedCase]?.input, null, 2)}
+                        </div>
+                        <div className="mb-2 text-slate-500 font-semibold">Expected Output</div>
+                        <div className="text-slate-200 whitespace-pre-wrap">
+                          {JSON.stringify(problem.examples?.[selectedCase]?.output, null, 2)}
+                        </div>
                       </div>
                     </div>
-                  ))}
+                  )}
                 </div>
               )}
               {consoleTab === 'result' && (
@@ -357,7 +440,7 @@ const ProblemDetails = () => {
                           <div>Memory: <span className="text-slate-200">{memory}</span></div>
                         </div>
                       )}
-                      
+
                       {output && status !== 'Accepted' && (
                         <div className="mb-4">
                           <div className="text-slate-500 mb-1 text-sm">Output</div>
@@ -368,7 +451,7 @@ const ProblemDetails = () => {
                       )}
 
                       {expectedOutput && status !== 'Accepted' && (
-                         <div className="mb-4">
+                        <div className="mb-4">
                           <div className="text-slate-500 mb-1 text-sm">Expected Output</div>
                           <div className="bg-[#1e1e1e] p-4 rounded-lg border border-slate-700 text-green-400 font-mono text-sm whitespace-pre-wrap">
                             {expectedOutput}

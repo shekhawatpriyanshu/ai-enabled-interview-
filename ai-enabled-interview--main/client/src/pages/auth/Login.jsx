@@ -279,6 +279,7 @@ const Login = () => {
                   value={form.email}
                   placeholder="john@example.com"
                   onChange={handleChange}
+                  autoComplete="email"
                   className={`w-full px-4 py-3 rounded-xl bg-white/10 border text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition duration-200 ${
                     errors.email
                       ? "border-red-500"
@@ -314,6 +315,7 @@ const Login = () => {
                     }
                     placeholder="Password@123"
                     onChange={handleChange}
+                    autoComplete="current-password"
                     className={`w-full px-4 py-3 rounded-xl bg-white/10 border text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition duration-200 ${
                       errors.password
                         ? "border-red-500"
