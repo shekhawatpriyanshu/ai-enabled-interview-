@@ -7,6 +7,7 @@ import {
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 
+import { FaUsers, FaUserCheck, FaUserSlash, FaUserShield, FaUserClock, FaUserPlus } from "react-icons/fa";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const UserAnalyticsCard = ({ analytics }) => {
@@ -43,53 +44,69 @@ const UserAnalyticsCard = ({ analytics }) => {
   };
 
   return (
+
     <div className="h-full flex flex-col">
-      <h2 className="text-xl font-bold text-slate-900 mb-6">
-        User Analytics
+      <h2 className="text-2xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-6 flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-sm shadow-sm">
+          <FaUsers />
+        </div>
+        User Analytics Breakdown
       </h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1">
         {/* Left Side: Stats Grid */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="border border-slate-100 bg-slate-50/50 rounded-2xl p-5 flex flex-col justify-center">
-            <p className="text-slate-500 text-sm font-medium">Total Users</p>
-            <h3 className="text-2xl font-bold text-slate-900 mt-1">
-              {analytics.totalUsers}
+          <div className="border border-blue-200/80 bg-gradient-to-br from-blue-50/80 to-indigo-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <FaUsers className="text-blue-500" /> Total Users
+            </p>
+            <h3 className="text-3xl font-black text-blue-700 mt-1">
+              {analytics.totalUsers || 0}
             </h3>
           </div>
 
-          <div className="border border-emerald-100 bg-emerald-50/30 rounded-2xl p-5 flex flex-col justify-center">
-            <p className="text-slate-500 text-sm font-medium">Active Users</p>
-            <h3 className="text-2xl font-bold text-emerald-600 mt-1">
-              {analytics.activeUsers}
+          <div className="border border-emerald-200/80 bg-gradient-to-br from-emerald-50/80 to-teal-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <FaUserCheck className="text-emerald-500" /> Active Users
+            </p>
+            <h3 className="text-3xl font-black text-emerald-700 mt-1">
+              {analytics.activeUsers || 0}
             </h3>
           </div>
 
-          <div className="border border-red-100 bg-red-50/30 rounded-2xl p-5 flex flex-col justify-center">
-            <p className="text-slate-500 text-sm font-medium">Blocked Users</p>
-            <h3 className="text-2xl font-bold text-red-600 mt-1">
-              {analytics.blockedUsers}
+          <div className="border border-rose-200/80 bg-gradient-to-br from-rose-50/80 to-red-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <FaUserSlash className="text-rose-500" /> Blocked Users
+            </p>
+            <h3 className="text-3xl font-black text-rose-700 mt-1">
+              {analytics.blockedUsers || 0}
             </h3>
           </div>
 
-          <div className="border border-blue-100 bg-blue-50/30 rounded-2xl p-5 flex flex-col justify-center">
-            <p className="text-slate-500 text-sm font-medium">Verified Users</p>
-            <h3 className="text-2xl font-bold text-blue-600 mt-1">
-              {analytics.verifiedUsers}
+          <div className="border border-cyan-200/80 bg-gradient-to-br from-cyan-50/80 to-blue-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <FaUserShield className="text-cyan-500" /> Verified Users
+            </p>
+            <h3 className="text-3xl font-black text-cyan-700 mt-1">
+              {analytics.verifiedUsers || 0}
             </h3>
           </div>
 
-          <div className="border border-orange-100 bg-orange-50/30 rounded-2xl p-5 flex flex-col justify-center">
-            <p className="text-slate-500 text-sm font-medium">Unverified Users</p>
-            <h3 className="text-2xl font-bold text-orange-600 mt-1">
-              {analytics.unverifiedUsers}
+          <div className="border border-orange-200/80 bg-gradient-to-br from-orange-50/80 to-amber-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <FaUserClock className="text-orange-500" /> Unverified Users
+            </p>
+            <h3 className="text-3xl font-black text-orange-700 mt-1">
+              {analytics.unverifiedUsers || 0}
             </h3>
           </div>
 
-          <div className="border border-purple-100 bg-purple-50/30 rounded-2xl p-5 flex flex-col justify-center">
-            <p className="text-slate-500 text-sm font-medium">New Users (7 Days)</p>
-            <h3 className="text-2xl font-bold text-purple-600 mt-1">
-              {analytics.newUsers}
+          <div className="border border-purple-200/80 bg-gradient-to-br from-purple-50/80 to-indigo-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <FaUserPlus className="text-purple-500" /> New Users (7 Days)
+            </p>
+            <h3 className="text-3xl font-black text-purple-700 mt-1">
+              {analytics.newUsers || 0}
             </h3>
           </div>
         </div>

@@ -62,26 +62,33 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
 
   return (
     <aside
-      className={`fixed left-0 top-0 w-72 h-screen bg-slate-900 text-slate-200 border-r border-slate-800 flex flex-col shadow-2xl z-50 transform transition-transform duration-300 md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
+      className={`fixed left-0 top-0 w-72 h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-indigo-950 text-slate-200 border-r border-slate-800/80 flex flex-col shadow-2xl z-50 transform transition-transform duration-300 md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
     >
       {/* PROFILE (Top Header) */}
-      <div className="p-6 border-b border-slate-800 bg-slate-800/30 hover:bg-slate-800 transition-colors cursor-pointer group flex justify-between items-start">
-        <div className="flex items-center gap-4">
-          <div className="h-14 w-14 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center text-xl font-bold uppercase shadow-md shrink-0 group-hover:scale-110 transition-transform duration-300 text-white">
+      <div className="p-6 border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md hover:bg-slate-800/70 transition-all duration-300 cursor-pointer group flex justify-between items-start">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="h-13 w-13 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 flex items-center justify-center text-xl font-black uppercase shadow-lg shadow-indigo-500/30 ring-2 ring-cyan-400/30 shrink-0 group-hover:scale-110 transition-transform duration-300 text-white">
             {admin?.name?.charAt(0) || "A"}
           </div>
 
           <div className="overflow-hidden flex-1">
-            <h2 className="text-base font-bold text-white truncate group-hover:text-cyan-400 transition-colors">
-              {admin?.name || "admin"}
+            <h2
+              style={{ color: "#ffffff" }}
+              className="text-base font-black text-white !text-white truncate group-hover:text-cyan-300 transition-colors tracking-wide"
+            >
+              {admin?.name ? admin.name : "Admin"}
             </h2>
-            <p className="text-xs text-slate-400 truncate mt-0.5">
-              {admin?.email || "[EMAIL_ADDRESS]"}
+            <p
+              style={{ color: "#cbd5e1" }}
+              className="text-xs text-slate-300 !text-slate-300 truncate mt-0.5 font-semibold"
+            >
+              {admin?.email || "admin@example.com"}
             </p>
             <div className="mt-2">
-              <span className="inline-block px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-[10px] font-bold uppercase tracking-widest shadow-sm">
-                {admin?.role || "admin"}
+              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-extrabold uppercase tracking-widest shadow-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                {admin?.role ? admin.role : "Admin"}
               </span>
             </div>
           </div>
@@ -90,7 +97,7 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
         {/* Mobile Close Button */}
         <button
           onClick={() => setIsOpen(false)}
-          className="md:hidden text-slate-400 hover:text-white shrink-0 mt-1 ml-2"
+          className="md:hidden text-slate-400 hover:text-white shrink-0 mt-1 ml-2 transition-colors"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -99,7 +106,7 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
       </div>
 
       {/* MENU */}
-      <nav className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-hide">
+      <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 scrollbar-thin scrollbar-thumb-slate-800">
         {menus.map((menu) => (
           <NavLink
             key={menu.name}
@@ -111,22 +118,32 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
                 location.pathname.startsWith("/admin/questions/topics") ||
                 location.pathname.startsWith("/admin/questions/companies")
               ));
-              return `flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group
-              ${active
-                  ? "bg-cyan-600 text-white shadow-md scale-[1.02]"
-                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
+              return `flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group relative ${active
+                  ? "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-bold shadow-lg shadow-indigo-500/30 scale-[1.02] border-l-4 border-cyan-400"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/60 hover:translate-x-1"
                 }`;
             }}
           >
-            <span className="text-lg group-hover:scale-110 transition">
+            <span className="text-lg shrink-0 group-hover:scale-125 group-hover:rotate-6 transition-transform duration-300">
               {menu.icon}
             </span>
 
-            <span className="font-medium">{menu.name}</span>
+            <span className="font-semibold text-sm tracking-wide">{menu.name}</span>
           </NavLink>
         ))}
       </nav>
 
+      {/* Logout Footer Button */}
+      <div className="p-4 border-t border-slate-800/80 bg-slate-950/40">
+        <button
+          onClick={handleLogout}
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-slate-800/40 hover:bg-gradient-to-r hover:from-rose-600 hover:to-red-600 text-slate-300 hover:text-white font-bold text-sm border border-slate-700/50 hover:border-rose-500 shadow-sm hover:shadow-lg hover:shadow-rose-600/25 active:scale-95 transition-all duration-300 disabled:opacity-50 cursor-pointer"
+        >
+          <FaSignOutAlt className="text-base group-hover:rotate-12 transition-transform" />
+          {loading ? "Logging out..." : "Logout"}
+        </button>
+      </div>
     </aside>
   );
 };

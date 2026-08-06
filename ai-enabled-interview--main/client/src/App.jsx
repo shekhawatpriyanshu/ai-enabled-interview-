@@ -74,6 +74,7 @@ const EditProfile = lazy(() => import("./pages/profiles/EditProfile"));
 
 // Auth (Admin)
 const AdminLogin = lazy(() => import("./admin/pages/AdminLogin"));
+const AdminForgotPassword = lazy(() => import("./admin/pages/AdminForgotPassword"));
 const AdminDashboard = lazy(() => import("./admin/pages/Dashboard"));
 const Users = lazy(() => import("./admin/pages/users/Users"));
 const UserDetails = lazy(() => import("./admin/pages/users/UserDetails"));
@@ -586,6 +587,10 @@ function App() {
     <Route
       path="/admin/login"
       element={<AdminLogin />}
+    />
+    <Route
+      path="/admin/forgot-password"
+      element={<AdminForgotPassword />}
     />
 
     <Route

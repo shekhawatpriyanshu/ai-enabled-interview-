@@ -32,7 +32,7 @@ const EditQuestion = () => {
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-          "Failed to load question."
+        "Failed to load question."
       );
       navigate("/admin/questions");
     } finally {
@@ -49,7 +49,7 @@ const EditQuestion = () => {
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-          "Failed to update question."
+        "Failed to update question."
       );
     } finally {
       setSaving(false);
@@ -66,7 +66,7 @@ const EditQuestion = () => {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
@@ -74,7 +74,7 @@ const EditQuestion = () => {
     >
       {/* Header section */}
       <div className="flex items-center gap-4">
-        <button 
+        <button
           onClick={() => navigate("/admin/questions")}
           className="p-2 bg-white dark:bg-gray-800 rounded-full shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
         >

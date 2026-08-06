@@ -106,21 +106,21 @@ const RewardTable = ({
 
   return (
     <div className="overflow-x-auto scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-white rounded-2xl border border-slate-200 shadow-sm">
-      <table className="w-full min-w-[800px] border-collapse text-left">
+      <table className="w-full min-w-[950px] border-collapse text-left">
         <thead className="bg-slate-50 border-b border-slate-200">
           <tr>
             <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-left w-16">#</th>
-            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-left">User</th>
-            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-left">Achievement</th>
-            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-left">Badge</th>
-            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Reward</th>
-            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Date</th>
+            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-left min-w-[200px]">User</th>
+            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-left min-w-[200px]">Achievement</th>
+            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-left min-w-[180px]">Badge</th>
+            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center min-w-[110px]">Reward</th>
+            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center min-w-[120px]">Date</th>
             <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center w-[120px]">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
           {rewards.map((reward, index) => (
-            <tr key={reward._id} className="hover:bg-slate-50/80 transition-colors">
+            <tr key={reward._id} className="hover:bg-slate-50 transition-all duration-200 group">
               <td className="px-6 py-4 text-sm text-slate-500 text-left">
                 {(currentPage - 1) * pageSize + index + 1}
               </td>
@@ -136,41 +136,41 @@ const RewardTable = ({
                 </div>
               </td>
               <td className="px-6 py-4 text-left">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center border border-orange-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center border border-orange-100 shrink-0">
                     <FaTrophy className="text-orange-500 text-xs" />
                   </div>
-                  <span className="text-sm font-medium text-slate-900 line-clamp-1">{reward.achievement?.title || "N/A"}</span>
+                  <span className="text-sm font-semibold text-slate-800 whitespace-nowrap">{reward.achievement?.title || "N/A"}</span>
                 </div>
               </td>
               <td className="px-6 py-4 text-left">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-yellow-50 flex items-center justify-center border border-yellow-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-yellow-50 flex items-center justify-center border border-yellow-100 shrink-0">
                     <FaAward className="text-yellow-500 text-xs" />
                   </div>
-                  <span className="text-sm text-slate-600 line-clamp-1">{reward.badge?.title || "No Badge"}</span>
+                  <span className="text-sm font-medium text-slate-700 whitespace-nowrap">{reward.badge?.title || "No Badge"}</span>
                 </div>
               </td>
               <td className="px-6 py-4 text-center">
-                <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
+                <span className="inline-block whitespace-nowrap px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-extrabold shadow-sm">
                   {reward.rewardPoints || 0} XP
                 </span>
               </td>
-              <td className="px-6 py-4 text-center text-sm text-slate-600">
+              <td className="px-6 py-4 text-center text-sm font-medium text-slate-600 whitespace-nowrap">
                 {new Date(reward.createdAt).toLocaleDateString()}
               </td>
               <td className="px-6 py-4">
                 <div className="flex justify-center items-center gap-2">
                   <button
                     onClick={() => onView(reward)}
-                    className="h-9 w-9 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm transition active:scale-95 cursor-pointer"
+                    className="h-9 w-9 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm hover:shadow-blue-500/30 hover:scale-110 hover:-translate-y-0.5 transition-all duration-300 active:scale-95 cursor-pointer"
                     title="View"
                   >
                     <FaEye />
                   </button>
                   <button
                     onClick={() => onDelete(reward)}
-                    className="h-9 w-9 flex items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm transition active:scale-95 cursor-pointer"
+                    className="h-9 w-9 flex items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm hover:shadow-red-600/30 hover:scale-110 hover:-translate-y-0.5 transition-all duration-300 active:scale-95 cursor-pointer"
                     title="Delete"
                   >
                     <FaTrash />

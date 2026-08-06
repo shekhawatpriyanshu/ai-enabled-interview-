@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FaUserGraduate } from "react-icons/fa";
 
 import InterviewStats from "../../components/interviews/InterviewStats";
 import InterviewSearch from "../../components/interviews/InterviewsSearch";
@@ -23,11 +24,8 @@ const Interviews = () => {
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
-
   const [status, setStatus] = useState("");
-  
-  const[experience,setExperience]=useState("");
-
+  const [experience, setExperience] = useState("");
   const [page, setPage] = useState(1);
 
   const [pagination, setPagination] = useState({
@@ -91,30 +89,34 @@ const Interviews = () => {
 
   useEffect(() => {
     fetchInterviews();
-  }, [page, search, status,experience]);
+  }, [page, search, status, experience]);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-8 animate-[fadeIn_0.4s_ease-out]">
 
-      {/* Page Heading */}
-
-      <div>
-        <h1 className="text-3xl font-bold">
-          Interview Management
-        </h1>
-
-        <p className="text-gray-500">
-          Manage all AI interview sessions
-        </p>
+      {/* 1. Page Heading */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-purple-500/30 animate-bounce">
+              <FaUserGraduate />
+            </div>
+            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+              Interview Management
+            </span>
+          </h1>
+          <p className="text-sm font-semibold text-slate-500 mt-2">
+            Monitor, inspect, and evaluate AI-driven interview sessions and candidate transcripts.
+          </p>
+        </div>
       </div>
 
-      {/* Statistics */}
-
+      {/* 2. Statistics */}
       <InterviewStats stats={stats} />
 
-      {/* Search & Filter */}
-      <div className="bg-white rounded-xl shadow p-5 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      {/* 3. Search & Filter Bar */}
+      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-center">
           <InterviewSearch
             value={search}
             onChange={setSearch}
@@ -128,8 +130,7 @@ const Interviews = () => {
         </div>
       </div>
 
-      {/* Table */}
-
+      {/* 4. Table */}
       <InterviewTable
         interviews={interviews}
         loading={loading}
@@ -138,15 +139,14 @@ const Interviews = () => {
         refresh={fetchInterviews}
       />
 
-      {/* Pagination */}
-
+      {/* 5. Pagination */}
       <Pagination
         page={page}
         pages={pagination.pages}
         setPage={setPage}
       />
 
-      {/* View Modal */}
+      {/* 6. View Modal */}
       <InterviewDetailsModal
         isOpen={showDetailsModal}
         onClose={() => {
@@ -158,7 +158,7 @@ const Interviews = () => {
         feedback={feedback}
       />
 
-      {/* Delete Modal */}
+      {/* 7. Delete Modal */}
       <DeleteInterviewModal
         isOpen={showDeleteModal}
         onClose={() => {

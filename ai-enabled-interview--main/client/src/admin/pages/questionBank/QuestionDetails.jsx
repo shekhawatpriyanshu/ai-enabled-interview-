@@ -33,7 +33,7 @@ const QuestionDetails = () => {
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-          "Failed to load question."
+        "Failed to load question."
       );
 
       navigate("/admin/questions");
@@ -239,7 +239,7 @@ const QuestionDetails = () => {
         </div>
 
       </div>
-            {/* Tags */}
+      {/* Tags */}
 
       {question.tags?.length > 0 && (
         <div className="bg-white rounded-xl shadow p-6">
@@ -410,11 +410,10 @@ const QuestionDetails = () => {
 
                 <div
                   key={index}
-                  className={`border rounded-lg p-4 ${
-                    option === question.correctAnswer
+                  className={`border rounded-lg p-4 ${option === question.correctAnswer
                       ? "bg-green-100 border-green-500"
                       : "bg-gray-50"
-                  }`}
+                    }`}
                 >
 
                   <div className="flex justify-between">
@@ -424,11 +423,11 @@ const QuestionDetails = () => {
                     {option ===
                       question.correctAnswer && (
 
-                      <span className="font-semibold text-green-700">
-                        Correct Answer
-                      </span>
+                        <span className="font-semibold text-green-700">
+                          Correct Answer
+                        </span>
 
-                    )}
+                      )}
 
                   </div>
 

@@ -31,7 +31,7 @@ const AddQuestion = () => {
 
       toast.error(
         error?.response?.data?.message ||
-          "Failed to create question."
+        "Failed to create question."
       );
     } finally {
       setLoading(false);

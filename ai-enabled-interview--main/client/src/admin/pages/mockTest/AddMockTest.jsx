@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
-import { ArrowLeft, LayoutTemplate } from "lucide-react";
+import { ArrowLeft, LayoutTemplate, Sparkles } from "lucide-react";
 
 import MockTestForm from "../../../admin/components/test/MockTestForm";
 import useMockTest from "../../../admin/hooks/useMockTest";
@@ -36,27 +36,31 @@ const AddMockTest = () => {
       className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8"
     >
       {/* Header section */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 border-b border-slate-200/80 pb-6">
         <button 
           onClick={() => navigate("/admin/mock-tests")}
-          className="p-2 bg-white dark:bg-gray-800 rounded-full shadow-sm hover:shadow-md border border-gray-200 dark:border-gray-700 transition-all text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+          className="group p-2.5 bg-white rounded-2xl shadow-sm hover:shadow-md border border-slate-200 transition-all text-slate-500 hover:text-indigo-600 cursor-pointer"
         >
-          <ArrowLeft size={20} />
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform duration-300" />
         </button>
         <div>
-          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-3">
-            <LayoutTemplate className="text-blue-500" size={28} />
-            Add Mock Test
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 text-white flex items-center justify-center text-xl shadow-lg shadow-purple-500/30 animate-pulse">
+              <LayoutTemplate size={22} />
+            </div>
+            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+              Create New Mock Test
+            </span>
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">
-            Design a new assessment to challenge your candidates.
+          <p className="text-sm font-semibold text-slate-500 mt-2">
+            Design a comprehensive assessment to evaluate candidate skills and domain knowledge.
           </p>
         </div>
       </div>
 
       {/* Form Card */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden relative">
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+      <div className="bg-white rounded-3xl shadow-xl border border-slate-200/90 overflow-hidden relative">
+        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500" />
         <div className="p-6 sm:p-8">
           <MockTestForm
             loading={loading}

@@ -2,30 +2,29 @@ const StatusBadge = ({ status }) => {
   const getStatusClasses = () => {
     switch (status) {
       case "Completed":
-        return "bg-green-100 text-green-700 border border-green-300";
+        return "bg-emerald-50 text-emerald-700 border-emerald-200/90 shadow-emerald-500/10";
 
       case "Started":
-        return "bg-yellow-100 text-yellow-700 border border-yellow-300";
+        return "bg-amber-50 text-amber-700 border-amber-200/90 shadow-amber-500/10";
 
       default:
-        return "bg-gray-100 text-gray-700 border border-gray-300";
+        return "bg-slate-100 text-slate-700 border-slate-200";
     }
   };
 
   return (
     <span
-      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${getStatusClasses()}`}
+      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border shadow-xs ${getStatusClasses()}`}
     >
       <span
-        className={`w-2 h-2 rounded-full mr-2 ${
+        className={`w-2 h-2 rounded-full mr-2 animate-pulse ${
           status === "Completed"
-            ? "bg-green-500"
+            ? "bg-emerald-500"
             : status === "Started"
-            ? "bg-yellow-500"
-            : "bg-gray-500"
+            ? "bg-amber-500"
+            : "bg-slate-400"
         }`}
       />
-
       {status}
     </span>
   );

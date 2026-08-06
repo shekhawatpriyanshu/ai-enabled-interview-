@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import { FaChartBar } from "react-icons/fa";
 import useAdminAnalytics from "../../hooks/useAdminAnalytics";
 
 import DashboardCards from "../../components/analytics/DashboardCards";
@@ -119,12 +120,19 @@ const AnalyticsDashboard = () => {
     ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-[fadeIn_0.5s_ease-out]">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center border-b border-slate-200/80 pb-5">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Analytics Dashboard</h1>
-          <p className="text-slate-500 mt-1">Monitor your platform performance, users and engagement.</p>
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
+            <FaChartBar className="text-indigo-600 text-3xl sm:text-4xl drop-shadow-sm hover:scale-110 transition-transform duration-200 shrink-0" />
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Analytics Dashboard
+            </span>
+          </h1>
+          <p className="text-sm font-medium text-slate-500 mt-1.5">
+            Monitor real-time platform performance, user engagement, and core system metrics.
+          </p>
         </div>
       </div>
 

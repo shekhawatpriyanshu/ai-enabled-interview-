@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { FaGift, FaPlus, FaArrowRight } from "react-icons/fa";
 import useReward from "../../hooks/useReward";
 
 import DashboardCards from "../../components/reward/DashboardCards";
@@ -58,71 +59,28 @@ const RewardDashboard = () => {
 
 
   return (
-
-    <div className="p-6 space-y-8">
-
-
+    <div className="p-6 space-y-8 animate-[fadeIn_0.5s_ease-out]">
       {/* Header */}
-
-      <div
-        className="
-        flex
-        justify-between
-        items-center
-        "
-      >
-
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-
-          <h1
-            className="
-            text-2xl
-            font-bold
-            text-slate-900
-            "
-          >
-            Reward Management
+          <h1 className="text-3xl sm:text-4xl font-black flex items-center gap-3 tracking-tight">
+            <FaGift className="text-amber-400 text-3xl sm:text-4xl drop-shadow-md hover:scale-110 transition-transform duration-200 shrink-0" />
+            <span className="bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 bg-clip-text text-transparent">
+              Reward Management
+            </span>
           </h1>
-
-
-          <p
-            className="
-            text-sm
-            text-slate-500
-            mt-1
-            "
-          >
-            Manage user rewards, badges and achievements
+          <p className="text-sm font-medium text-slate-500 mt-1.5">
+            Manage user rewards, badges, and achievements across the platform
           </p>
-
-
         </div>
 
-
-
         <button
-
-          onClick={()=>navigate(
-            "/admin/rewards/give"
-          )}
-
-          className="
-          px-5
-          py-2.5
-          rounded-xl
-          bg-blue-600
-          text-white
-          font-semibold
-          hover:bg-blue-700
-          transition
-          "
+          onClick={() => navigate("/admin/rewards/give")}
+          className="group flex items-center gap-2.5 px-6 py-3 bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-600 hover:via-rose-600 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg hover:shadow-rose-500/30 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 cursor-pointer text-sm self-start sm:self-auto"
         >
-
+          <FaPlus className="text-xs group-hover:rotate-90 transition-transform duration-300" />
           Give Reward
-
         </button>
-
-
       </div>
 
 
@@ -157,46 +115,19 @@ const RewardDashboard = () => {
       >
 
 
-        <div
-          className="
-          flex
-          justify-between
-          items-center
-          mb-5
-          "
-        >
-
-
-          <h2
-            className="
-            text-lg
-            font-bold
-            text-slate-800
-            "
-          >
+        <div className="flex justify-between items-center mb-5 border-b border-slate-100 pb-4">
+          <h2 className="text-lg font-extrabold text-slate-800 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-blue-600"></span>
             Recent Rewards
           </h2>
 
-
-
           <button
-
-            onClick={()=>navigate(
-              "/admin/rewards"
-            )}
-
-            className="
-            text-sm
-            text-blue-600
-            font-semibold
-            "
+            onClick={() => navigate("/admin/rewards")}
+            className="group flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-700 font-bold hover:underline transition-all cursor-pointer"
           >
-
             View All
-
+            <FaArrowRight className="text-xs group-hover:translate-x-1 transition-transform duration-200" />
           </button>
-
-
         </div>
 
 

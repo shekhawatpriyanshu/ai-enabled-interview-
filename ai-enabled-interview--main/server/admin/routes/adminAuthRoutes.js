@@ -5,6 +5,9 @@ const {
   getAdminProfile,
   adminLogout,
   getDashboardStats,
+  forgotPassword,
+  resetPassword,
+  getOnlineUsers,
 } = require("../controllers/adminAuthController");
 
 const adminProtect = require("../middlewares/adminProtect");
@@ -17,6 +20,8 @@ const router = express.Router();
  * @access  Public
  */
 router.post("/login", adminLogin);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 /**
  * @route   GET /api/admin/auth/me
@@ -38,5 +43,6 @@ router.post("/logout", adminProtect, adminLogout);
  * @access  Private (Admin Only)
  */
 router.get("/dashboard", adminProtect, getDashboardStats);
+router.get("/online-users", adminProtect, getOnlineUsers);
 
 module.exports = router;

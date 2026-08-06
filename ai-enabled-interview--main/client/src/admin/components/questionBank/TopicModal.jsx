@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, BookOpen, AlignLeft, CheckCircle, Save, Loader2 } from "lucide-react";
+import { X, BookOpen, AlignLeft, CheckCircle, Save, Loader2, AlertCircle } from "lucide-react";
 
 const TopicModal = ({
   isOpen,
@@ -64,85 +64,92 @@ const TopicModal = ({
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex justify-center items-center p-4 sm:p-6">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={handleClose}
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
         />
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800"
+          className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-slate-200"
         >
+          {/* Top Multi-Color Gradient Accent Bar */}
+          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500" />
+
           {/* Header */}
-          <div className="flex-shrink-0 px-6 py-5 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-gray-900 dark:to-gray-800">
+          <div className="flex-shrink-0 px-6 sm:px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 mt-2">
             <div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-2">
-                <BookOpen className="text-blue-500" size={24} />
+              <h2 className="text-2xl font-black bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-fuchsia-600 text-white flex items-center justify-center text-base shadow-md group hover:rotate-6 hover:scale-110 transition-transform duration-300">
+                  <BookOpen size={20} />
+                </div>
                 {initialData ? "Edit Topic" : "Add New Topic"}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">
-                {initialData ? "Update the details of this topic." : "Create a new topic category for coding questions."}
+              <p className="text-xs font-semibold text-slate-500 mt-1">
+                {initialData ? "Update the details of this topic category." : "Create a new topic category for coding questions."}
               </p>
             </div>
             <button
               onClick={handleClose}
-              className="p-2 rounded-full hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition-colors text-gray-500 hover:text-red-500"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-400 hover:rotate-90 transition-all duration-300 cursor-pointer shadow-sm"
+              title="Close Modal"
             >
-              <X size={24} />
+              <X size={20} />
             </button>
           </div>
 
-          {/* Body */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
-            
+          {/* Form Body */}
+          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
             {/* Topic Name */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                <BookOpen size={16} className="text-blue-500" /> Topic Name
+              <label className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                <BookOpen size={16} className="text-purple-600" /> Topic Name
               </label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="e.g. Arrays and Hashing"
-                className={`w-full bg-gray-50 dark:bg-gray-800/50 border ${errors.name ? 'border-red-400 focus:ring-red-500/50' : 'border-gray-200 dark:border-gray-700 focus:ring-blue-500/50 focus:border-blue-500'} rounded-xl px-4 py-3 outline-none focus:ring-2 transition-all dark:text-white`}
+                placeholder="e.g. Arrays and Hashing, Dynamic Programming"
+                className={`w-full bg-slate-50 border ${
+                  errors.name ? "border-rose-400 focus:ring-rose-500/50" : "border-slate-200 hover:border-purple-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                } rounded-2xl px-4 py-3 outline-none transition-all font-semibold text-slate-800 text-sm shadow-xs`}
               />
               {errors.name && (
-                <motion.p initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} className="text-red-500 text-xs font-medium mt-1 ml-1">
-                  {errors.name}
+                <motion.p initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} className="text-rose-500 text-xs font-bold mt-1 flex items-center gap-1">
+                  <AlertCircle size={12} /> {errors.name}
                 </motion.p>
               )}
             </div>
 
             {/* Description */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                <AlignLeft size={16} className="text-indigo-500" /> Description
+              <label className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                <AlignLeft size={16} className="text-indigo-600" /> Description
               </label>
               <textarea
                 rows={5}
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Write a brief description of what this topic covers..."
-                className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all dark:text-white resize-none"
+                placeholder="Write a brief description of what this topic domain covers..."
+                className="w-full bg-slate-50 border border-slate-200 hover:border-indigo-300 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium text-slate-800 text-sm resize-none shadow-xs"
               />
             </div>
 
-            {/* Footer */}
-            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-800">
+            {/* Footer Actions */}
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6 border-t border-slate-100">
               <button
                 type="button"
                 onClick={handleClose}
                 disabled={loading}
-                className="w-full sm:w-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-2.5 font-semibold text-gray-700 dark:text-gray-300 transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-sm"
+                className="w-full sm:w-auto rounded-xl border border-slate-200 bg-white hover:bg-slate-100 hover:shadow-md hover:-translate-y-0.5 px-6 py-2.5 font-extrabold text-slate-600 transition-all duration-300 text-xs active:scale-95 cursor-pointer"
               >
                 Cancel
               </button>
@@ -150,14 +157,14 @@ const TopicModal = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-2.5 font-semibold text-white shadow-md transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-700 hover:via-purple-700 hover:to-cyan-600 px-6 py-2.5 font-black text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 text-xs active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 {loading ? (
-                  <><Loader2 className="animate-spin" size={18} /> Saving...</>
+                  <><Loader2 className="animate-spin" size={16} /> Saving...</>
                 ) : initialData ? (
-                  <><CheckCircle size={18} /> Update Topic</>
+                  <><CheckCircle size={16} /> Update Topic</>
                 ) : (
-                  <><Save size={18} /> Create Topic</>
+                  <><Save size={16} /> Create Topic</>
                 )}
               </button>
             </div>

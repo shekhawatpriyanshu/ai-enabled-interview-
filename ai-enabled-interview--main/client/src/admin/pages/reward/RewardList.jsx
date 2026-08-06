@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaTrophy, FaPlus } from "react-icons/fa";
 
 import useReward from "../../hooks/useReward";
 
@@ -161,68 +161,28 @@ const RewardList = () => {
 
 
   return (
-
-    <div className="p-6 space-y-6">
-
-
+    <div className="p-6 space-y-6 animate-[fadeIn_0.5s_ease-out]">
       {/* Header */}
-
-      <div
-        className="
-        flex
-        justify-between
-        items-center
-        "
-      >
-
+      <div className="flex justify-between items-center">
         <div>
-
-          <h1
-          className="
-          text-2xl
-          font-bold
-          text-slate-900
-          "
-          >
-            All Rewards
+          <h1 className="text-3xl sm:text-4xl font-black flex items-center gap-3 tracking-tight">
+            <FaTrophy className="text-amber-400 text-3xl sm:text-4xl drop-shadow-md hover:scale-110 transition-transform duration-200 shrink-0" />
+            <span className="bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 bg-clip-text text-transparent">
+              All Rewards
+            </span>
           </h1>
-
-
-          <p
-          className="
-          text-sm
-          text-slate-500
-          "
-          >
-            Manage earned rewards and badges
+          <p className="text-sm font-medium text-slate-500 mt-1.5">
+            Manage earned rewards, XP points, and badges across all users.
           </p>
-
-
         </div>
 
-
-
         <button
-
-        onClick={()=>navigate(
-          "/admin/rewards/give"
-        )}
-
-        className="
-        px-5
-        py-2.5
-        bg-blue-600
-        text-white
-        rounded-xl
-        font-semibold
-        "
+          onClick={() => navigate("/admin/rewards/give")}
+          className="group flex items-center gap-2.5 px-6 py-3 bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-600 hover:via-rose-600 hover:to-indigo-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg hover:shadow-rose-500/30 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 cursor-pointer text-sm"
         >
-
+          <FaPlus className="text-xs group-hover:rotate-90 transition-transform duration-300" />
           Give Reward
-
         </button>
-
-
       </div>
 
 

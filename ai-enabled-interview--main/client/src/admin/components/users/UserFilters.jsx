@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaCheckCircle, FaBan, FaSortAmountDown } from "react-icons/fa";
 
 const UserFilters = ({
     onSearch,
@@ -8,25 +8,20 @@ const UserFilters = ({
     onBlocked,
     onSort,
 }) => {
-    const [keyword, setKeyword] =
-        useState("");
+    const [keyword, setKeyword] = useState("");
 
     const handleSearch = (e) => {
         const value = e.target.value;
-
         setKeyword(value);
-
         onSearch(value);
     };
 
     return (
-        <div className="bg-white rounded-xl shadow p-5 mb-6">
-
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-
+        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-center">
                 {/* Search */}
-                <div className="relative flex items-center">
-                    <div className="absolute left-3 text-gray-400 flex items-center justify-center pointer-events-none">
+                <div className="relative flex items-center col-span-1">
+                    <div className="absolute left-3.5 text-slate-400 flex items-center justify-center pointer-events-none">
                         <FaSearch className="w-4 h-4" />
                     </div>
 
@@ -35,77 +30,70 @@ const UserFilters = ({
                         placeholder="Search by name or email..."
                         value={keyword}
                         onChange={handleSearch}
-                        className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none bg-white shadow-sm"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 hover:border-purple-300 rounded-xl text-slate-800 font-semibold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-sm text-xs sm:text-sm"
                     />
                 </div>
 
-                {/* Role */}
-
-
-                {/* Verified */}
-
-                <select
-                    onChange={(e) =>
-                        onVerified(e.target.value)
-                    }
-                    className="border rounded-lg p-3"
-                >
-                    <option value="">
-                        Verification
-                    </option>
-
-                    <option value="true">
-                        Verified
-                    </option>
-
-                    <option value="false">
-                        Not Verified
-                    </option>
-
-                </select>
+                {/* Verification */}
+                <div className="relative flex items-center col-span-1">
+                    <div className="absolute left-3.5 text-slate-400 flex items-center justify-center pointer-events-none">
+                        <FaCheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                    </div>
+                    <select
+                        onChange={(e) => onVerified(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 hover:border-purple-300 rounded-xl text-slate-800 font-normal focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-sm text-xs sm:text-sm cursor-pointer"
+                    >
+                        <option value="" className="bg-white font-normal text-slate-800 py-1">
+                            Verification Status
+                        </option>
+                        <option value="true" className="bg-white font-normal text-slate-800 py-1">
+                            Verified Only
+                        </option>
+                        <option value="false" className="bg-white font-normal text-slate-800 py-1">
+                            Not Verified
+                        </option>
+                    </select>
+                </div>
 
                 {/* Blocked */}
-
-                <select
-                    onChange={(e) =>
-                        onBlocked(e.target.value)
-                    }
-                    className="border rounded-lg p-3"
-                >
-                    <option value="">
-                        Status
-                    </option>
-
-                    <option value="false">
-                        Active
-                    </option>
-
-                    <option value="true">
-                        Blocked
-                    </option>
-
-                </select>
+                <div className="relative flex items-center col-span-1">
+                    <div className="absolute left-3.5 text-slate-400 flex items-center justify-center pointer-events-none">
+                        <FaBan className="w-3.5 h-3.5 text-rose-500" />
+                    </div>
+                    <select
+                        onChange={(e) => onBlocked(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 hover:border-purple-300 rounded-xl text-slate-800 font-normal focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-sm text-xs sm:text-sm cursor-pointer"
+                    >
+                        <option value="" className="bg-white font-normal text-slate-800 py-1">
+                            Account Status
+                        </option>
+                        <option value="false" className="bg-white font-normal text-slate-800 py-1">
+                            Active Only
+                        </option>
+                        <option value="true" className="bg-white font-normal text-slate-800 py-1">
+                            Blocked Only
+                        </option>
+                    </select>
+                </div>
 
                 {/* Sort */}
-
-                <select
-                    onChange={(e) =>
-                        onSort(e.target.value)
-                    }
-                    className="border rounded-lg p-3"
-                >
-                    <option value="newest">
-                        Newest First
-                    </option>
-
-                    <option value="oldest">
-                        Oldest First
-                    </option>
-
-                </select>
-
+                <div className="relative flex items-center col-span-1">
+                    <div className="absolute left-3.5 text-slate-400 flex items-center justify-center pointer-events-none">
+                        <FaSortAmountDown className="w-3.5 h-3.5 text-indigo-600" />
+                    </div>
+                    <select
+                        onChange={(e) => onSort(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 hover:border-purple-300 rounded-xl text-slate-800 font-normal focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-sm text-xs sm:text-sm cursor-pointer"
+                    >
+                        <option value="newest" className="bg-white font-normal text-slate-800 py-1">
+                            Newest First
+                        </option>
+                        <option value="oldest" className="bg-white font-normal text-slate-800 py-1">
+                            Oldest First
+                        </option>
+                    </select>
+                </div>
             </div>
-
         </div>
     );
 };

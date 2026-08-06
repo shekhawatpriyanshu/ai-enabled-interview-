@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FaUserShield, FaEye, FaEyeSlash } from "react-icons/fa";
 
 import { useAdminAuth } from "../context/AdminAuthContext";
@@ -158,6 +158,15 @@ const AdminLogin = () => {
 
             </div>
 
+          </div>
+
+          <div className="flex justify-end mt-1">
+            <Link
+              to="/admin/forgot-password"
+              className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition"
+            >
+              Forgot Password?
+            </Link>
           </div>
 
           {/* Button */}

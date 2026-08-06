@@ -250,7 +250,7 @@ Example JSON:
 const generateVoiceQuestions = async (role, resumeDetails, mcqMistakes, codingMistakes) => {
   try {
     const prompt = `
-Generate a list of 5 personalized interview questions (3 Technical, 2 HR) for a ${role}.
+Generate a list of 15 personalized interview questions (7 Technical, 8 HR) for a ${role}.
 Context:
 Resume: ${JSON.stringify(resumeDetails)}
 MCQ Mistakes: ${JSON.stringify(mcqMistakes)}
@@ -273,8 +273,25 @@ Return JSON ONLY:
   } catch (error) {
     console.error("Voice Gen Error:", error);
     return {
-      technicalQuestions: ["Tell me about a technical challenge you faced.", "Explain a core concept of your tech stack.", "How do you optimize performance?"],
-      hrQuestions: ["Tell me about yourself.", "Where do you see yourself in 5 years?"]
+      technicalQuestions: [
+        "Tell me about a technical challenge you faced.", 
+        "Explain a core concept of your tech stack.", 
+        "How do you optimize performance?",
+        "Describe your experience with debugging complex issues.",
+        "How do you ensure your code is secure and maintainable?",
+        "What is your approach to testing?",
+        "Can you explain a recent technology you learned?"
+      ],
+      hrQuestions: [
+        "Tell me about yourself.", 
+        "Where do you see yourself in 5 years?",
+        "Describe a time you disagreed with a team member.",
+        "How do you handle tight deadlines?",
+        "What is your greatest professional achievement?",
+        "Why do you want to work here?",
+        "How do you prioritize your tasks?",
+        "Describe your ideal work environment."
+      ]
     };
   }
 };

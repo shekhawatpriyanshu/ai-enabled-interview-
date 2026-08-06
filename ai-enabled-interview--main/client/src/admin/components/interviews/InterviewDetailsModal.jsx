@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   X, User, Mail, Briefcase, Star, Clock, 
   CheckCircle, XCircle, AlertCircle, MessageSquare, 
-  Award, Brain, Target, MessageCircle 
+  Award, Brain, Target, MessageCircle, Sparkles
 } from "lucide-react";
 
 const InterviewDetailsModal = ({ isOpen, onClose, interview, feedback }) => {
@@ -11,74 +11,90 @@ const InterviewDetailsModal = ({ isOpen, onClose, interview, feedback }) => {
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+        {/* Backdrop */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          className="absolute inset-0 bg-slate-950/70 backdrop-blur-md"
         />
         
+        {/* Modal Container */}
         <motion.div 
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          initial={{ opacity: 0, y: 30, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.95 }}
+          exit={{ opacity: 0, y: 30, scale: 0.95 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-5xl max-h-[90vh] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800"
+          className="relative w-full max-w-5xl max-h-[90vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-slate-200/90"
         >
-          {/* Header */}
-          <div className="flex-shrink-0 px-6 py-5 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-gray-900 dark:to-gray-800">
-            <div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Interview Intelligence Report
-              </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">
-                Comprehensive candidate evaluation
-              </p>
+          {/* Header Bar */}
+          <div className="flex-shrink-0 px-6 sm:px-8 py-5 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-slate-50 via-indigo-50/50 to-purple-50/50 relative">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500" />
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 text-white flex items-center justify-center shadow-lg shadow-purple-500/30">
+                <Brain className="w-6 h-6 animate-pulse" />
+              </div>
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+                  Interview Intelligence Report
+                </h2>
+                <p className="text-xs text-slate-500 font-medium tracking-wider uppercase">
+                  Comprehensive Candidate Evaluation & AI Analytics
+                </p>
+              </div>
             </div>
+            
             <button
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition-colors text-gray-500 hover:text-red-500"
+              className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-rose-500 hover:text-white flex items-center justify-center text-slate-500 transition-all duration-300 cursor-pointer hover:scale-110 active:scale-95 shadow-sm"
             >
-              <X size={24} />
+              <X size={18} />
             </button>
           </div>
 
-          {/* Body */}
-          <div className="overflow-y-auto flex-1 p-6 space-y-10">
+          {/* Modal Content */}
+          <div className="overflow-y-auto flex-1 p-6 sm:p-8 space-y-8">
             
-            {/* Candidate Information */}
-            <section>
-              <div className="flex items-center gap-2 mb-6">
-                <User className="text-blue-500" size={24} />
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-white">Candidate Profile</h3>
+            {/* Candidate Profile */}
+            <section className="space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-md">
+                  <User size={16} />
+                </div>
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">Candidate Profile Overview</h3>
               </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <InfoCard icon={<User size={18} />} label="Name" value={interview.user?.name} />
-                <InfoCard icon={<Mail size={18} />} label="Email" value={interview.user?.email} />
-                <InfoCard icon={<Briefcase size={18} />} label="Role" value={interview.role} />
-                <InfoCard icon={<Star size={18} />} label="Experience" value={interview.experienceLevel} />
-                <InfoCard icon={<Target size={18} />} label="Status" value={interview.status} />
-                <InfoCard icon={<Clock size={18} />} label="Date" value={new Date(interview.createdAt).toLocaleDateString()} />
+                <InfoCard icon={<User size={18} />} label="Candidate Name" value={interview.user?.name} gradient="from-indigo-500 to-blue-600" />
+                <InfoCard icon={<Mail size={18} />} label="Email Address" value={interview.user?.email} gradient="from-purple-500 to-pink-600" />
+                <InfoCard icon={<Briefcase size={18} />} label="Target Role" value={interview.role} gradient="from-cyan-500 to-blue-600" />
+                <InfoCard icon={<Star size={18} />} label="Experience Level" value={interview.experienceLevel} gradient="from-amber-500 to-orange-500" />
+                <InfoCard icon={<Target size={18} />} label="Session Status" value={interview.status} gradient="from-emerald-500 to-teal-600" />
+                <InfoCard icon={<Clock size={18} />} label="Session Date" value={new Date(interview.createdAt).toLocaleDateString()} gradient="from-fuchsia-500 to-purple-600" />
               </div>
             </section>
 
-            {/* AI Feedback Section */}
+            {/* AI Performance Analysis Section */}
             {feedback && (
-              <section className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-800">
-                <div className="flex items-center gap-2 mb-6">
-                  <Brain className="text-indigo-500" size={24} />
-                  <h3 className="text-xl font-semibold text-gray-800 dark:text-white">AI Performance Analysis</h3>
+              <section className="bg-gradient-to-br from-slate-50 via-indigo-50/40 to-purple-50/30 rounded-3xl p-6 sm:p-8 border border-purple-100 shadow-xl space-y-6 relative overflow-hidden">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 text-white flex items-center justify-center shadow-md">
+                    <Sparkles size={18} />
+                  </div>
+                  <h3 className="text-base font-bold text-slate-800">AI Performance Analytics</h3>
                 </div>
                 
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                  <ScoreCard title="Overall Score" score={feedback.score} icon={<Award />} color="indigo" />
-                  <ScoreCard title="Communication" score={feedback.communication} icon={<MessageCircle />} color="blue" />
-                  <ScoreCard title="Technical" score={feedback.technicalKnowledge} icon={<Target />} color="emerald" />
-                  <ScoreCard title="Problem Solving" score={feedback.problemSolving} icon={<Brain />} color="violet" />
+                {/* Score Grid */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <ScoreCard title="Overall Score" score={feedback.score} icon={<Award />} gradient="from-indigo-600 via-purple-600 to-cyan-500" bgGradient="from-indigo-50/80 to-purple-50/40" />
+                  <ScoreCard title="Communication" score={feedback.communication} icon={<MessageCircle />} gradient="from-cyan-600 to-blue-600" bgGradient="from-cyan-50/80 to-blue-50/40" />
+                  <ScoreCard title="Technical" score={feedback.technicalKnowledge} icon={<Target />} gradient="from-emerald-600 to-teal-600" bgGradient="from-emerald-50/80 to-teal-50/40" />
+                  <ScoreCard title="Problem Solving" score={feedback.problemSolving} icon={<Brain />} gradient="from-purple-600 to-fuchsia-600" bgGradient="from-purple-50/80 to-fuchsia-50/40" />
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-6">
+                {/* Qualitative Feedback Cards */}
+                <div className="grid md:grid-cols-3 gap-6 pt-2">
                   <ListCard title="Key Strengths" items={feedback.strengths} type="success" />
                   <ListCard title="Areas to Improve" items={feedback.weaknesses} type="danger" />
                   <ListCard title="Actionable Advice" items={feedback.suggestions} type="warning" />
@@ -86,12 +102,15 @@ const InterviewDetailsModal = ({ isOpen, onClose, interview, feedback }) => {
               </section>
             )}
 
-            {/* Questions */}
-            <section>
-              <div className="flex items-center gap-2 mb-6">
-                <MessageSquare className="text-emerald-500" size={24} />
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-white">Detailed Transcript</h3>
+            {/* Questions & Transcript Section */}
+            <section className="space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md">
+                  <MessageSquare size={16} />
+                </div>
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">Detailed Question Transcript</h3>
               </div>
+
               <div className="space-y-4">
                 {interview.questions?.length > 0 ? (
                   interview.questions.map((item, index) => (
@@ -100,33 +119,33 @@ const InterviewDetailsModal = ({ isOpen, onClose, interview, feedback }) => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
                       key={index} 
-                      className="group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all"
+                      className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden hover:border-purple-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
                     >
-                      <div className="bg-blue-50/50 dark:bg-blue-900/10 p-4 border-b border-gray-100 dark:border-gray-800">
-                        <h4 className="font-semibold text-blue-800 dark:text-blue-300 flex items-start gap-3">
-                          <span className="flex-shrink-0 bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs mt-0.5">
-                            {index + 1}
-                          </span>
-                          <span className="leading-relaxed">{item.question}</span>
+                      <div className="bg-slate-50/80 p-4 border-b border-slate-100 flex items-start gap-3">
+                        <span className="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-md group-hover:scale-110 transition-transform">
+                          {index + 1}
+                        </span>
+                        <h4 className="font-semibold text-slate-800 text-sm leading-relaxed group-hover:text-indigo-600 transition-colors">
+                          {item.question}
                         </h4>
                       </div>
-                      <div className="p-4 sm:p-5">
+                      <div className="p-5">
                         {item.answer ? (
-                          <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap pl-9 border-l-2 border-emerald-100 dark:border-emerald-900/30">
+                          <div className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed whitespace-pre-wrap pl-4 border-l-2 border-emerald-400 bg-emerald-50/30 p-3.5 rounded-r-xl border-slate-100">
                             {item.answer}
                           </div>
                         ) : (
-                          <div className="pl-9 text-gray-400 italic flex items-center gap-2">
-                            <AlertCircle size={16} />
-                            Candidate did not provide an answer.
+                          <div className="text-xs text-slate-400 font-normal italic flex items-center gap-2 bg-amber-50/50 p-3 rounded-xl border border-amber-100">
+                            <AlertCircle size={15} className="text-amber-500" />
+                            Candidate did not provide a recorded answer for this question.
                           </div>
                         )}
                       </div>
                     </motion.div>
                   ))
                 ) : (
-                  <div className="text-center py-10 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 text-gray-500">
-                    No transcript available for this interview.
+                  <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-slate-200 text-slate-400 font-medium text-xs">
+                    No transcript available for this interview session.
                   </div>
                 )}
               </div>
@@ -138,51 +157,41 @@ const InterviewDetailsModal = ({ isOpen, onClose, interview, feedback }) => {
   );
 };
 
-const InfoCard = ({ label, value, icon }) => (
-  <div className="flex items-center gap-4 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-    <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-gray-800 flex items-center justify-center text-blue-500 flex-shrink-0">
-      {icon}
-    </div>
-    <div className="min-w-0 flex-1">
-      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{label}</p>
-      <p className="font-semibold text-gray-900 dark:text-white truncate mt-0.5" title={value || "-"}>
-        {value || "-"}
-      </p>
-    </div>
-  </div>
-);
-
-const ScoreCard = ({ title, score, icon, color }) => {
-  const colorMap = {
-    indigo: "from-indigo-500 to-blue-600 text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20",
-    blue: "from-blue-400 to-cyan-500 text-blue-600 bg-blue-50 dark:bg-blue-900/20",
-    emerald: "from-emerald-400 to-green-500 text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20",
-    violet: "from-violet-500 to-purple-600 text-violet-600 bg-violet-50 dark:bg-violet-900/20"
-  };
-  
-  const bgColors = colorMap[color] || colorMap.indigo;
-  const gradient = bgColors.split(' text-')[0];
-  const textColor = `text-${bgColors.split(' text-')[1].split(' ')[0]}`;
-  const bgColorClass = bgColors.split(' bg-')[1];
-  
+const InfoCard = ({ label, value, icon, gradient }) => {
   return (
-    <div className="relative overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all group">
-      <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradient} opacity-5 rounded-bl-[100px] transition-transform group-hover:scale-110`} />
+    <div className="flex items-center gap-3.5 bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:border-purple-300 transition-all duration-300 group">
+      <div className={`w-10 h-10 rounded-xl bg-gradient-to-tr ${gradient} text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-transform`}>
+        {icon}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">{label}</p>
+        <p className="font-semibold text-xs sm:text-sm text-slate-700 truncate mt-0.5" title={value || "-"}>
+          {value || "-"}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const ScoreCard = ({ title, score, icon, gradient, bgGradient }) => {
+  return (
+    <div className={`relative overflow-hidden bg-gradient-to-br ${bgGradient} border border-slate-200/90 rounded-2xl p-5 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group`}>
+      <div className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-br ${gradient} opacity-10 rounded-bl-full transition-transform group-hover:scale-125`} />
       
-      <div className="flex justify-between items-start mb-4 relative z-10">
-        <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+      <div className="flex justify-between items-start mb-3 relative z-10">
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
           {title}
         </h4>
-        <div className={`p-2 rounded-lg bg-${bgColorClass} ${textColor}`}>
+        <div className={`w-8 h-8 rounded-xl bg-gradient-to-tr ${gradient} text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform`}>
           {icon}
         </div>
       </div>
       
       <div className="flex items-baseline gap-1 relative z-10">
-        <h2 className={`text-4xl font-extrabold bg-gradient-to-br ${gradient} bg-clip-text text-transparent`}>
+        <h2 className={`text-3xl sm:text-4xl font-extrabold bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}>
           {score ?? 0}
         </h2>
-        <span className="text-sm font-medium text-gray-400">/ 100</span>
+        <span className="text-xs font-medium text-slate-400">/ 100</span>
       </div>
     </div>
   );
@@ -191,41 +200,41 @@ const ScoreCard = ({ title, score, icon, color }) => {
 const ListCard = ({ title, items, type }) => {
   const styles = {
     success: {
-      icon: <CheckCircle className="text-emerald-500 flex-shrink-0 mt-0.5" size={18} />,
-      bg: "bg-emerald-50/50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-900/30",
-      title: "text-emerald-700 dark:text-emerald-400"
+      icon: <CheckCircle className="text-emerald-500 shrink-0 mt-0.5" size={16} />,
+      bg: "bg-emerald-50/70 border-emerald-200/90",
+      title: "text-emerald-800"
     },
     danger: {
-      icon: <XCircle className="text-red-500 flex-shrink-0 mt-0.5" size={18} />,
-      bg: "bg-red-50/50 dark:bg-red-900/10 border-red-100 dark:border-red-900/30",
-      title: "text-red-700 dark:text-red-400"
+      icon: <XCircle className="text-rose-500 shrink-0 mt-0.5" size={16} />,
+      bg: "bg-rose-50/70 border-rose-200/90",
+      title: "text-rose-800"
     },
     warning: {
-      icon: <AlertCircle className="text-amber-500 flex-shrink-0 mt-0.5" size={18} />,
-      bg: "bg-amber-50/50 dark:bg-amber-900/10 border-amber-100 dark:border-amber-900/30",
-      title: "text-amber-700 dark:text-amber-400"
+      icon: <AlertCircle className="text-amber-500 shrink-0 mt-0.5" size={16} />,
+      bg: "bg-amber-50/70 border-amber-200/90",
+      title: "text-amber-800"
     }
   };
 
   const currentStyle = styles[type];
 
   return (
-    <div className={`rounded-xl p-5 border ${currentStyle.bg}`}>
-      <h4 className={`font-semibold mb-4 text-lg ${currentStyle.title}`}>
+    <div className={`rounded-2xl p-5 border shadow-sm hover:shadow-md transition-all duration-300 ${currentStyle.bg}`}>
+      <h4 className={`font-bold uppercase tracking-wider text-xs mb-3 ${currentStyle.title}`}>
         {title}
       </h4>
       {items?.length > 0 ? (
-        <ul className="space-y-3">
+        <ul className="space-y-2.5">
           {items.map((item, index) => (
-            <li key={index} className="flex items-start gap-3 text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+            <li key={index} className="flex items-start gap-2 text-slate-700 text-xs font-normal leading-relaxed">
               {currentStyle.icon}
               <span>{item}</span>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="text-gray-500 italic text-sm">
-          No items recorded.
+        <p className="text-slate-400 italic text-xs font-normal">
+          No records.
         </p>
       )}
     </div>

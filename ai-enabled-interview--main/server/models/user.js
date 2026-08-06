@@ -86,4 +86,27 @@ userSchema.pre("countDocuments", function () {
   this.where({ isDeleted: { $ne: true } });
 });
 
+userSchema.post('save', function(doc) {
+  if (global.socketIo && doc.role !== 'admin' && doc.role !== 'super_admin') {
+    const isNew = doc.createdAt && doc.updatedAt && doc.createdAt.getTime() === doc.updatedAt.getTime();
+    global.socketIo.emit("new_activity", {
+      type: "User",
+      text: isNew ? `New user registered: ${doc.name}` : `User profile updated: ${doc.name}`,
+      createdAt: doc.updatedAt || new Date(),
+      icon: isNew ? "🟢" : "🔄"
+    });
+  }
+});
+
+userSchema.post('findOneAndUpdate', function(doc) {
+  if (doc && global.socketIo && doc.role !== 'admin' && doc.role !== 'super_admin') {
+    global.socketIo.emit("new_activity", {
+      type: "User",
+      text: `User profile updated: ${doc.name}`,
+      createdAt: doc.updatedAt || new Date(),
+      icon: "🔄"
+    });
+  }
+});
+
 module.exports = mongoose.model("User", userSchema);

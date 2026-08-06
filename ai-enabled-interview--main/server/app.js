@@ -14,6 +14,7 @@ const questionRoutes = require(
 const adminAuthRoutes = require("./admin/routes/adminAuthRoutes");
 const userManagementRoutes = require('./admin/routes/userManagementRoutes')
 const path = require("path");
+const activityLogger = require("./middlewares/activityLogger");
 const adminCommunityRoutes = require(
   "./admin/routes/adminCommunityRoutes"
 );
@@ -67,6 +68,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
+app.use(activityLogger);
 // Local file serving removed for S3 migration
 app.use(
   "/api/coding",

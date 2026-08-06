@@ -115,6 +115,20 @@ interviewSessionSchema.pre("countDocuments", function () {
   this.where({ isDeleted: { $ne: true } });
 });
 
+interviewSessionSchema.post('save', function(doc) {
+  if (global.socketIo) {
+    const isNew = doc.createdAt && doc.updatedAt && doc.createdAt.getTime() === doc.updatedAt.getTime();
+    if (isNew) {
+      global.socketIo.emit("new_activity", {
+        type: "Interview",
+        text: `Interview session started`,
+        createdAt: doc.createdAt || new Date(),
+        icon: "🎤"
+      });
+    }
+  }
+});
+
 module.exports = mongoose.model(
   "InterviewSession",
   interviewSessionSchema

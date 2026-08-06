@@ -74,19 +74,19 @@ const MockTestForm = ({ initialData = {}, onSubmit, loading = false }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Title */}
         <div className="space-y-2 md:col-span-2">
-          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-            <FileText size={16} className="text-blue-500" /> Test Title
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+            <FileText size={15} className="text-indigo-600" /> Test Title
           </label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className={`w-full bg-gray-50 dark:bg-gray-800/50 border ${errors.title ? 'border-red-400 focus:ring-red-500/50' : 'border-gray-200 dark:border-gray-700 focus:ring-blue-500/50 focus:border-blue-500'} rounded-xl px-4 py-3 outline-none focus:ring-2 transition-all dark:text-white`}
-            placeholder="e.g. Advanced React Assessment"
+            className={`w-full bg-slate-50 border ${errors.title ? 'border-rose-400 focus:ring-rose-500/20' : 'border-slate-200 hover:border-purple-300 focus:ring-purple-500/20 focus:border-purple-500'} rounded-2xl px-4 py-3 outline-none focus:ring-2 transition-all text-slate-800 font-semibold text-sm shadow-xs`}
+            placeholder="e.g. Advanced React & Frontend Architecture Assessment"
           />
           {errors.title && (
-            <motion.p initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} className="text-red-500 text-xs font-medium mt-1 ml-1">
+            <motion.p initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} className="text-rose-600 text-xs font-semibold mt-1 ml-1">
               {errors.title}
             </motion.p>
           )}
@@ -94,23 +94,23 @@ const MockTestForm = ({ initialData = {}, onSubmit, loading = false }) => {
 
         {/* Description */}
         <div className="space-y-2 md:col-span-2">
-          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-            <AlignLeft size={16} className="text-indigo-500" /> Description
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+            <AlignLeft size={15} className="text-purple-600" /> Assessment Overview & Instructions
           </label>
           <textarea
             rows={4}
             name="description"
             value={formData.description}
             onChange={handleChange}
-            className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all dark:text-white resize-none"
-            placeholder="Provide context and instructions for the candidates..."
+            className="w-full bg-slate-50 border border-slate-200 hover:border-purple-300 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-slate-800 font-medium text-sm resize-none shadow-xs"
+            placeholder="Provide guidelines, pass requirements, and instructions for candidates taking this test..."
           />
         </div>
 
         {/* Duration */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-            <Clock size={16} className="text-amber-500" /> Duration (Minutes)
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+            <Clock size={15} className="text-amber-500" /> Test Duration (Minutes)
           </label>
           <div className="relative">
             <input
@@ -118,12 +118,12 @@ const MockTestForm = ({ initialData = {}, onSubmit, loading = false }) => {
               name="duration"
               value={formData.duration}
               onChange={handleChange}
-              className={`w-full bg-gray-50 dark:bg-gray-800/50 border ${errors.duration ? 'border-red-400 focus:ring-red-500/50' : 'border-gray-200 dark:border-gray-700 focus:ring-amber-500/50 focus:border-amber-500'} rounded-xl pl-4 pr-12 py-3 outline-none focus:ring-2 transition-all dark:text-white`}
+              className={`w-full bg-slate-50 border ${errors.duration ? 'border-rose-400 focus:ring-rose-500/20' : 'border-slate-200 hover:border-purple-300 focus:ring-purple-500/20 focus:border-purple-500'} rounded-2xl pl-4 pr-14 py-3 outline-none focus:ring-2 transition-all text-slate-800 font-semibold text-sm shadow-xs`}
             />
-            <span className="absolute right-4 top-3.5 text-gray-400 text-sm font-medium">min</span>
+            <span className="absolute right-4 top-3 text-slate-400 text-xs font-bold uppercase">mins</span>
           </div>
           {errors.duration && (
-            <motion.p initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} className="text-red-500 text-xs font-medium mt-1 ml-1">
+            <motion.p initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} className="text-rose-600 text-xs font-semibold mt-1 ml-1">
               {errors.duration}
             </motion.p>
           )}
@@ -131,29 +131,29 @@ const MockTestForm = ({ initialData = {}, onSubmit, loading = false }) => {
 
         {/* Difficulty */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-            <BarChart size={16} className="text-emerald-500" /> Difficulty Level
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+            <BarChart size={15} className="text-emerald-500" /> Target Difficulty Level
           </label>
           <select
             name="difficulty"
             value={formData.difficulty}
             onChange={handleChange}
-            className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all dark:text-white cursor-pointer"
+            className="w-full bg-white border border-slate-200 hover:border-purple-300 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-slate-800 font-normal text-sm cursor-pointer shadow-xs"
           >
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
+            <option value="Easy" className="bg-white font-normal text-slate-800 py-1">Easy Level</option>
+            <option value="Medium" className="bg-white font-normal text-slate-800 py-1">Medium Level</option>
+            <option value="Hard" className="bg-white font-normal text-slate-800 py-1">Hard Level</option>
           </select>
         </div>
       </div>
 
-      {/* Question Selector */}
-      <div className="pt-6 border-t border-gray-100 dark:border-gray-800">
-        <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-          <Target size={20} className="text-purple-500" /> Assessment Questions
+      {/* Question Selector Section */}
+      <div className="pt-6 border-t border-slate-100 space-y-4">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+          <Target size={18} className="text-purple-600" /> Select Assessment Questions
         </h3>
         
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-1 overflow-hidden shadow-sm">
+        <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 p-5 shadow-xs">
           <QuestionSelector
             selectedQuestions={formData.questions}
             onChange={handleQuestionChange}
@@ -161,43 +161,41 @@ const MockTestForm = ({ initialData = {}, onSubmit, loading = false }) => {
         </div>
         
         {errors.questions && (
-          <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="mt-4 text-sm font-medium text-red-500 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-100 dark:border-red-800 flex items-center gap-2">
+          <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-xs font-semibold text-rose-600 bg-rose-50 p-3.5 rounded-2xl border border-rose-200 flex items-center gap-2">
             <X size={16} /> {errors.questions}
           </motion.p>
         )}
       </div>
 
-      {/* Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-gray-100 dark:border-gray-800">
-        <div className="relative overflow-hidden rounded-xl border border-blue-100 dark:border-blue-900/50 bg-blue-50/50 dark:bg-blue-900/10 p-5 group transition-all hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-400 to-blue-600 opacity-5 rounded-bl-[100px] transition-transform group-hover:scale-110" />
-          <div className="flex items-center gap-3 text-blue-600 mb-2 relative z-10">
-            <Target size={20} />
-            <p className="font-semibold text-sm uppercase tracking-wider">Total Questions</p>
+      {/* Summary Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-6 border-t border-slate-100">
+        <div className="relative overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/80 to-blue-50/40 p-5 group transition-all hover:shadow-md hover:border-indigo-300">
+          <div className="flex items-center gap-3 text-indigo-600 mb-2 relative z-10">
+            <Target size={18} />
+            <p className="font-bold text-xs uppercase tracking-wider">Total Questions</p>
           </div>
-          <h3 className="text-4xl font-extrabold text-blue-700 dark:text-blue-400 relative z-10">
+          <h3 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent relative z-10">
             {formData.questions.length}
           </h3>
         </div>
 
-        <div className="relative overflow-hidden rounded-xl border border-emerald-100 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-900/10 p-5 group transition-all hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-800">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-400 to-emerald-600 opacity-5 rounded-bl-[100px] transition-transform group-hover:scale-110" />
+        <div className="relative overflow-hidden rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-teal-50/40 p-5 group transition-all hover:shadow-md hover:border-emerald-300">
           <div className="flex items-center gap-3 text-emerald-600 mb-2 relative z-10">
-            <Award size={20} />
-            <p className="font-semibold text-sm uppercase tracking-wider">Total Marks</p>
+            <Award size={18} />
+            <p className="font-bold text-xs uppercase tracking-wider">Total Assessment Marks</p>
           </div>
-          <h3 className="text-4xl font-extrabold text-emerald-700 dark:text-emerald-400 relative z-10">
+          <h3 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent relative z-10">
             {formData.questions.length}
           </h3>
         </div>
       </div>
 
       {/* Footer Actions */}
-      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 pt-6 border-t border-gray-100 dark:border-gray-800">
+      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 pt-6 border-t border-slate-100">
         <button
           type="button"
           onClick={() => window.history.back()}
-          className="w-full sm:w-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-3 font-semibold text-gray-700 dark:text-gray-300 transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-sm"
+          className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all duration-300 cursor-pointer"
         >
           Cancel
         </button>
@@ -205,14 +203,14 @@ const MockTestForm = ({ initialData = {}, onSubmit, loading = false }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-3 font-semibold text-white shadow-md transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
+          className="w-full sm:w-auto px-8 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:scale-105 active:scale-95 shadow-lg shadow-indigo-500/25 transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-70"
         >
           {loading ? (
-            <><Loader2 className="animate-spin" size={20} /> Processing...</>
+            <><Loader2 className="animate-spin" size={16} /> Processing...</>
           ) : initialData?._id ? (
-            <><CheckCircle size={20} /> Update Mock Test</>
+            <><CheckCircle size={16} /> Update Mock Test</>
           ) : (
-            <><Save size={20} /> Create Mock Test</>
+            <><Save size={16} /> Create Mock Test</>
           )}
         </button>
       </div>

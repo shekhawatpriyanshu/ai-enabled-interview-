@@ -24,6 +24,7 @@ const io = new Server(server, {
 
 
 app.set("socketio", io);
+global.socketIo = io; // Expose globally for Mongoose hooks
 
 
 const socketToUserMap = new Map();

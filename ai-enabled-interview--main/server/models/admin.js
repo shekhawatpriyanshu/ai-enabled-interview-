@@ -33,6 +33,8 @@ const adminSchema = new mongoose.Schema(
     lastSeen: {
       type: Date,
     },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
   {
     timestamps: true,

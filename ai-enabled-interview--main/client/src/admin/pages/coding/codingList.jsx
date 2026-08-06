@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaCode } from "react-icons/fa";
 
 import {
   getProblems,
@@ -77,24 +77,32 @@ const CodingList = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-8 animate-[fadeIn_0.4s_ease-out]">
+      {/* 1. HEADER SECTION */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Coding Problems</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Manage and configure all user coding challenges and test cases.
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/30 animate-bounce">
+              <FaCode />
+            </div>
+            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+              Coding Problems
+            </span>
+          </h1>
+          <p className="text-sm font-semibold text-slate-500 mt-2">
+            Manage, configure, and curate technical coding challenges, test cases, and starter code.
           </p>
         </div>
+
         <button
           onClick={() => navigate("/admin/coding/add")}
-          className="flex items-center gap-2 px-5 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-xl shadow-sm hover:shadow-md transition duration-200 active:scale-95 cursor-pointer text-sm"
+          className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-700 hover:via-purple-700 hover:to-cyan-600 text-white font-black transition-all duration-300 shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 text-xs whitespace-nowrap flex items-center justify-center gap-2 cursor-pointer shrink-0 group"
         >
-          <FaPlus className="text-xs" />
-          Add Problem
+          <FaPlus className="group-hover:rotate-90 transition-transform duration-300" /> Add Coding Problem
         </button>
       </div>
 
+      {/* 2. FILTERS */}
       <CodingFilters
         search={search}
         setSearch={setSearch}
@@ -104,6 +112,7 @@ const CodingList = () => {
         setStatus={setStatus}
       />
 
+      {/* 3. TABLE */}
       <CodingTable
         problems={problems}
         currentPage={page}
@@ -113,12 +122,14 @@ const CodingList = () => {
         onToggleStatus={handleStatus}
       />
 
+      {/* 4. PAGINATION */}
       <Pagination
         currentPage={page}
         totalPages={pages}
         onPageChange={setPage}
       />
 
+      {/* 5. DELETE MODAL */}
       <DeleteCodingModal
         show={showDeleteModal}
         loading={deleteLoading}

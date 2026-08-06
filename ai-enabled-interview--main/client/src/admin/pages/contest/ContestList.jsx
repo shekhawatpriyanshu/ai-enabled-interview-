@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaPlus, FaSearch } from "react-icons/fa";
+import { FaPlus, FaSearch, FaTrophy } from "react-icons/fa";
 
 import useContest from "../../hooks/useContest";
 
@@ -9,20 +9,11 @@ import ContestTable from "../../components/contest/ContestTable";
 import DeleteContestModal from "../../components/contest/DeleteContestModal";
 
 const ContestList = () => {
-  const {
-    contests,
-    loading,
-    loadContests,
-    removeContest,
-  } = useContest();
+  const { contests, loading, loadContests, removeContest } = useContest();
 
   const [search, setSearch] = useState("");
-
-  const [deleteModal, setDeleteModal] =
-    useState(false);
-
-  const [selectedContest, setSelectedContest] =
-    useState(null);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [selectedContest, setSelectedContest] = useState(null);
 
   useEffect(() => {
     loadContests();
@@ -30,124 +21,87 @@ const ContestList = () => {
 
   const filteredContests = useMemo(() => {
     return contests.filter((contest) => {
-      const keyword =
-        search.toLowerCase();
-
+      const keyword = search.toLowerCase();
       return (
-        contest.title
-          ?.toLowerCase()
-          .includes(keyword) ||
-        contest.description
-          ?.toLowerCase()
-          .includes(keyword)
+        contest.title?.toLowerCase().includes(keyword) ||
+        contest.description?.toLowerCase().includes(keyword)
       );
     });
   }, [contests, search]);
 
-  const handleDeleteClick = (
-    contest
-  ) => {
+  const handleDeleteClick = (contest) => {
     setSelectedContest(contest);
     setDeleteModal(true);
   };
 
-  const handleDelete = async (
-    id
-  ) => {
+  const handleDelete = async (id) => {
     await removeContest(id);
-
     setDeleteModal(false);
-
     setSelectedContest(null);
   };
 
   return (
-    <div className="space-y-6">
-
-      {/* Header */}
-
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-
+    <div className="p-4 sm:p-6 lg:p-8 space-y-8 animate-[fadeIn_0.4s_ease-out]">
+      {/* 1. HEADER SECTION */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
         <div>
-
-          <h1 className="text-3xl font-bold">
-            Contest Management
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-400 via-orange-500 to-amber-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-amber-500/30 animate-bounce">
+              <FaTrophy />
+            </div>
+            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+              Contest Management
+            </span>
           </h1>
-
-          <p className="text-gray-500 mt-1">
-            Create, edit and manage coding contests.
+          <p className="text-sm font-semibold text-slate-500 mt-2">
+            Create, schedule, organize, and monitor competitive coding contests.
           </p>
-
         </div>
 
         <Link
           to="/admin/contests/add"
-          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-white hover:bg-blue-700"
+          className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-700 hover:via-purple-700 hover:to-cyan-600 text-white font-black transition-all duration-300 shadow-lg shadow-indigo-500/25 active:scale-95 text-xs whitespace-nowrap flex items-center justify-center gap-2 cursor-pointer shrink-0"
         >
-          <FaPlus />
-
-          Add Contest
+          <FaPlus /> Add New Contest
         </Link>
-
       </div>
 
-      {/* Statistics */}
+      {/* 2. STATS BAR */}
+      <ContestStats contests={contests} />
 
-      <ContestStats
-        contests={contests}
-      />
-
-      {/* Search */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-6">
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-slate-700">
-            Search Contests
-          </label>
-          <div className="relative flex items-center">
-            <div className="absolute left-3 text-slate-400 flex items-center justify-center pointer-events-none">
-              <FaSearch className="w-4 h-4" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search by title or description..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition shadow-sm"
-            />
+      {/* 3. SEARCH CONTAINER */}
+      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-5 space-y-4">
+        <div className="relative flex items-center">
+          <div className="absolute left-3.5 text-slate-400 flex items-center justify-center pointer-events-none">
+            <FaSearch className="w-4 h-4" />
           </div>
+          <input
+            type="text"
+            placeholder="Type to search contests by title or description..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-semibold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition shadow-sm text-sm"
+          />
         </div>
       </div>
 
-      {/* Table */}
-
-      <div className="bg-white rounded-lg shadow">
-
+      {/* 4. CONTEST TABLE */}
+      <div>
         <ContestTable
-          contests={
-            filteredContests
-          }
+          contests={filteredContests}
           loading={loading}
-          onDelete={
-            handleDeleteClick
-          }
+          onDelete={handleDeleteClick}
         />
-
       </div>
 
-      {/* Delete Modal */}
-
+      {/* 5. DELETE MODAL */}
       <DeleteContestModal
         isOpen={deleteModal}
         contest={selectedContest}
         loading={loading}
-        onClose={() =>
-          setDeleteModal(false)
-        }
-        onConfirm={
-          handleDelete
-        }
+        onClose={() => setDeleteModal(false)}
+        onConfirm={handleDelete}
       />
-
     </div>
   );
 };

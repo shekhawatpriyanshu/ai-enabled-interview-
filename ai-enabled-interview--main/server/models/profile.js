@@ -54,5 +54,39 @@ const profileSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+profileSchema.post('save', async function(doc) {
+  if (global.socketIo) {
+    const isNew = doc.createdAt && doc.updatedAt && doc.createdAt.getTime() === doc.updatedAt.getTime();
+    try {
+      await doc.populate('user', 'name');
+      const userName = doc.user ? doc.user.name : "a user";
+      global.socketIo.emit("new_activity", {
+        type: "Profile",
+        text: isNew ? `Profile created for ${userName}` : `Profile updated for ${userName}`,
+        createdAt: doc.updatedAt || new Date(),
+        icon: "📝"
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+});
+
+profileSchema.post('findOneAndUpdate', async function(doc) {
+  if (doc && global.socketIo) {
+    try {
+      await doc.populate('user', 'name');
+      const userName = doc.user ? doc.user.name : "a user";
+      global.socketIo.emit("new_activity", {
+        type: "Profile",
+        text: `Profile updated for ${userName}`,
+        createdAt: doc.updatedAt || new Date(),
+        icon: "📝"
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+});
 
 module.exports = mongoose.model("Profile", profileSchema);

@@ -9,50 +9,35 @@ const UserTable = ({
   onRole,
 }) => {
   return (
-    <div className="bg-white rounded-xl shadow overflow-x-auto scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-
-      <table className="w-full min-w-[800px]">
-
-        <thead className="bg-gray-100">
-
+    <div className="w-full overflow-x-auto scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden">
+      <table className="w-full min-w-[850px] text-left border-collapse">
+        <thead className="bg-slate-50 border-b border-slate-200/80">
           <tr>
-
-            <th className="p-4 text-left">
-              Name
+            <th className="px-6 py-4.5 text-xs font-semibold uppercase tracking-wider text-slate-500 text-left">
+              Candidate Name
             </th>
-
-            <th className="p-4 text-left">
-              Email
+            <th className="px-6 py-4.5 text-xs font-semibold uppercase tracking-wider text-slate-500 text-left">
+              Email Address
             </th>
-
-            <th className="p-4 text-center">
+            <th className="px-6 py-4.5 text-xs font-semibold uppercase tracking-wider text-slate-500 text-center">
               Role
             </th>
-
-            <th className="p-4 text-center">
-              Verified
+            <th className="px-6 py-4.5 text-xs font-semibold uppercase tracking-wider text-slate-500 text-center">
+              Verification
             </th>
-
-            <th className="p-4 text-center">
+            <th className="px-6 py-4.5 text-xs font-semibold uppercase tracking-wider text-slate-500 text-center">
               Status
             </th>
-
-            <th className="p-4 text-center">
-              Joined
+            <th className="px-6 py-4.5 text-xs font-semibold uppercase tracking-wider text-slate-500 text-center">
+              Joined Date
             </th>
-
-            <th className="p-4 text-center">
+            <th className="px-6 py-4.5 text-xs font-semibold uppercase tracking-wider text-slate-500 text-center w-[180px]">
               Actions
             </th>
-
           </tr>
-
         </thead>
-
-        <tbody>
-
+        <tbody className="divide-y divide-slate-100">
           {users.map((user) => (
-
             <UserRow
               key={user._id}
               user={user}
@@ -62,13 +47,9 @@ const UserTable = ({
               onBlock={onBlock}
               onRole={onRole}
             />
-
           ))}
-
         </tbody>
-
       </table>
-
     </div>
   );
 };

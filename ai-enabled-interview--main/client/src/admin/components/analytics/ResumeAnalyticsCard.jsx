@@ -9,6 +9,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
+import { FaFileAlt, FaChartLine, FaStar, FaThumbsUp, FaMinusCircle, FaExclamationCircle } from "react-icons/fa";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const ResumeAnalyticsCard = ({ analytics }) => {
@@ -51,52 +52,67 @@ const ResumeAnalyticsCard = ({ analytics }) => {
 
   return (
     <div className="h-full flex flex-col">
-      <h2 className="text-xl font-bold text-slate-900 mb-6">
-        Resume Analytics
+      <h2 className="text-2xl font-black bg-gradient-to-r from-orange-600 via-amber-600 to-yellow-600 bg-clip-text text-transparent mb-6 flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center text-sm shadow-sm">
+          <FaFileAlt />
+        </div>
+        Resume Uploads & ATS Analytics
       </h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1">
         {/* Left Side: Stats Grid */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="border border-slate-100 bg-slate-50/50 rounded-2xl p-5 flex flex-col justify-center">
-            <p className="text-slate-500 text-sm font-medium">Total Uploads</p>
-            <h3 className="text-2xl font-bold text-slate-900 mt-1">
-              {analytics.totalUploads}
+          <div className="border border-orange-200/80 bg-gradient-to-br from-orange-50/80 to-amber-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <FaFileAlt className="text-orange-500" /> Total Uploads
+            </p>
+            <h3 className="text-3xl font-black text-orange-700 mt-1">
+              {analytics.totalUploads || 0}
             </h3>
           </div>
 
-          <div className="border border-blue-100 bg-blue-50/30 rounded-2xl p-5 flex flex-col justify-center">
-            <p className="text-slate-500 text-sm font-medium">Average ATS Score</p>
-            <h3 className="text-2xl font-bold text-blue-600 mt-1">
-              {analytics.averageATS}%
+          <div className="border border-blue-200/80 bg-gradient-to-br from-blue-50/80 to-cyan-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <FaChartLine className="text-blue-500" /> Average ATS
+            </p>
+            <h3 className="text-3xl font-black text-blue-700 mt-1">
+              {analytics.averageATS || 0}%
             </h3>
           </div>
 
-          <div className="border border-emerald-100 bg-emerald-50/30 rounded-2xl p-5 flex flex-col justify-center">
-            <p className="text-slate-500 text-sm font-medium">Excellent</p>
-            <h3 className="text-2xl font-bold text-emerald-600 mt-1">
-              {analytics.excellent}
+          <div className="border border-emerald-200/80 bg-gradient-to-br from-emerald-50/80 to-teal-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <FaStar className="text-emerald-500" /> Excellent
+            </p>
+            <h3 className="text-3xl font-black text-emerald-700 mt-1">
+              {analytics.excellent || 0}
             </h3>
           </div>
 
-          <div className="border border-indigo-100 bg-indigo-50/30 rounded-2xl p-5 flex flex-col justify-center">
-            <p className="text-slate-500 text-sm font-medium">Good</p>
-            <h3 className="text-2xl font-bold text-indigo-600 mt-1">
-              {analytics.good}
+          <div className="border border-indigo-200/80 bg-gradient-to-br from-indigo-50/80 to-purple-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <FaThumbsUp className="text-indigo-500" /> Good
+            </p>
+            <h3 className="text-3xl font-black text-indigo-700 mt-1">
+              {analytics.good || 0}
             </h3>
           </div>
 
-          <div className="border border-yellow-100 bg-yellow-50/30 rounded-2xl p-5 flex flex-col justify-center">
-            <p className="text-slate-500 text-sm font-medium">Average</p>
-            <h3 className="text-2xl font-bold text-yellow-600 mt-1">
-              {analytics.average}
+          <div className="border border-amber-200/80 bg-gradient-to-br from-amber-50/80 to-yellow-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <FaMinusCircle className="text-amber-500" /> Average
+            </p>
+            <h3 className="text-3xl font-black text-amber-700 mt-1">
+              {analytics.average || 0}
             </h3>
           </div>
 
-          <div className="border border-red-100 bg-red-50/30 rounded-2xl p-5 flex flex-col justify-center">
-            <p className="text-slate-500 text-sm font-medium">Poor</p>
-            <h3 className="text-2xl font-bold text-red-600 mt-1">
-              {analytics.poor}
+          <div className="border border-rose-200/80 bg-gradient-to-br from-rose-50/80 to-red-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <FaExclamationCircle className="text-rose-500" /> Poor
+            </p>
+            <h3 className="text-3xl font-black text-rose-700 mt-1">
+              {analytics.poor || 0}
             </h3>
           </div>
         </div>

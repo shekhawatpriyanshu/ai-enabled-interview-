@@ -1,4 +1,5 @@
 const User = require("../../models/user");
+const Profile = require("../../models/profile");
 
 /**
  * =====================================================
@@ -114,7 +115,7 @@ const getUserById = async (
       await User.findOne({
         _id: req.params.id,
         role: "user",
-      }).select("-password");
+      }).select("-password").lean();
 
     if (!user) {
       return res.status(404).json({
@@ -123,6 +124,9 @@ const getUserById = async (
           "User not found",
       });
     }
+
+    const profile = await Profile.findOne({ user: user._id }).select('avatar');
+    user.avatar = profile ? profile.avatar : null;
 
     res.status(200).json({
       success: true,

@@ -4,6 +4,7 @@ import {
   FaPlus,
   FaSearch,
   FaSyncAlt,
+  FaTrophy,
 } from "react-icons/fa";
 import DeleteModal from "../../../admin/components/achievement/DeleteModal";
 import useAchievement from "../../../admin/hooks/useAchievement";
@@ -35,105 +36,89 @@ const [deleteItem, setDeleteItem] = useState(null);
   // ===================================
   // Load Data
   // ===================================
-
+  // Live Load Data on Search / Filter Change
+  // ===================================
   useEffect(() => {
-    loadAchievements();
-  }, [page, category, status]);
+    const timer = setTimeout(() => {
+      getAchievements({
+        page,
+        limit: pageSize,
+        search,
+        category,
+        status,
+      });
+    }, 300);
 
-  const loadAchievements = () => {
-    getAchievements({
-      page,
-      limit: pageSize,
-      search,
-      category,
-      status,
-    });
-  };
+    return () => clearTimeout(timer);
+  }, [search, category, status, page]);
 
-  // ===================================
-  // Search
-  // ===================================
-const handleDelete = (achievement)=>{
+  const handleDelete = (achievement) => {
     setDeleteItem(achievement);
-};
-const confirmDelete = async()=>{
-
-    await deleteAchievement(
-        deleteItem._id
-    );
-
-    setDeleteItem(null);
-
-    loadAchievements();
-};
-  const handleSearch = () => {
-    setPage(1);
-
-    loadAchievements();
   };
-// ===================================
-// Toggle Status
-// ===================================
 
-const handleToggleStatus =
-  async (id) => {
-    const success =
-      await toggleStatus(id);
+  const confirmDelete = async () => {
+    await deleteAchievement(deleteItem._id);
+    setDeleteItem(null);
+  };
 
+  const handleToggleStatus = async (id) => {
+    const success = await toggleStatus(id);
     if (success) {
-      loadAchievements();
+      getAchievements({
+        page,
+        limit: pageSize,
+        search,
+        category,
+        status,
+      });
     }
   };
+
   return (
     <div className="space-y-6">
-      {/* ===========================
-            Header
-      ============================ */}
-
-      <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
         <div>
-          <h1 className="text-2xl font-bold">
-            Achievement Management
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-400 text-white flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/30 animate-bounce">
+              <FaTrophy />
+            </div>
+            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+              Achievement Management
+            </span>
           </h1>
-
-          <p className="text-slate-500 mt-1">
-            Manage achievements,
-            rewards and badges.
+          <p className="text-sm font-semibold text-slate-500 mt-2">
+            Configure automated milestone achievements, point rewards, and linked badges for learners.
           </p>
         </div>
 
         <div className="flex gap-3">
-
           <Link
             to="/admin/achievement/add"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 hover:from-amber-600 hover:via-rose-600 hover:to-purple-700 text-white font-extrabold text-xs shadow-lg shadow-rose-500/25 active:scale-95 transition-all duration-300 cursor-pointer whitespace-nowrap"
           >
-            <FaPlus />
-
-            Add Achievement
+            <FaPlus /> Add Achievement
           </Link>
         </div>
       </div>
 
-      {/* ===========================
-            Filters
-      ============================ */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-          {/* Search */}
+      {/* Live Search & Filters Bar */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+          {/* Search Input Box (Instant Search) */}
           <div className="relative flex items-center">
-            <div className="absolute left-3 text-slate-400 flex items-center justify-center pointer-events-none">
+            <div className="absolute left-3.5 text-slate-400 flex items-center justify-center pointer-events-none">
               <FaSearch className="w-4 h-4" />
             </div>
             <input
               type="text"
-              placeholder="Search achievement..."
+              placeholder="Type to search achievement..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
               }}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition shadow-sm"
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-semibold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition shadow-sm text-sm"
             />
           </div>
 
@@ -144,7 +129,7 @@ const handleToggleStatus =
               setCategory(e.target.value);
               setPage(1);
             }}
-            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition shadow-sm"
+            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition shadow-sm text-sm cursor-pointer"
           >
             <option value="">All Categories</option>
             <option value="coding">Coding</option>
@@ -161,20 +146,12 @@ const handleToggleStatus =
               setStatus(e.target.value);
               setPage(1);
             }}
-            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition shadow-sm"
+            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition shadow-sm text-sm cursor-pointer"
           >
             <option value="">All Status</option>
             <option value="true">Active</option>
             <option value="false">Inactive</option>
           </select>
-
-          {/* Search Button */}
-          <button
-            onClick={handleSearch}
-            className="w-full bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl px-4 py-2.5 font-semibold transition active:scale-95 shadow-sm"
-          >
-            Search
-          </button>
         </div>
       </div>
 

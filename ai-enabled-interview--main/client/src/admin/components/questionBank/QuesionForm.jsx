@@ -82,9 +82,9 @@ const QuestionForm = ({
     if (!formData.answer.trim()) newErrors.answer = "Reference answer is required";
     if (!formData.topic) newErrors.topic = "Topic must be selected";
     if (!formData.company) newErrors.company = "Company must be selected";
-    
+
     setErrors(newErrors);
-    
+
     if (Object.keys(newErrors).length > 0) {
       toast.error("Please fill in all required fields");
       return false;
@@ -193,15 +193,14 @@ const QuestionForm = ({
                 key={diff}
                 type="button"
                 onClick={() => setFormData((prev) => ({ ...prev, difficulty: diff }))}
-                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-300 ${
-                  formData.difficulty === diff
+                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-300 ${formData.difficulty === diff
                     ? diff === "Easy"
                       ? "bg-green-500 text-white shadow-md"
                       : diff === "Medium"
-                      ? "bg-amber-500 text-white shadow-md"
-                      : "bg-red-500 text-white shadow-md"
+                        ? "bg-amber-500 text-white shadow-md"
+                        : "bg-red-500 text-white shadow-md"
                     : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                }`}
+                  }`}
               >
                 {diff}
               </button>

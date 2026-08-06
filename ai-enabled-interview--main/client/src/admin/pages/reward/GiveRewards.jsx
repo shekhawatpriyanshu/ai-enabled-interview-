@@ -23,106 +23,40 @@ const GiveReward = () => {
 
 
   const handleSubmit =
-  async(formData)=>{
+    async (formData) => {
 
 
-    const success =
-      await giveReward(
-        formData
-      );
+      const success =
+        await giveReward(
+          formData
+        );
 
 
 
-    if(success){
+      if (success) {
 
-      navigate(
-        "/admin/rewards"
-      );
+        navigate(
+          "/admin/rewards"
+        );
 
-    }
+      }
 
 
-  };
+    };
 
 
 
 
 
   return (
-
-    <div
-    className="
-    p-6
-    "
-    >
-
-
-      <div
-      className="
-      max-w-3xl
-      mx-auto
-      "
-      >
-
-
-        <div
-        className="
-        mb-6
-        "
-        >
-
-          <h1
-          className="
-          text-2xl
-          font-bold
-          text-slate-900
-          "
-          >
-
-            Give Reward
-
-          </h1>
-
-
-
-          <p
-          className="
-          text-sm
-          text-slate-500
-          mt-1
-          "
-          >
-
-            Assign achievement rewards and badges to users
-
-          </p>
-
-
-        </div>
-
-
-
-
-
+    <div className="p-6 animate-[fadeIn_0.5s_ease-out]">
+      <div className="max-w-3xl mx-auto">
         <RewardForm
-
-          onSubmit={
-            handleSubmit
-          }
-
-          loading={
-            loading
-          }
-
+          onSubmit={handleSubmit}
+          loading={loading}
         />
-
-
-
       </div>
-
-
     </div>
-
   );
 
 };

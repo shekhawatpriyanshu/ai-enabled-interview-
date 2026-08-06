@@ -66,13 +66,12 @@ const MockTestTable = ({
               <td className="px-6 py-4 text-center">
                 <span
                   className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
-                  ${
-                    test.difficulty === "Easy"
+                  ${test.difficulty === "Easy"
                       ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                       : test.difficulty === "Medium"
-                      ? "bg-amber-50 text-amber-700 border border-amber-200"
-                      : "bg-rose-50 text-rose-700 border border-rose-200"
-                  }`}
+                        ? "bg-amber-50 text-amber-700 border border-amber-200"
+                        : "bg-rose-50 text-rose-700 border border-rose-200"
+                    }`}
                 >
                   {test.difficulty}
                 </span>

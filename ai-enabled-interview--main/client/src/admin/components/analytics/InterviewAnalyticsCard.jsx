@@ -7,14 +7,16 @@ import {
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 
+import { FaUserTie } from "react-icons/fa";
+
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const Card = ({ title, value, color, bgColor }) => (
-  <div className={`border border-gray-100 ${bgColor || "bg-gray-50/50"} rounded-2xl p-4`}>
-    <p className="text-gray-500 text-sm font-medium">
+const Card = ({ title, value, color, bgColor, borderColor }) => (
+  <div className={`border ${borderColor || "border-slate-200/80"} ${bgColor || "bg-slate-50/50"} rounded-2xl p-4 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group`}>
+    <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">
       {title}
     </p>
-    <h3 className={`text-3xl font-extrabold mt-1 ${color}`}>
+    <h3 className={`text-3xl font-black mt-1 ${color}`}>
       {value}
     </h3>
   </div>
@@ -55,8 +57,11 @@ const InterviewAnalyticsCard = ({ analytics }) => {
 
   return (
     <div className="h-full flex flex-col">
-      <h2 className="text-xl font-bold text-slate-900 mb-6">
-        Interview Analytics
+      <h2 className="text-2xl font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent mb-6 flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm shadow-sm">
+          <FaUserTie />
+        </div>
+        Interview Performance Analytics
       </h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1">
@@ -64,44 +69,50 @@ const InterviewAnalyticsCard = ({ analytics }) => {
         <div className="grid grid-cols-2 gap-4">
           <Card
             title="Total Interviews"
-            value={analytics.totalInterviews}
-            color="text-slate-900"
-            bgColor="bg-slate-50/50 border-slate-100"
+            value={analytics.totalInterviews || 0}
+            color="text-slate-800"
+            bgColor="bg-gradient-to-br from-slate-50 to-blue-50/30"
+            borderColor="border-slate-200"
           />
 
           <Card
             title="Completed"
-            value={analytics.completed}
-            color="text-emerald-600"
-            bgColor="bg-emerald-50/30 border-emerald-100"
+            value={analytics.completed || 0}
+            color="text-emerald-700"
+            bgColor="bg-gradient-to-br from-emerald-50/80 to-teal-50/40"
+            borderColor="border-emerald-200/80"
           />
 
           <Card
             title="Pending"
-            value={analytics.pending}
-            color="text-yellow-600"
-            bgColor="bg-yellow-50/30 border-yellow-100"
+            value={analytics.pending || 0}
+            color="text-amber-700"
+            bgColor="bg-gradient-to-br from-amber-50/80 to-yellow-50/40"
+            borderColor="border-amber-200/80"
           />
 
           <Card
             title="Cancelled"
-            value={analytics.cancelled}
-            color="text-red-600"
-            bgColor="bg-red-50/30 border-red-100"
+            value={analytics.cancelled || 0}
+            color="text-rose-700"
+            bgColor="bg-gradient-to-br from-rose-50/80 to-red-50/40"
+            borderColor="border-rose-200/80"
           />
 
           <Card
             title="Completion Rate"
-            value={`${analytics.completionRate}%`}
-            color="text-purple-600"
-            bgColor="bg-purple-50/30 border-purple-100"
+            value={`${analytics.completionRate || 0}%`}
+            color="text-purple-700"
+            bgColor="bg-gradient-to-br from-purple-50/80 to-indigo-50/40"
+            borderColor="border-purple-200/80"
           />
 
           <Card
             title="Average Score"
-            value={analytics.averageScore}
-            color="text-indigo-600"
-            bgColor="bg-indigo-50/30 border-indigo-100"
+            value={analytics.averageScore || 0}
+            color="text-indigo-700"
+            bgColor="bg-gradient-to-br from-indigo-50/80 to-blue-50/40"
+            borderColor="border-indigo-200/80"
           />
         </div>
 
