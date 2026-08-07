@@ -25,7 +25,7 @@ const useAdminAnalytics = () => {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          "Failed to load dashboard"
+        "Failed to load dashboard"
       );
     } finally {
       setLoading(false);
@@ -40,7 +40,7 @@ const useAdminAnalytics = () => {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          "Failed to load user analytics"
+        "Failed to load user analytics"
       );
     } finally {
       setLoading(false);
@@ -55,59 +55,59 @@ const useAdminAnalytics = () => {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          "Failed to load interview analytics"
+        "Failed to load interview analytics"
       );
     } finally {
       setLoading(false);
     }
   };
 
-const getCoding = async () => {
-  try {
-    setLoading(true);
+  const getCoding = async () => {
+    try {
+      setLoading(true);
 
-    const data =
-      await AdminAnalyticsService.getCoding();
+      const data =
+        await AdminAnalyticsService.getCoding();
 
-    setCodingAnalytics(
-      data.analytics
-    );
-  } catch (error) {
-    toast.error(
-      error.response?.data?.message ||
-      "Failed to load coding analytics"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
-const getResume = async () => {
+      setCodingAnalytics(
+        data.analytics
+      );
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+        "Failed to load coding analytics"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+  const getResume = async () => {
 
-  try {
+    try {
 
-    setLoading(true);
+      setLoading(true);
 
-    const data =
-      await AdminAnalyticsService.getResume();
+      const data =
+        await AdminAnalyticsService.getResume();
 
-    setResumeAnalytics(
-      data.analytics
-    );
+      setResumeAnalytics(
+        data.analytics
+      );
 
-  } catch (error) {
+    } catch (error) {
 
-    toast.error(
-      error.response?.data?.message ||
-      "Failed to load resume analytics"
-    );
+      toast.error(
+        error.response?.data?.message ||
+        "Failed to load resume analytics"
+      );
 
-  } finally {
+    } finally {
 
-    setLoading(false);
+      setLoading(false);
 
-  }
+    }
 
-};
+  };
   return {
     loading,
 

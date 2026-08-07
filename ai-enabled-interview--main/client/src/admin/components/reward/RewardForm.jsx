@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   FaUser,
@@ -8,19 +9,18 @@ import {
   FaSearch,
   FaCheck,
   FaGift,
+  FaArrowLeft,
 } from "react-icons/fa";
-
 
 import useAchievement from "../../../admin/hooks/useAchievement";
 import useBadge from "../../../admin/hooks/useBadge";
 import { getUsers } from "../../services/userService";
 
-
-
 const RewardForm = ({
   onSubmit,
   loading = false,
 }) => {
+  const navigate = useNavigate();
 
 
   const {
@@ -123,14 +123,23 @@ const RewardForm = ({
       className="backdrop-blur-xl bg-white/90 border border-slate-200/80 rounded-3xl p-6 sm:p-8 space-y-8 shadow-xl transition-all duration-300"
     >
       {/* Page Title & Header inside single card */}
-      <div className="border-b border-slate-100 pb-5">
+      <div className="border-b border-slate-100 pb-5 space-y-3">
+        <button
+          type="button"
+          onClick={() => navigate("/admin/rewards")}
+          className="group inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-slate-500 hover:text-indigo-600 transition-colors cursor-pointer"
+        >
+          <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" /> Back to Rewards
+        </button>
         <h1 className="text-3xl sm:text-4xl font-black flex items-center gap-3 tracking-tight">
-          <FaGift className="text-amber-400 fill-amber-400 text-3xl sm:text-4xl drop-shadow-md hover:scale-110 transition-transform duration-200 shrink-0" />
-          <span className="bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 bg-clip-text text-transparent">
-            Give Reward
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/30 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+            <FaGift />
+          </div>
+          <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+            Give Manual Reward
           </span>
         </h1>
-        <p className="text-sm font-medium text-slate-500 mt-1.5">
+        <p className="text-sm font-semibold text-slate-500 mt-1.5">
           Assign achievement rewards, XP points, and badges directly to users.
         </p>
       </div>

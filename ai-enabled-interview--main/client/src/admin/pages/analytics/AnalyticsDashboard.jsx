@@ -19,105 +19,105 @@ import ErrorCard from "../../components/analytics/ErrorCard";
 
 const AnalyticsDashboard = () => {
 
-    const {
+  const {
 
-        loading,
+    loading,
 
-        dashboard,
+    dashboard,
 
-        userAnalytics,
+    userAnalytics,
 
-        interviewAnalytics,
+    interviewAnalytics,
 
-        codingAnalytics,
+    codingAnalytics,
 
-        resumeAnalytics,
+    resumeAnalytics,
 
-        getDashboard,
+    getDashboard,
 
-        getUsers,
+    getUsers,
 
-        getInterviews,
+    getInterviews,
 
-        getCoding,
+    getCoding,
 
-        getResume,
+    getResume,
 
-    } = useAdminAnalytics();
+  } = useAdminAnalytics();
 
-    useEffect(() => {
+  useEffect(() => {
 
-        getDashboard();
+    getDashboard();
 
-        getUsers();
+    getUsers();
 
-        getInterviews();
+    getInterviews();
 
-        getCoding();
+    getCoding();
 
-        getResume();
+    getResume();
 
-    }, []);
+  }, []);
 
-    if (loading) {
+  if (loading) {
 
-        return <LoadingSkeleton />;
+    return <LoadingSkeleton />;
 
-    }
+  }
 
-    if (!dashboard) {
+  if (!dashboard) {
 
-        return (
+    return (
 
-            <ErrorCard
+      <ErrorCard
 
-                title="Analytics Dashboard"
+        title="Analytics Dashboard"
 
-                message="Unable to load dashboard."
+        message="Unable to load dashboard."
 
-            />
+      />
 
-        );
+    );
 
-    }
-        const cards = [
+  }
+  const cards = [
 
-        {
-            title: "Users",
-            value: dashboard.users.totalUsers,
-            color: "bg-blue-500",
-        },
+    {
+      title: "Users",
+      value: dashboard.users.totalUsers,
+      color: "bg-blue-500",
+    },
 
-        {
-            title: "Interviews",
-            value: dashboard.interviews.totalInterviews,
-            color: "bg-green-500",
-        },
+    {
+      title: "Interviews",
+      value: dashboard.interviews.totalInterviews,
+      color: "bg-green-500",
+    },
 
-        {
-            title: "Tests",
-            value: dashboard.tests.totalTests,
-            color: "bg-yellow-500",
-        },
+    {
+      title: "Tests",
+      value: dashboard.tests.totalTests,
+      color: "bg-yellow-500",
+    },
 
-        {
-            title: "Coding Problems",
-            value: dashboard.coding.totalCodingProblems,
-            color: "bg-purple-500",
-        },
+    {
+      title: "Coding Problems",
+      value: dashboard.coding.totalCodingProblems,
+      color: "bg-purple-500",
+    },
 
-        {
-            title: "Contests",
-            value: dashboard.contests.totalContests,
-            color: "bg-pink-500",
-        },
+    {
+      title: "Contests",
+      value: dashboard.contests.totalContests,
+      color: "bg-pink-500",
+    },
 
-        {
-            title: "Resume Uploads",
-            value: dashboard.resumes.totalResumeUploads,
-            color: "bg-red-500",
-        },
-    ];
+    {
+      title: "Resume Uploads",
+      value: dashboard.resumes.totalResumeUploads,
+      color: "bg-red-500",
+    },
+  ];
 
   return (
     <div className="space-y-6 animate-[fadeIn_0.5s_ease-out]">
@@ -136,42 +136,42 @@ const AnalyticsDashboard = () => {
         </div>
       </div>
 
-    {/* KPI Cards */}
+      {/* KPI Cards */}
 
-    <DashboardCards dashboard={dashboard} />
+      <DashboardCards dashboard={dashboard} />
 
 
 
-    {/* Analytics */}
+      {/* Analytics */}
 
-    <div className="grid gap-6">
-      {userAnalytics && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300">
-          <UserAnalyticsCard analytics={userAnalytics} />
-        </div>
-      )}
+      <div className="grid gap-6">
+        {userAnalytics && (
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300">
+            <UserAnalyticsCard analytics={userAnalytics} />
+          </div>
+        )}
 
-      {interviewAnalytics && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300">
-          <InterviewAnalyticsCard analytics={interviewAnalytics} />
-        </div>
-      )}
+        {interviewAnalytics && (
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300">
+            <InterviewAnalyticsCard analytics={interviewAnalytics} />
+          </div>
+        )}
 
-      {codingAnalytics && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300">
-          <CodingAnalyticsCard analytics={codingAnalytics} />
-        </div>
-      )}
+        {codingAnalytics && (
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300">
+            <CodingAnalyticsCard analytics={codingAnalytics} />
+          </div>
+        )}
 
-      {resumeAnalytics && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300">
-          <ResumeAnalyticsCard analytics={resumeAnalytics} />
-        </div>
-      )}
+        {resumeAnalytics && (
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-xl hover:-translate-y-1 hover:border-slate-300 transition-all duration-300">
+            <ResumeAnalyticsCard analytics={resumeAnalytics} />
+          </div>
+        )}
+      </div>
+
     </div>
-
-  </div>
-);
+  );
 };
 
 export default AnalyticsDashboard;
