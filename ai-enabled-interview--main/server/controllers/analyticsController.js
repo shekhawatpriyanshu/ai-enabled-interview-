@@ -114,24 +114,35 @@ const getMyAnalytics = async (req, res) => {
 
     let totalScore = 0;
 
+    // 1. Mock Test Submissions
     submissions.forEach((submission) => {
       totalScore += submission.score || 0;
     });
 
-    const codingSubmissions =
-      await CodeSubmission.find({
-        user: req.user._id,
-        status: "Accepted",
-      });
-
-    codingSubmissions.forEach((submission) => {
-      totalScore += submission.score || 0;
+    // 2. Accepted Coding Submissions (Default 100 pts per accepted solution)
+    const codingSubmissions = await CodeSubmission.find({
+      user: req.user._id,
+      status: "Accepted",
     });
 
-    const contestSubmissions =
-      await ContestSubmission.find({
-        user: req.user._id,
-      });
+    codingSubmissions.forEach((submission) => {
+      totalScore += submission.score || 100;
+    });
+
+    // 3. Completed Interview Sessions
+    const interviewSessions = await InterviewSession.find({
+      user: req.user._id,
+      status: "Completed",
+    });
+
+    interviewSessions.forEach((session) => {
+      totalScore += session.overallScore || (session.mcqScore + session.codingScore) || 0;
+    });
+
+    // 4. Contest Submissions
+    const contestSubmissions = await ContestSubmission.find({
+      user: req.user._id,
+    });
 
     contestSubmissions.forEach((submission) => {
       totalScore += submission.score || 0;

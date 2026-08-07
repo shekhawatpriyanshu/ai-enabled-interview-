@@ -1,5 +1,3 @@
-// src/components/analytics/ActivityChart.jsx
-
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,6 +8,7 @@ import {
 } from "chart.js";
 
 import { Bar } from "react-chartjs-2";
+import { FaChartBar } from "react-icons/fa";
 
 ChartJS.register(
   CategoryScale,
@@ -39,13 +38,20 @@ const ActivityChart = ({ analytics }) => {
           analytics?.interviewsCompleted || 0,
         ],
         backgroundColor: [
-          "#0d6efd",
-          "#198754",
-          "#ffc107",
-          "#dc3545",
-          "#0dcaf0",
+          "#3b82f6", // Blue
+          "#10b981", // Emerald
+          "#f59e0b", // Amber
+          "#f43f5e", // Rose
+          "#06b6d4", // Cyan
         ],
-        borderRadius: 10,
+        borderRadius: 12,
+        hoverBackgroundColor: [
+          "#2563eb",
+          "#059669",
+          "#d97706",
+          "#e11d48",
+          "#0891b2",
+        ],
       },
     ],
   };
@@ -53,42 +59,56 @@ const ActivityChart = ({ analytics }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-
     plugins: {
       legend: {
         display: false,
       },
-
       tooltip: {
-        enabled: true,
+        backgroundColor: "#0f172a",
+        titleFont: { size: 12, weight: "bold" },
+        bodyFont: { size: 12 },
+        padding: 12,
+        cornerRadius: 12,
       },
     },
-
     scales: {
       y: {
         beginAtZero: true,
+        grid: {
+          color: "rgba(226, 232, 240, 0.6)",
+        },
         ticks: {
           precision: 0,
+          font: { size: 11, weight: "600" },
+          color: "#64748b",
+        },
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          font: { size: 11, weight: "700" },
+          color: "#334155",
         },
       },
     },
   };
 
   return (
-    <div className="card border-0 shadow-sm h-100">
-      <div className="card-body">
-
-        <h5 className="fw-bold mb-4">
-          Activity Overview
+    <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm h-full flex flex-col justify-between">
+      <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+        <h5 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+          <FaChartBar className="text-indigo-600" />
+          <span>Activity Overview</span>
         </h5>
+        <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+          User Completion Analytics
+        </span>
+      </div>
 
-        <div style={{ height: "400px" }}>
-          <Bar
-            data={data}
-            options={options}
-          />
-        </div>
-
+      <div className="w-full h-80 sm:h-96">
+        <Bar data={data} options={options} />
       </div>
     </div>
   );

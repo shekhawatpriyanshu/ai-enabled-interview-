@@ -76,9 +76,8 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
 
   return (
     <aside
-      className={`fixed left-0 top-0 w-72 h-screen bg-slate-950 text-slate-100 border-r border-slate-800/80 flex flex-col shadow-2xl z-50 transform transition-all duration-300 md:translate-x-0 ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      }`}
+      className={`fixed left-0 top-0 w-72 h-screen bg-slate-950 text-slate-100 border-r border-slate-800/80 flex flex-col shadow-2xl z-50 transform transition-all duration-300 md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
     >
       {/* PROMINENT & PERFECTLY ALIGNED ADMIN HEADER */}
       <div className="p-3.5 border-b border-slate-800/90 bg-slate-950 flex items-center justify-between shadow-md">
@@ -141,11 +140,10 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
                         location.pathname.startsWith("/admin/questions/companies"))
                     );
 
-                  return `group relative flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-300 font-bold text-xs sm:text-sm tracking-wide ${
-                    active
-                      ? "bg-gradient-to-r from-blue-600 via-indigo-600 via-purple-600 to-cyan-500 text-white font-extrabold shadow-lg shadow-indigo-500/30 scale-[1.02] border-l-4 border-cyan-300"
-                      : "text-slate-300 hover:text-white hover:bg-slate-900/90 hover:translate-x-1.5 hover:shadow-md hover:border-slate-800 border border-transparent"
-                  }`;
+                  return `group relative flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-300 font-bold text-xs sm:text-sm tracking-wide ${active
+                    ? "bg-gradient-to-r from-blue-600 via-indigo-600 via-purple-600 to-cyan-500 text-white font-extrabold shadow-lg shadow-indigo-500/30 scale-[1.02] border-l-4 border-cyan-300"
+                    : "text-slate-300 hover:text-white hover:bg-slate-900/90 hover:translate-x-1.5 hover:shadow-md hover:border-slate-800 border border-transparent"
+                    }`;
                 }}
               >
                 {({ isActive }) => {
@@ -161,11 +159,10 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
                     <>
                       <div className="flex items-center gap-3 min-w-0">
                         <div
-                          className={`w-8 h-8 rounded-lg border flex items-center justify-center text-sm shrink-0 transition-all duration-300 ${
-                            active
-                              ? "bg-white/20 border-white/30 text-white"
-                              : `${menu.bg} ${menu.color} group-hover:scale-110 group-hover:rotate-6`
-                          }`}
+                          className={`w-8 h-8 rounded-lg border flex items-center justify-center text-sm shrink-0 transition-all duration-300 ${active
+                            ? "bg-white/20 border-white/30 text-white"
+                            : `${menu.bg} ${menu.color} group-hover:scale-110 group-hover:rotate-6`
+                            }`}
                         >
                           {menu.icon}
                         </div>
@@ -173,11 +170,10 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
                       </div>
 
                       <FaChevronRight
-                        className={`text-xs transition-all duration-300 shrink-0 ${
-                          active
-                            ? "text-white opacity-100 translate-x-0"
-                            : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-cyan-400"
-                        }`}
+                        className={`text-xs transition-all duration-300 shrink-0 ${active
+                          ? "text-white opacity-100 translate-x-0"
+                          : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-cyan-400"
+                          }`}
                       />
                     </>
                   );
@@ -196,7 +192,7 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
           className="group w-full flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl bg-slate-900 hover:bg-gradient-to-r hover:from-rose-600 hover:via-pink-600 hover:to-red-600 text-slate-300 hover:text-white font-bold text-xs sm:text-sm border border-slate-800 hover:border-rose-500 shadow-sm hover:shadow-lg hover:shadow-rose-600/30 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 disabled:opacity-50 cursor-pointer"
         >
           <FaSignOutAlt className="text-sm group-hover:rotate-12 transition-transform duration-300 text-rose-400 group-hover:text-white" />
-          <span>{loading ? "Signing out..." : "Logout Admin"}</span>
+          <span>{loading ? "Signing out..." : "Logout "}</span>
         </button>
       </div>
     </aside>

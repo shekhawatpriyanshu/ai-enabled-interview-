@@ -1,98 +1,133 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Calendar,
   Clock3,
   FileCode2,
   Trophy,
   ArrowRight,
+  Sparkles,
 } from "lucide-react";
 
-const statusColors = {
-  Upcoming:
-    "bg-yellow-50 text-yellow-700 border-yellow-200/50 shadow-[0_0_10px_rgba(234,179,8,0.2)]",
-  Live:
-    "bg-green-50 text-green-700 border-green-200/50 shadow-[0_0_10px_rgba(34,197,94,0.2)] animate-pulse",
-  Completed:
-    "bg-gray-50 text-gray-600 border-gray-200/50",
+const statusStyles = {
+  Live: {
+    cardBg: "bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/60 border-emerald-200/90 hover:border-emerald-400 hover:shadow-emerald-500/15",
+    badgeBg: "bg-emerald-100 text-emerald-800 border-emerald-300 animate-pulse",
+    topLine: "from-emerald-400 to-teal-500",
+    btnBg: "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-emerald-500/25",
+  },
+  Upcoming: {
+    cardBg: "bg-gradient-to-br from-amber-50/90 via-white to-orange-50/60 border-amber-200/90 hover:border-amber-400 hover:shadow-amber-500/15",
+    badgeBg: "bg-amber-100 text-amber-800 border-amber-300",
+    topLine: "from-amber-400 to-orange-500",
+    btnBg: "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-amber-500/25",
+  },
+  Completed: {
+    cardBg: "bg-gradient-to-br from-indigo-50/90 via-white to-purple-50/60 border-indigo-200/90 hover:border-indigo-400 hover:shadow-indigo-500/15",
+    badgeBg: "bg-indigo-100 text-indigo-800 border-indigo-300",
+    topLine: "from-indigo-400 to-purple-500",
+    btnBg: "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-indigo-500/25",
+  },
 };
 
-const ContestCard = ({ contest }) => {
+const ContestCard = ({ contest, index = 0 }) => {
+  const style = statusStyles[contest.status] || statusStyles.Completed;
+
   return (
-    <div className="group bg-white/70 backdrop-blur-xl rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(79,_70,_229,_0.15)] transition-all duration-500 p-6 md:p-8 flex flex-col h-full hover:-translate-y-1 relative overflow-hidden">
-      
-      {/* Decorative Gradient on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-transparent to-purple-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      whileHover={{ y: -6, scale: 1.015 }}
+      className={`group border rounded-3xl p-6 sm:p-7 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between h-full relative overflow-hidden text-slate-800 ${style.cardBg}`}
+    >
+      {/* Top Accent Bar */}
+      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${style.topLine}`} />
 
-      {/* Header */}
-      <div className="flex items-start justify-between mb-6 relative z-10">
-        <div>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 group-hover:text-indigo-700 transition-colors duration-300">
-            {contest.title}
-          </h2>
-          <p className="text-gray-500 mt-2 line-clamp-2 font-medium">
-            {contest.description}
-          </p>
+      <div className="space-y-4">
+        {/* Header Row */}
+        <div className="flex items-start justify-between gap-4 relative z-10">
+          <div className="space-y-1 min-w-0 flex-1">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors duration-300 tracking-tight truncate">
+              {contest.title}
+            </h2>
+            <p className="text-slate-600 text-xs font-semibold line-clamp-2 leading-relaxed">
+              {contest.description || "Participate in this coding contest challenge to test algorithm speed and rank on leaderboards."}
+            </p>
+          </div>
+
+          <span className={`px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider border shrink-0 shadow-2xs ${style.badgeBg}`}>
+            {contest.status || "Upcoming"}
+          </span>
         </div>
 
-        <div
-          className={`px-4 py-1.5 rounded-full border text-xs font-bold tracking-wider uppercase ${
-            statusColors[contest.status]
-          }`}
-        >
-          {contest.status}
+        {/* 2x2 Information Grid */}
+        <div className="grid grid-cols-2 gap-3 relative z-10 pt-1">
+          <div className="flex items-center gap-2.5 bg-white/80 p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+              <Calendar size={15} />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">Start Date</span>
+              <span className="text-xs font-black text-slate-900 truncate block">
+                {new Date(contest.startTime).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 bg-white/80 p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+              <Clock3 size={15} />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">Duration</span>
+              <span className="text-xs font-black text-slate-900 truncate block">
+                {contest.duration} mins
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 bg-white/80 p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <div className="w-8 h-8 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center shrink-0">
+              <FileCode2 size={15} />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">Problems</span>
+              <span className="text-xs font-black text-slate-900 truncate block">
+                {contest.problems?.length || 0} Challenges
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 bg-white/80 p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+              <Trophy size={15} />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">Leaderboard</span>
+              <span className="text-xs font-black text-slate-900 truncate block">
+                Live Rank
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Information */}
-      <div className="grid grid-cols-2 gap-3 mt-auto relative z-10">
-        <div className="flex items-center gap-3 text-gray-600 bg-gray-50/80 p-2.5 rounded-xl group-hover:bg-indigo-50 transition-colors cursor-default">
-          <div className="w-8 h-8 flex items-center justify-center shrink-0 bg-indigo-100 rounded-lg group-hover:scale-110 transition-transform duration-300">
-            <Calendar size={16} className="text-indigo-600" />
-          </div>
-          <span className="text-sm font-bold text-gray-700 leading-tight">
-            {new Date(contest.startTime).toLocaleDateString()}
-          </span>
-        </div>
+      {/* Footer CTA Button */}
+      <div className="mt-6 pt-4 border-t border-slate-200/60 flex items-center justify-between relative z-10">
+        <span className="text-[11px] font-bold text-slate-500">
+          Click to view session details
+        </span>
 
-        <div className="flex items-center gap-3 text-gray-600 bg-gray-50/80 p-2.5 rounded-xl group-hover:bg-purple-50 transition-colors cursor-default">
-          <div className="w-8 h-8 flex items-center justify-center shrink-0 bg-purple-100 rounded-lg group-hover:rotate-12 transition-transform duration-300">
-            <Clock3 size={16} className="text-purple-600" />
-          </div>
-          <span className="text-sm font-bold text-gray-700 leading-tight">
-            {contest.duration} mins
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3 text-gray-600 bg-gray-50/80 p-2.5 rounded-xl group-hover:bg-blue-50 transition-colors cursor-default">
-          <div className="w-8 h-8 flex items-center justify-center shrink-0 bg-blue-100 rounded-lg group-hover:-translate-y-1 transition-transform duration-300">
-            <FileCode2 size={16} className="text-blue-600" />
-          </div>
-          <span className="text-sm font-bold text-gray-700 leading-tight">
-            {contest.problems?.length || 0} Problems
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3 text-gray-600 bg-gray-50/80 p-2.5 rounded-xl group-hover:bg-orange-50 transition-colors cursor-default">
-          <div className="w-8 h-8 flex items-center justify-center shrink-0 bg-orange-100 rounded-lg group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
-            <Trophy size={16} className="text-orange-600" />
-          </div>
-          <span className="text-sm font-bold text-gray-700 leading-tight">
-            Contest
-          </span>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="mt-8 flex justify-end relative z-10">
         <Link
           to={`/contests/${contest._id}`}
-          className="inline-flex items-center gap-2.5 bg-gray-900 hover:bg-indigo-600 text-white font-bold px-6 py-3 rounded-xl transition-all duration-300 shadow-md hover:shadow-indigo-500/30 hover:pr-4 group/btn"
+          className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl font-black text-xs uppercase tracking-wider shadow-md hover:scale-105 active:scale-95 transition-all duration-200 ${style.btnBg}`}
         >
-          View Details
-          <ArrowRight size={18} className="transition-transform group-hover/btn:translate-x-1" />
+          <span>View Details</span>
+          <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

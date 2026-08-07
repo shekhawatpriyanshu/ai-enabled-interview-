@@ -9,6 +9,12 @@ const profileSchema = new mongoose.Schema(
       unique: true,
     },
 
+    userType: {
+      type: String,
+      enum: ["Student", "Working Professional"],
+      default: "Student",
+    },
+
     avatar: {
       type: String,
       default: "",
@@ -20,6 +26,26 @@ const profileSchema = new mongoose.Schema(
     },
 
     college: {
+      type: String,
+      default: "",
+    },
+
+    degree: {
+      type: String,
+      default: "",
+    },
+
+    company: {
+      type: String,
+      default: "",
+    },
+
+    designation: {
+      type: String,
+      default: "",
+    },
+
+    targetRole: {
       type: String,
       default: "",
     },
@@ -54,6 +80,7 @@ const profileSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
 profileSchema.post('save', async function(doc) {
   if (global.socketIo) {
     const isNew = doc.createdAt && doc.updatedAt && doc.createdAt.getTime() === doc.updatedAt.getTime();

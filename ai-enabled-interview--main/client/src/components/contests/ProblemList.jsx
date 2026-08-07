@@ -1,29 +1,20 @@
 import { Link } from "react-router-dom";
-import {
-  FileCode2,
-  ExternalLink,
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { FileCode2, ExternalLink, ArrowRight, Tag } from "lucide-react";
 
-const difficultyColors = {
-  Easy: "bg-green-100 text-green-700",
-  Medium: "bg-yellow-100 text-yellow-700",
-  Hard: "bg-red-100 text-red-700",
+const difficultyBadgeStyles = {
+  Easy: "bg-emerald-100 text-emerald-800 border-emerald-300",
+  Medium: "bg-amber-100 text-amber-800 border-amber-300",
+  Hard: "bg-rose-100 text-rose-800 border-rose-300",
 };
 
 const ProblemList = ({ problems = [] }) => {
   if (problems.length === 0) {
     return (
-      <div className="bg-white rounded-xl border shadow-sm p-10 text-center">
-        <FileCode2
-          className="mx-auto text-gray-400"
-          size={50}
-        />
-
-        <h2 className="mt-4 text-xl font-semibold">
-          No Problems Available
-        </h2>
-
-        <p className="text-gray-500 mt-2">
+      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-12 text-center space-y-3">
+        <FileCode2 className="mx-auto text-slate-300 animate-bounce" size={48} />
+        <h2 className="text-xl font-black text-slate-900">No Problems Available</h2>
+        <p className="text-slate-500 text-xs font-semibold">
           This contest doesn't contain any coding problems yet.
         </p>
       </div>
@@ -31,164 +22,76 @@ const ProblemList = ({ problems = [] }) => {
   }
 
   return (
-    <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-
+    <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden text-slate-800">
       {/* Header */}
-
-      <div className="px-6 py-5 border-b">
-
-        <h2 className="text-2xl font-bold">
-          Contest Problems
+      <div className="px-6 sm:px-8 py-5 border-b border-slate-100 flex items-center justify-between">
+        <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <FileCode2 className="text-indigo-600" size={22} />
+          <span>Contest Challenges ({problems.length})</span>
         </h2>
-
+        <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+          Solve to Rank
+        </span>
       </div>
 
-      {/* Desktop Table */}
-
-      <div className="hidden md:block overflow-x-auto">
-
-        <table className="w-full">
-
-          <thead className="bg-gray-50">
-
-            <tr>
-
-              <th className="text-left px-6 py-4">
-                #
-              </th>
-
-              <th className="text-left px-6 py-4">
-                Problem
-              </th>
-
-              <th className="text-left px-6 py-4">
-                Difficulty
-              </th>
-
-              <th className="text-right px-6 py-4">
-                Action
-              </th>
-
+      {/* Desktop & Tablet Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-slate-900 text-white text-[11px] font-black uppercase tracking-wider border-b border-slate-800">
+              <th className="px-6 py-4">#</th>
+              <th className="px-6 py-4">Problem Challenge</th>
+              <th className="px-6 py-4">Difficulty</th>
+              <th className="px-6 py-4 text-right">Action</th>
             </tr>
-
           </thead>
-
-          <tbody>
-
+          <tbody className="divide-y divide-slate-100 text-sm font-semibold">
             {problems.map((problem, index) => {
-
-              const letter = String.fromCharCode(
-                65 + index
-              );
+              const letter = String.fromCharCode(65 + index);
+              const badgeStyle = difficultyBadgeStyles[problem.difficulty] || "bg-slate-100 text-slate-700 border-slate-200";
 
               return (
-                <tr
-                  key={problem._id}
-                  className="border-t hover:bg-gray-50"
+                <motion.tr
+                  key={problem._id || index}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="hover:bg-indigo-50/40 transition-colors duration-200 group"
                 >
-
-                  <td className="px-6 py-5 font-semibold">
+                  <td className="px-6 py-4 font-black text-indigo-600 text-base">
                     {letter}
                   </td>
 
-                  <td className="px-6 py-5">
-
-                    <p className="font-medium">
+                  <td className="px-6 py-4">
+                    <p className="font-black text-slate-900 group-hover:text-indigo-600 transition-colors text-base">
                       {problem.title}
                     </p>
-
+                    <p className="text-xs text-slate-500 line-clamp-1 mt-0.5 font-medium">
+                      {problem.description || "Solve this algorithmic challenge to earn contest points."}
+                    </p>
                   </td>
 
-                  <td className="px-6 py-5">
-
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        difficultyColors[
-                          problem.difficulty
-                        ] ||
-                        "bg-gray-100 text-gray-700"
-                      }`}
-                    >
-                      {problem.difficulty ||
-                        "N/A"}
+                  <td className="px-6 py-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${badgeStyle}`}>
+                      {problem.difficulty || "Easy"}
                     </span>
-
                   </td>
 
-                  <td className="px-6 py-5 text-right">
-
+                  <td className="px-6 py-4 text-right">
                     <Link
                       to={`/coding/${problem._id}`}
-                      className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                      className="inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl shadow-md shadow-indigo-500/20 hover:scale-105 transition-all uppercase tracking-wider"
                     >
-                      Solve
-
-                      <ExternalLink size={16} />
+                      <span>Solve</span>
+                      <ExternalLink size={14} />
                     </Link>
-
                   </td>
-
-                </tr>
+                </motion.tr>
               );
             })}
-
           </tbody>
-
         </table>
-
       </div>
-
-      {/* Mobile Cards */}
-
-      <div className="md:hidden">
-
-        {problems.map((problem, index) => {
-
-          const letter = String.fromCharCode(
-            65 + index
-          );
-
-          return (
-            <div
-              key={problem._id}
-              className="border-t p-5"
-            >
-
-              <div className="flex justify-between">
-
-                <h3 className="font-semibold">
-                  {letter}. {problem.title}
-                </h3>
-
-                <span
-                  className={`px-3 py-1 rounded-full text-xs ${
-                    difficultyColors[
-                      problem.difficulty
-                    ] ||
-                    "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  {problem.difficulty ||
-                    "N/A"}
-                </span>
-
-              </div>
-
-              <Link
-                to={`/coding/${problem._id}`}
-                className="mt-4 inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg"
-              >
-                Solve
-
-                <ExternalLink size={16} />
-              </Link>
-
-            </div>
-          );
-        })}
-
-      </div>
-
     </div>
   );
 };

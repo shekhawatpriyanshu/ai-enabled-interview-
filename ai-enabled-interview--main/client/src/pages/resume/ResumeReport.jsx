@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { getAnalysis } from "../../services/ResumeService";
 import { motion } from "framer-motion";
+import {
+  FaArrowLeft,
+  FaFileAlt,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaLightbulb,
+  FaBriefcase,
+  FaRocket,
+  FaSpinner,
+  FaChartLine,
+} from "react-icons/fa";
 import MainLayout from "../../layouts/MainLayout";
 
 const ResumeReport = () => {
@@ -20,7 +31,7 @@ const ResumeReport = () => {
       const data = await getAnalysis(id);
       setAnalysis(data.analysis);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -29,14 +40,11 @@ const ResumeReport = () => {
   if (loading) {
     return (
       <MainLayout showNavbar={false}>
-        <div className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-sky-200 flex items-center justify-center">
-          <motion.div 
-            animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="text-6xl drop-shadow-lg"
-          >
-            📄
-          </motion.div>
+        <div className="flex flex-col justify-center items-center h-[65vh] gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-cyan-500/20 border-t-cyan-600 animate-spin"></div>
+          <p className="text-slate-500 text-xs font-bold tracking-widest uppercase animate-pulse">
+            Generating AI Resume Report...
+          </p>
         </div>
       </MainLayout>
     );
@@ -45,8 +53,18 @@ const ResumeReport = () => {
   if (!analysis) {
     return (
       <MainLayout showNavbar={false}>
-        <div className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-sky-200 flex items-center justify-center text-slate-800">
-          <h1 className="text-3xl font-bold text-red-500">Report Not Found</h1>
+        <div className="max-w-xl mx-auto my-20 p-8 bg-white border border-slate-200 rounded-3xl text-center space-y-4 shadow-xl">
+          <FaFileAlt className="text-4xl text-rose-500 mx-auto" />
+          <h1 className="text-2xl font-black text-slate-900">Report Not Found</h1>
+          <p className="text-slate-500 text-xs font-semibold">
+            We couldn't retrieve the analysis report. Please try analyzing your resume again.
+          </p>
+          <button
+            onClick={() => navigate("/resume-analyzer")}
+            className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-extrabold text-xs rounded-2xl shadow-md hover:scale-105 transition-all"
+          >
+            Back to Resume Analyzer
+          </button>
         </div>
       </MainLayout>
     );
@@ -54,124 +72,190 @@ const ResumeReport = () => {
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { 
+    visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
+      transition: { staggerChildren: 0.1 },
+    },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
   };
 
   return (
     <MainLayout showNavbar={false}>
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-sky-200 p-6 md:p-12 overflow-hidden relative">
+      <div className="max-w-7xl mx-auto space-y-8 pb-12 bg-slate-50 text-slate-800 relative">
         
-        {/* Background Decor */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-white/40 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-200/40 rounded-full blur-3xl pointer-events-none" />
+        {/* Ambient Color Spheres */}
+        <div className="absolute -top-10 left-10 w-96 h-96 bg-cyan-500/10 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 right-10 w-96 h-96 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none" />
 
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="max-w-7xl mx-auto relative z-10"
-      >
-        <motion.div variants={itemVariants} className="flex justify-between items-center mb-10">
-          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-900 drop-shadow-sm tracking-tight">
-            Resume Report
-          </h1>
-          <button 
-            onClick={() => navigate('/dashboard')}
-            className="px-6 py-3 bg-white/70 hover:bg-white border border-white/50 rounded-full text-slate-700 font-bold shadow-sm transition-all"
+        {/* Back Navigation & Top Actions */}
+        <motion.div
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center justify-between relative z-10"
+        >
+          <Link
+            to="/resume-analyzer"
+            className="group inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:text-indigo-600 hover:border-indigo-300 shadow-sm hover:shadow-md font-extrabold text-xs transition-all duration-300"
+          >
+            <FaArrowLeft className="group-hover:-translate-x-1 transition-transform duration-200 text-indigo-600 text-xs" />
+            <span>Analyze Another Resume</span>
+          </Link>
+
+          <Link
+            to="/dashboard"
+            className="px-4 py-2.5 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 font-extrabold text-xs transition-all"
           >
             Back to Dashboard
-          </button>
+          </Link>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-10">
-          <motion.div variants={itemVariants} whileHover={{ y: -5 }} className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 border border-white shadow-lg hover:border-cyan-300 hover:shadow-cyan-500/20 transition-all group">
-            <h2 className="text-slate-500 text-sm uppercase tracking-widest font-bold mb-3 group-hover:text-cyan-600 transition-colors">
-              ATS Score
-            </h2>
-            <p className="text-7xl font-black text-cyan-600 drop-shadow-sm">
-              {analysis.atsScore}%
-            </p>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-8 relative z-10"
+        >
+          {/* Header Card */}
+          <motion.div
+            variants={itemVariants}
+            className="bg-gradient-to-br from-indigo-100/90 via-white to-cyan-50/80 border border-indigo-200/90 rounded-3xl p-6 sm:p-8 shadow-lg shadow-indigo-500/10 relative overflow-hidden"
+          >
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-cyan-500 via-indigo-600 via-purple-600 to-fuchsia-500" />
+            
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <span className="text-xs font-black uppercase tracking-wider text-cyan-700 bg-cyan-50 border border-cyan-200 px-3 py-1 rounded-full shadow-2xs">
+                  AI Detailed Report
+                </span>
+                <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mt-2">
+                  Resume Analysis Report
+                </h1>
+                <p className="text-slate-600 text-xs font-semibold mt-1">
+                  Target Role Evaluation & Key Improvement Suggestions
+                </p>
+              </div>
+
+              <div className="w-16 h-16 rounded-3xl bg-cyan-50 border border-cyan-200 text-cyan-600 flex items-center justify-center text-3xl shadow-xs shrink-0">
+                <FaChartLine />
+              </div>
+            </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} whileHover={{ y: -5 }} className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 border border-white shadow-lg hover:border-purple-300 hover:shadow-purple-500/20 transition-all group">
-            <h2 className="text-slate-500 text-sm uppercase tracking-widest font-bold mb-3 group-hover:text-purple-600 transition-colors">
-              Keyword Match
+          {/* Metric Cards Grid: ATS Score & Keyword Match */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* ATS Score Card */}
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ y: -4 }}
+              className="group bg-gradient-to-br from-cyan-50/90 via-white to-blue-50/50 rounded-3xl p-8 border border-cyan-200/90 shadow-sm hover:shadow-md hover:border-cyan-400 transition-all duration-300 relative overflow-hidden"
+            >
+              <h2 className="text-xs font-black uppercase tracking-wider text-cyan-700 flex items-center gap-2 mb-3">
+                <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                  <FaChartLine className="text-xs" />
+                </div>
+                <span>ATS Compatibility Score</span>
+              </h2>
+              <p className="text-6xl sm:text-7xl font-black text-cyan-600 tracking-tight">
+                {analysis.atsScore}%
+              </p>
+              <p className="text-slate-500 text-xs font-semibold mt-2">
+                Overall match rate for the selected job description.
+              </p>
+            </motion.div>
+
+            {/* Keyword Match Card */}
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ y: -4 }}
+              className="group bg-gradient-to-br from-purple-50/90 via-white to-fuchsia-50/50 rounded-3xl p-8 border border-purple-200/90 shadow-sm hover:shadow-md hover:border-purple-400 transition-all duration-300 relative overflow-hidden"
+            >
+              <h2 className="text-xs font-black uppercase tracking-wider text-purple-700 flex items-center gap-2 mb-3">
+                <div className="p-2 rounded-xl bg-gradient-to-tr from-purple-600 to-fuchsia-600 text-white shadow-md shadow-purple-500/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                  <FaCheckCircle className="text-xs" />
+                </div>
+                <span>Keyword Match</span>
+              </h2>
+              <p className="text-5xl sm:text-6xl font-black text-purple-600 tracking-tight">
+                {analysis.keywordMatch?.matched}
+                <span className="text-2xl sm:text-3xl text-slate-400 font-bold ml-2">
+                  / {analysis.keywordMatch?.total}
+                </span>
+              </p>
+              <p className="text-slate-500 text-xs font-semibold mt-2">
+                Essential role keywords identified in your resume.
+              </p>
+            </motion.div>
+          </div>
+
+          {/* Matched Skills Chips */}
+          <motion.div variants={itemVariants} className="space-y-3">
+            <h2 className="text-sm font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <FaCheckCircle className="text-emerald-500 text-base" />
+              <span>Matched Skills</span>
             </h2>
-            <p className="text-6xl font-black text-purple-600 drop-shadow-sm">
-              {analysis.keywordMatch?.matched}
-              <span className="text-3xl text-slate-400 font-bold ml-2">/ {analysis.keywordMatch?.total}</span>
-            </p>
+            <div className="flex flex-wrap gap-2.5">
+              {analysis.skillsMatch?.map((skill, index) => (
+                <motion.span
+                  whileHover={{ scale: 1.08 }}
+                  key={index}
+                  className="px-4 py-2 rounded-2xl bg-white border border-emerald-200 text-emerald-700 font-extrabold text-xs shadow-2xs hover:bg-emerald-50 transition-colors"
+                >
+                  {skill}
+                </motion.span>
+              ))}
+            </div>
           </motion.div>
-        </div>
 
-        <motion.div variants={itemVariants} className="mb-10">
-          <h2 className="text-xl text-slate-800 font-bold mb-5 flex items-center gap-3">
-            <span className="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-600 text-sm border border-cyan-200">✓</span>
-            Skills Match
-          </h2>
-          <div className="flex flex-wrap gap-3">
-            {analysis.skillsMatch?.map((skill, index) => (
-              <motion.span
-                whileHover={{ scale: 1.05 }}
-                key={index}
-                className="px-5 py-2.5 rounded-full bg-white border border-cyan-200 text-cyan-700 font-semibold shadow-sm backdrop-blur-md cursor-default"
-              >
-                {skill}
-              </motion.span>
-            ))}
-          </div>
+          {/* Missing Skills Chips */}
+          <motion.div variants={itemVariants} className="space-y-3">
+            <h2 className="text-sm font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+              <FaTimesCircle className="text-rose-500 text-base" />
+              <span>Missing Skills</span>
+            </h2>
+            <div className="flex flex-wrap gap-2.5">
+              {analysis.missingSkills?.map((skill, index) => (
+                <motion.span
+                  whileHover={{ scale: 1.08 }}
+                  key={index}
+                  className="px-4 py-2 rounded-2xl bg-white border border-rose-200 text-rose-600 font-extrabold text-xs shadow-2xs hover:bg-rose-50 transition-colors"
+                >
+                  {skill}
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Detailed Cards */}
+          <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-6">
+            <ReportCard title="Resume Summary" content={analysis.resumeSummary} icon={<FaFileAlt />} color="indigo" />
+            <ReportCard title="Experience Analysis" content={analysis.experienceAnalysis} icon={<FaBriefcase />} color="cyan" />
+            <ReportCard title="Projects Analysis" content={analysis.projectsAnalysis} icon={<FaRocket />} color="purple" />
+            <ReportCard title="Suggestions & Guidance" content={analysis.suggestions?.join(", ")} icon={<FaLightbulb />} color="amber" />
+          </motion.div>
         </motion.div>
-
-        <motion.div variants={itemVariants} className="mb-12">
-          <h2 className="text-xl text-slate-800 font-bold mb-5 flex items-center gap-3">
-            <span className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-sm border border-red-200">✗</span>
-            Missing Skills
-          </h2>
-          <div className="flex flex-wrap gap-3">
-            {analysis.missingSkills?.map((skill, index) => (
-              <motion.span
-                whileHover={{ scale: 1.05 }}
-                key={index}
-                className="px-5 py-2.5 rounded-full bg-white border border-red-200 text-red-600 font-semibold shadow-sm backdrop-blur-md cursor-default"
-              >
-                {skill}
-              </motion.span>
-            ))}
-          </div>
-        </motion.div>
-
-        <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-8">
-          <Card title="Resume Summary" content={analysis.resumeSummary} icon="📝" />
-          <Card title="Experience Analysis" content={analysis.experienceAnalysis} icon="💼" />
-          <Card title="Projects Analysis" content={analysis.projectsAnalysis} icon="🚀" />
-          <Card title="Suggestions" content={analysis.suggestions?.join(", ")} icon="💡" borderHover="border-yellow-400" />
-        </motion.div>
-
-      </motion.div>
-    </div>
+      </div>
     </MainLayout>
   );
 };
 
-const Card = ({ title, content, icon, borderHover = "border-cyan-300" }) => (
-  <motion.div 
-    whileHover={{ y: -5 }}
-    className={`bg-white/70 backdrop-blur-xl border border-white rounded-3xl p-8 shadow-lg hover:${borderHover} hover:shadow-cyan-500/10 transition-all group`}
+const ReportCard = ({ title, content, icon, color = "indigo" }) => (
+  <motion.div
+    whileHover={{ y: -4 }}
+    className="group bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-300"
   >
-    <h2 className="text-2xl text-slate-800 font-bold mb-4 flex items-center gap-3">
-      <span className="text-2xl group-hover:scale-110 transition-transform">{icon}</span>
-      {title}
+    <h2 className="text-base font-black text-slate-900 mb-3 flex items-center gap-2.5">
+      <div className="p-2 rounded-xl bg-slate-100 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+        {icon}
+      </div>
+      <span>{title}</span>
     </h2>
-    <p className="text-slate-600 leading-relaxed text-lg font-medium">
-      {content}
+    <p className="text-slate-700 leading-relaxed text-xs font-semibold">
+      {content || "No details available."}
     </p>
   </motion.div>
 );

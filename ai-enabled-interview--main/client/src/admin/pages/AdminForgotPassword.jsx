@@ -6,6 +6,9 @@ import {
   FaEye,
   FaEyeSlash,
   FaArrowLeft,
+  FaEnvelope,
+  FaLock,
+  FaKey,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
 
@@ -44,7 +47,7 @@ const AdminForgotPassword = () => {
     try {
       setLoading(true);
       await adminApi.post("/auth/forgot-password", { email });
-      setMessage("Verification code sent! Please check your email.");
+      setMessage("Verification code sent! Please check your email inbox.");
       setStep(2);
     } catch (err) {
       console.error(err);
@@ -60,7 +63,7 @@ const AdminForgotPassword = () => {
     setMessage("");
 
     if (!otp.trim()) {
-      setError("OTP is required");
+      setError("OTP verification code is required");
       return;
     }
 
@@ -100,52 +103,54 @@ const AdminForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 flex items-center justify-center px-4 relative overflow-hidden">
-      
-      {/* Background Blobs */}
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Animated Glow Blobs */}
       <motion.div
         animate={{
-          scale: [1, 1.2, 1],
-          x: [0, 30, 0],
-          y: [0, -30, 0],
+          scale: [1, 1.25, 1],
+          x: [0, 35, 0],
+          y: [0, -35, 0],
         }}
         transition={{
-          duration: 8,
+          duration: 9,
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute top-0 left-0 w-96 h-96 bg-cyan-500/20 blur-3xl rounded-full"
-      ></motion.div>
+        className="absolute top-10 left-10 w-96 h-96 bg-cyan-500/15 blur-3xl rounded-full pointer-events-none"
+      />
 
       <motion.div
         animate={{
           scale: [1, 1.3, 1],
-          x: [0, -40, 0],
-          y: [0, 40, 0],
+          x: [0, -45, 0],
+          y: [0, 45, 0],
         }}
         transition={{
-          duration: 10,
+          duration: 11,
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/20 blur-3xl rounded-full"
-      ></motion.div>
+        className="absolute bottom-10 right-10 w-96 h-96 bg-purple-600/15 blur-3xl rounded-full pointer-events-none"
+      />
 
       <div className="relative w-full max-w-md">
         <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.95 }}
+          initial={{ opacity: 0, y: 30, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+          className="bg-slate-900/80 backdrop-blur-2xl border border-slate-800/90 rounded-3xl p-8 sm:p-10 shadow-2xl shadow-purple-950/40 relative overflow-hidden"
         >
-          {/* Logo */}
-          <div className="flex justify-center mb-6">
+          {/* Top Accent Gradient Bar */}
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500" />
+
+          {/* Logo Badge */}
+          <div className="flex justify-center mb-6 pt-2">
             <motion.div
-              whileHover={{ scale: 1.15, rotate: 10 }}
-              whileTap={{ scale: 0.9 }}
-              className="h-20 w-20 rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center shadow-lg cursor-pointer"
+              whileHover={{ scale: 1.1, rotate: 6 }}
+              whileTap={{ scale: 0.95 }}
+              className="h-20 w-20 rounded-3xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-xl shadow-indigo-500/30 ring-2 ring-cyan-400/30 cursor-pointer"
             >
-              <FaRobot className="text-white text-4xl" />
+              <FaRobot className="text-white text-4xl drop-shadow-md" />
             </motion.div>
           </div>
 
@@ -155,16 +160,18 @@ const AdminForgotPassword = () => {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.4 }}
-              className="text-3xl font-bold text-white"
+              className="text-2xl sm:text-3xl font-black text-white tracking-tight"
             >
-              {step === 1 ? "Admin Forgot Password" : "Admin Reset Password"}
+              <span className="bg-gradient-to-r from-cyan-300 via-indigo-200 to-pink-300 bg-clip-text text-transparent">
+                {step === 1 ? "Forgot Password" : "Reset Password"}
+              </span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.4 }}
-              className="text-slate-300 mt-2 text-sm"
+              className="text-xs font-semibold text-slate-400 mt-2"
             >
               {step === 1
                 ? "Enter your admin email to receive a password reset verification code"
@@ -172,45 +179,53 @@ const AdminForgotPassword = () => {
             </motion.p>
           </div>
 
+          {/* Error Banner */}
           {error && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="mb-4 p-3 rounded-xl bg-red-500/20 border border-red-500/30 text-red-300 text-sm"
+              className="mb-6 p-4 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-bold flex items-center gap-2"
             >
-              {error}
+              <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+              <span>{error}</span>
             </motion.div>
           )}
 
+          {/* Success Message Banner */}
           {message && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="mb-4 p-3 rounded-xl bg-green-500/20 border border-green-500/30 text-green-300 text-sm"
+              className="mb-6 p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold flex items-center gap-2"
             >
-              {message}
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse"></span>
+              <span>{message}</span>
             </motion.div>
           )}
 
           {step === 1 ? (
             <form onSubmit={handleSendOtp} className="space-y-5">
-              {/* Email */}
+              {/* Email Input */}
               <motion.div
                 initial={{ opacity: 0, x: -15 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3, duration: 0.4 }}
               >
-                <label className="text-slate-300 text-sm mb-2 block">
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2">
                   Admin Email Address
                 </label>
-
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@example.com"
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition duration-200"
-                />
+                <div className="relative flex items-center">
+                  <div className="absolute left-4 text-slate-400 pointer-events-none">
+                    <FaEnvelope className="text-sm" />
+                  </div>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@example.com"
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl text-white placeholder-slate-500 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 transition-all duration-200 shadow-inner"
+                  />
+                </div>
               </motion.div>
 
               {/* Submit Button */}
@@ -219,15 +234,20 @@ const AdminForgotPassword = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.4 }}
               >
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-cyan-500 to-purple-600 shadow-lg disabled:opacity-50 cursor-pointer"
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-700 hover:via-purple-700 hover:to-cyan-600 text-white font-extrabold text-sm tracking-wide shadow-lg hover:shadow-xl hover:shadow-cyan-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 cursor-pointer mt-2"
                 >
-                  {loading ? "Sending..." : "Send Verification Code"}
-                </motion.button>
+                  {loading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                      <span>Sending Code...</span>
+                    </div>
+                  ) : (
+                    "📩 Send Verification Code"
+                  )}
+                </button>
               </motion.div>
             </form>
           ) : (
@@ -238,18 +258,22 @@ const AdminForgotPassword = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3, duration: 0.4 }}
               >
-                <label className="text-slate-300 text-sm mb-2 block">
-                  Verification Code (OTP)
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2">
+                  Verification Code (6-Digit OTP)
                 </label>
-
-                <input
-                  type="text"
-                  maxLength={6}
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  placeholder="123456"
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 text-center tracking-widest text-lg font-bold transition duration-200"
-                />
+                <div className="relative flex items-center">
+                  <div className="absolute left-4 text-slate-400 pointer-events-none">
+                    <FaKey className="text-sm" />
+                  </div>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    placeholder="123456"
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl text-cyan-300 placeholder-slate-600 text-center tracking-[0.4em] text-lg font-black focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 transition-all duration-200 shadow-inner"
+                  />
+                </div>
               </motion.div>
 
               {/* New Password */}
@@ -258,25 +282,26 @@ const AdminForgotPassword = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4, duration: 0.4 }}
               >
-                <label className="text-slate-300 text-sm mb-2 block">
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2">
                   New Password
                 </label>
-
-                <div className="relative">
+                <div className="relative flex items-center">
+                  <div className="absolute left-4 text-slate-400 pointer-events-none">
+                    <FaLock className="text-sm" />
+                  </div>
                   <input
                     type={showPassword ? "text" : "password"}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="New password"
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition duration-200"
+                    className="w-full pl-11 pr-12 py-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl text-white placeholder-slate-500 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 transition-all duration-200 shadow-inner"
                   />
-
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-4 text-slate-300 hover:text-white transition duration-200"
+                    className="absolute right-4 text-slate-400 hover:text-cyan-300 transition-colors p-1"
                   >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    {showPassword ? <FaEyeSlash className="text-base" /> : <FaEye className="text-base" />}
                   </button>
                 </div>
               </motion.div>
@@ -287,17 +312,21 @@ const AdminForgotPassword = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5, duration: 0.4 }}
               >
-                <label className="text-slate-300 text-sm mb-2 block">
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-2">
                   Confirm Password
                 </label>
-
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm new password"
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition duration-200"
-                />
+                <div className="relative flex items-center">
+                  <div className="absolute left-4 text-slate-400 pointer-events-none">
+                    <FaLock className="text-sm" />
+                  </div>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl text-white placeholder-slate-500 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 transition-all duration-200 shadow-inner"
+                  />
+                </div>
               </motion.div>
 
               {/* Submit Button */}
@@ -306,15 +335,20 @@ const AdminForgotPassword = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.4 }}
               >
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-cyan-500 to-purple-600 shadow-lg disabled:opacity-50 cursor-pointer"
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-700 hover:via-purple-700 hover:to-cyan-600 text-white font-extrabold text-sm tracking-wide shadow-lg hover:shadow-xl hover:shadow-cyan-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 cursor-pointer mt-2"
                 >
-                  {loading ? "Resetting..." : "Reset Password"}
-                </motion.button>
+                  {loading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                      <span>Resetting...</span>
+                    </div>
+                  ) : (
+                    "✨ Confirm Reset Password"
+                  )}
+                </button>
               </motion.div>
             </form>
           )}
@@ -323,14 +357,15 @@ const AdminForgotPassword = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.4 }}
-            className="mt-8 flex items-center justify-between"
+            transition={{ delay: 0.7, duration: 0.4 }}
+            className="mt-8 pt-4 border-t border-slate-800/80 flex items-center justify-between"
           >
             <Link
               to="/admin/login"
-              className="text-cyan-400 font-semibold hover:text-cyan-300 flex items-center text-sm transition duration-200"
+              className="group inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-cyan-300 transition-colors"
             >
-              <FaArrowLeft className="mr-2" /> Back to Admin Login
+              <FaArrowLeft className="group-hover:-translate-x-1 transition-transform duration-200 text-cyan-400" />
+              <span>Back to Admin Login</span>
             </Link>
           </motion.div>
         </motion.div>

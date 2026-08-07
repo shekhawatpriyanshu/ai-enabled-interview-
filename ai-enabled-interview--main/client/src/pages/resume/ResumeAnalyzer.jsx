@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { FaFileAlt, FaRobot } from "react-icons/fa";
 import MainLayout from "../../layouts/MainLayout";
 import UploadResumeCard from "../../components/resume/UploadResumeCard";
 import { uploadResume, analyzeResume } from "../../services/ResumeService";
@@ -14,11 +15,11 @@ const ResumeAnalyzer = () => {
   const handleAnalyze = async () => {
     try {
       if (!file) {
-        alert("Please select a resume");
+        alert("Please select a resume file.");
         return;
       }
       if (!role) {
-        alert("Please enter target role");
+        alert("Please enter target job role.");
         return;
       }
 
@@ -32,9 +33,8 @@ const ResumeAnalyzer = () => {
 
       await analyzeResume(resumeId, role);
       navigate(`/resume-report/${resumeId}`);
-
     } catch (error) {
-      console.log("Resume Error:", error);
+      console.error("Resume Error:", error);
       alert(error.response?.data?.message || "Analysis Failed");
     } finally {
       setLoading(false);
@@ -43,44 +43,57 @@ const ResumeAnalyzer = () => {
 
   return (
     <MainLayout showNavbar={false}>
-      <div className="min-h-screen bg-gradient-to-br from-sky-50 via-sky-100 to-sky-200 p-4 md:p-10 relative overflow-hidden">
-        {/* Decorative Blobs */}
-      <div className="absolute top-10 left-10 w-72 h-72 bg-white/40 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-200/40 rounded-full blur-3xl pointer-events-none" />
+      <div className="max-w-5xl mx-auto space-y-6 pb-12 bg-slate-50 text-slate-800 relative">
+        
+        {/* Ambient Color Spheres */}
+        <div className="absolute -top-10 left-10 w-96 h-96 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 right-10 w-96 h-96 bg-cyan-500/10 blur-3xl rounded-full pointer-events-none" />
 
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 24 }}
-        className="max-w-4xl mx-auto relative z-10"
-      >
-        <div className="text-center mb-10 mt-12 md:mt-4">
-          <motion.div 
-            initial={{ scale: 0 }} 
-            animate={{ scale: 1 }} 
-            transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
-            className="w-20 h-20 mx-auto rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center text-4xl mb-4 shadow-lg shadow-cyan-500/20 border-4 border-white"
-          >
-            📄
-          </motion.div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-900 tracking-tight">
-            AI Resume Analyzer
-          </h1>
-          <p className="text-slate-600 font-medium mt-3 text-lg">
-            Upload your resume and get instant AI-powered feedback tailored to your target role.
-          </p>
+        {/* Header Hero Card */}
+        <motion.div
+          initial={{ opacity: 0, y: -15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="bg-gradient-to-br from-indigo-100/90 via-white to-purple-50/80 border border-indigo-200/90 rounded-3xl p-6 sm:p-8 shadow-lg shadow-indigo-500/10 relative overflow-hidden z-10"
+        >
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-cyan-500 via-indigo-600 via-purple-600 via-fuchsia-500 to-amber-400" />
+
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
+            <div className="space-y-1.5 text-center sm:text-left">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-100 border border-cyan-200 text-cyan-800 text-xs font-black uppercase tracking-wider shadow-xs">
+                <FaRobot className="text-cyan-600 text-xs" />
+                <span>AI-Powered Resume Analysis</span>
+              </div>
+
+              <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
+                <span className="bg-gradient-to-r from-cyan-600 via-indigo-600 via-purple-600 to-fuchsia-500 bg-clip-text text-transparent">
+                  AI Resume Analyzer
+                </span>
+              </h1>
+
+              <p className="text-slate-600 text-sm font-semibold max-w-xl">
+                Upload your resume to get instant ATS match scores, missing keyword analysis, and AI suggestions tailored to your target role.
+              </p>
+            </div>
+
+            <div className="w-16 h-16 rounded-3xl bg-cyan-50 border border-cyan-200 text-cyan-600 flex items-center justify-center text-3xl shadow-xs shrink-0">
+              <FaFileAlt />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Upload Resume Card */}
+        <div className="relative z-10">
+          <UploadResumeCard
+            file={file}
+            setFile={setFile}
+            role={role}
+            setRole={setRole}
+            loading={loading}
+            onAnalyze={handleAnalyze}
+          />
         </div>
-
-        <UploadResumeCard
-          file={file}
-          setFile={setFile}
-          role={role}
-          setRole={setRole}
-          loading={loading}
-          onAnalyze={handleAnalyze}
-        />
-      </motion.div>
-    </div>
+      </div>
     </MainLayout>
   );
 };

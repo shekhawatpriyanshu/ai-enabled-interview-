@@ -133,35 +133,26 @@ const forgotPassword = async (req, res) => {
     // Generate 6-digit numeric OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Set OTP and expiration time (10 minutes)
+    // Set OTP and expiration time (5 minutes)
     user.resetPasswordToken = otp;
-    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+    user.resetPasswordExpire = Date.now() + 5 * 60 * 1000;
     await user.save();
 
-    const message = `You are receiving this email because you (or someone else) have requested the reset of a password. Please use the following One-Time Password (OTP) to reset your password:\n\n${otp}\n\nThis OTP is valid for 10 minutes. If you did not request this, please ignore this email.`;
+    const message = `You are receiving this email because you (or someone else) have requested the reset of a password. Please use the following One-Time Password (OTP) to reset your password:\n\n${otp}\n\nThis OTP is valid for 5 minutes. If you did not request this, please ignore this email.`;
 
-    try {
-      await sendEmail({
-        email: user.email,
-        subject: "Password Reset OTP",
-        message,
-      });
+    // Send email asynchronously (non-blocking for instant UI response)
+    sendEmail({
+      email: user.email,
+      subject: "Password Reset OTP",
+      message,
+    }).catch((err) => {
+      console.error("Background Email sending failed:", err);
+    });
 
-      res.status(200).json({
-        success: true,
-        message: "Password reset OTP sent to email",
-      });
-    } catch (error) {
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
-      await user.save();
-
-      console.error("Email sending failed:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Email could not be sent",
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      message: "Password reset OTP sent to email",
+    });
   } catch (error) {
     res.status(500).json({
       success: false,

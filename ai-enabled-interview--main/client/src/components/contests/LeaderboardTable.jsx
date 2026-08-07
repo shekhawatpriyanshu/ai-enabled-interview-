@@ -1,30 +1,15 @@
-import {
-  Trophy,
-  Medal,
-  Award,
-} from "lucide-react";
+import { Trophy, Medal, Award, Star } from "lucide-react";
+import { motion } from "framer-motion";
 
-const LeaderboardTable = ({
-  leaderboard = [],
-}) => {
+const LeaderboardTable = ({ leaderboard = [] }) => {
   if (leaderboard.length === 0) {
     return (
-      <div className="bg-white rounded-xl border shadow-sm p-10 text-center">
-
-        <Trophy
-          size={55}
-          className="mx-auto text-gray-400"
-        />
-
-        <h2 className="text-2xl font-bold mt-4">
-          No Leaderboard Yet
-        </h2>
-
-        <p className="text-gray-500 mt-2">
-          Once participants submit the contest,
-          rankings will appear here.
+      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-12 text-center space-y-3">
+        <Trophy size={48} className="mx-auto text-amber-400 animate-bounce" />
+        <h2 className="text-xl font-black text-slate-900">No Leaderboard Yet</h2>
+        <p className="text-slate-500 text-xs font-semibold">
+          Once participants submit solutions, live rankings will appear here.
         </p>
-
       </div>
     );
   }
@@ -33,31 +18,25 @@ const LeaderboardTable = ({
     switch (rank) {
       case 1:
         return (
-          <Trophy
-            className="text-yellow-500"
-            size={22}
-          />
+          <span className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 to-yellow-500 text-white flex items-center justify-center shadow-md shadow-amber-500/20 font-black">
+            <Trophy size={18} />
+          </span>
         );
-
       case 2:
         return (
-          <Medal
-            className="text-gray-500"
-            size={22}
-          />
+          <span className="w-8 h-8 rounded-xl bg-gradient-to-tr from-slate-300 to-slate-400 text-white flex items-center justify-center shadow-md font-black">
+            <Medal size={18} />
+          </span>
         );
-
       case 3:
         return (
-          <Award
-            className="text-orange-500"
-            size={22}
-          />
+          <span className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-600 to-orange-600 text-white flex items-center justify-center shadow-md font-black">
+            <Award size={18} />
+          </span>
         );
-
       default:
         return (
-          <span className="font-semibold">
+          <span className="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 font-black text-xs flex items-center justify-center">
             #{rank}
           </span>
         );
@@ -65,142 +44,60 @@ const LeaderboardTable = ({
   };
 
   return (
-    <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-
+    <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden text-slate-800">
       {/* Header */}
-
-      <div className="px-6 py-5 border-b">
-
-        <h2 className="text-2xl font-bold">
-          Leaderboard
+      <div className="px-6 sm:px-8 py-5 border-b border-slate-100 flex items-center justify-between">
+        <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+          <Trophy className="text-amber-500" size={22} />
+          <span>Contest Leaderboard</span>
         </h2>
-
+        <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+          Rankings Updated Live
+        </span>
       </div>
 
-      {/* Desktop */}
-
-      <div className="hidden md:block overflow-x-auto">
-
-        <table className="w-full">
-
-          <thead className="bg-gray-50">
-
-            <tr>
-
-              <th className="text-left px-6 py-4">
-                Rank
-              </th>
-
-              <th className="text-left px-6 py-4">
-                Participant
-              </th>
-
-              <th className="text-left px-6 py-4">
-                Email
-              </th>
-
-              <th className="text-center px-6 py-4">
-                Score
-              </th>
-
+      {/* Desktop Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-slate-900 text-white text-[11px] font-black uppercase tracking-wider border-b border-slate-800">
+              <th className="px-6 py-4">Rank</th>
+              <th className="px-6 py-4">Participant</th>
+              <th className="px-6 py-4">Email</th>
+              <th className="px-6 py-4 text-center">Score</th>
             </tr>
-
           </thead>
-
-          <tbody>
-
+          <tbody className="divide-y divide-slate-100 text-sm font-semibold">
             {leaderboard.map((item, index) => {
-
-              const rank =
-                item.rank || index + 1;
+              const rank = item.rank || index + 1;
 
               return (
-                <tr
-                  key={item._id}
-                  className="border-t hover:bg-gray-50"
+                <motion.tr
+                  key={item._id || index}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.04 }}
+                  className="hover:bg-indigo-50/40 transition-colors duration-200 group"
                 >
+                  <td className="px-6 py-4">{getRankBadge(rank)}</td>
 
-                  <td className="px-6 py-5">
-                    {getRankBadge(rank)}
+                  <td className="px-6 py-4 font-black text-slate-900 group-hover:text-indigo-600 transition-colors">
+                    {item.user?.name || "Participant"}
                   </td>
 
-                  <td className="px-6 py-5 font-semibold">
-                    {item.user?.name}
+                  <td className="px-6 py-4 text-xs font-semibold text-slate-500">
+                    {item.user?.email || "—"}
                   </td>
 
-                  <td className="px-6 py-5 text-gray-500">
-                    {item.user?.email}
+                  <td className="px-6 py-4 text-center font-black text-indigo-600 text-base">
+                    {item.score || 0}
                   </td>
-
-                  <td className="px-6 py-5 text-center font-bold text-blue-600">
-                    {item.score}
-                  </td>
-
-                </tr>
+                </motion.tr>
               );
             })}
-
           </tbody>
-
         </table>
-
       </div>
-
-      {/* Mobile */}
-
-      <div className="md:hidden">
-
-        {leaderboard.map((item, index) => {
-
-          const rank =
-            item.rank || index + 1;
-
-          return (
-            <div
-              key={item._id}
-              className="border-t p-5"
-            >
-
-              <div className="flex justify-between items-center">
-
-                <div className="flex items-center gap-3">
-
-                  {getRankBadge(rank)}
-
-                  <div>
-
-                    <h3 className="font-semibold">
-                      {item.user?.name}
-                    </h3>
-
-                    <p className="text-sm text-gray-500">
-                      {item.user?.email}
-                    </p>
-
-                  </div>
-
-                </div>
-
-                <div className="text-right">
-
-                  <p className="text-sm text-gray-500">
-                    Score
-                  </p>
-
-                  <p className="font-bold text-blue-600">
-                    {item.score}
-                  </p>
-
-                </div>
-
-              </div>
-
-            </div>
-          );
-        })}
-
-      </div>
-
     </div>
   );
 };

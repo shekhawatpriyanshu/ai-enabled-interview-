@@ -1,318 +1,197 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
-  useEffect,
-  useState,
-} from "react";
-
-import {
-  Link,
-} from "react-router-dom";
+  FaRocket,
+  FaSpinner,
+  FaRobot,
+  FaChevronLeft,
+  FaChevronRight,
+  FaExclamationCircle,
+  FaSearch,
+} from "react-icons/fa";
 
 import MainLayout from "../../layouts/MainLayout";
-
-import {
-  getMyInterviews,
-} from "../../services/InterviewService";
-
+import { getMyInterviews } from "../../services/InterviewService";
 import InterviewCard from "../../components/interview/InterviewCard";
 
 const MyInterviews = () => {
-  const [interviews,
-    setInterviews] =
-    useState([]);
-
-  const [loading,
-    setLoading] =
-    useState(true);
-
-  const [error,
-    setError] =
-    useState("");
-
-  const [currentPage,
-    setCurrentPage] =
-    useState(1);
-
-  const [totalPages,
-    setTotalPages] =
-    useState(1);
-
-  const [totalInterviews,
-    setTotalInterviews] =
-    useState(0);
+  const [interviews, setInterviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalInterviews, setTotalInterviews] = useState(0);
 
   useEffect(() => {
-    loadInterviews(
-      currentPage
-    );
+    loadInterviews(currentPage);
   }, [currentPage]);
 
-  const loadInterviews =
-    async (
-      page = 1
-    ) => {
-      try {
-        setLoading(true);
-
-        const data =
-          await getMyInterviews(
-            page,
-            10
-          );
-
-        setInterviews(
-          data.interviews ||
-            []
-        );
-
-        setTotalPages(
-          data.totalPages ||
-            1
-        );
-
-        setTotalInterviews(
-          data.totalInterviews ||
-            0
-        );
-      } catch (err) {
-        console.log(err);
-
-        setError(
-          err.response?.data
-            ?.message ||
-            "Failed to load interviews"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadInterviews = async (page = 1) => {
+    try {
+      setLoading(true);
+      const data = await getMyInterviews(page, 9);
+      setInterviews(data.interviews || []);
+      setTotalPages(data.totalPages || 1);
+      setTotalInterviews(data.totalInterviews || 0);
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "Failed to load interviews.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <MainLayout showNavbar={false}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 px-6 py-10">
+      <div className="max-w-7xl mx-auto space-y-8 pb-12 bg-slate-50 text-slate-800 relative">
+        
+        {/* Floating Ambient Color Spheres */}
+        <div className="absolute -top-10 left-10 w-96 h-96 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 right-10 w-96 h-96 bg-cyan-500/10 blur-3xl rounded-full pointer-events-none" />
 
-        {/* Header */}
-        <div className="max-w-7xl mx-auto mb-12">
+        {/* Top Header Section */}
+        <motion.div
+          initial={{ opacity: 0, y: -15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="bg-gradient-to-br from-indigo-100/90 via-white to-purple-50/80 border border-indigo-200/90 rounded-3xl p-6 sm:p-8 shadow-lg shadow-indigo-500/10 relative overflow-hidden z-10"
+        >
+          {/* Top Multi-tone Accent Bar */}
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-400" />
 
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
+            <div className="space-y-1.5 text-center sm:text-left">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 border border-indigo-200 text-indigo-800 text-xs font-black uppercase tracking-wider shadow-xs">
+                <FaRobot className="text-indigo-600 text-xs" />
+                <span>AI Interview History & Submissions</span>
+              </div>
 
-            <div>
-
-              <h1 className="text-5xl font-bold text-blue-400 mb-3">
-                My Interviews
+              <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
+                <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+                  My Interview Submissions
+                </span>
               </h1>
 
-              <p className="text-slate-200 text-lg">
-                Track your interview sessions,
-                performance and AI feedback.
+              <p className="text-slate-600 text-sm font-semibold max-w-xl">
+                Track your AI mock interview sessions, view coding evaluation scores, and review detailed feedback.
               </p>
-
             </div>
 
             <Link
               to="/interviews/start"
-              className="
-                inline-flex
-                items-center
-                justify-center
-                rounded-2xl
-                bg-gradient-to-r
-                from-cyan-500
-                to-purple-600
-                px-8
-                py-4
-                font-semibold
-                text-white
-                shadow-lg
-                transition-all
-                duration-300
-                hover:scale-105
-              "
+              className="group px-6 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-700 hover:to-cyan-600 text-white font-extrabold text-xs shadow-lg shadow-indigo-500/25 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2.5 shrink-0"
             >
-              🚀 Start Interview
+              <FaRocket className="text-xs group-hover:rotate-12 transition-transform duration-300" />
+              <span>Start New Interview</span>
             </Link>
-
           </div>
+        </motion.div>
 
-        </div>
-
+        {/* Content Body */}
         {loading ? (
-
-          <div className="flex flex-col items-center justify-center py-24">
-
-            <div className="h-14 w-14 rounded-full border-4 border-cyan-500 border-t-transparent animate-spin"></div>
-
-            <p className="mt-6 text-slate-400 text-lg">
-              Loading Interviews...
+          <div className="flex flex-col justify-center items-center py-20 gap-4">
+            <div className="w-12 h-12 rounded-full border-4 border-indigo-500/20 border-t-indigo-600 animate-spin" />
+            <p className="text-slate-500 text-xs font-bold tracking-widest uppercase animate-pulse">
+              Loading Interview Sessions...
             </p>
-
           </div>
-
         ) : error ? (
-
-          <div className="max-w-4xl mx-auto">
-
-            <div className="rounded-3xl border border-red-500/30 bg-red-500/10 p-6 text-red-300">
-              {error}
-            </div>
-
+          <div className="bg-rose-50 border border-rose-200 rounded-3xl p-6 text-center space-y-2 max-w-2xl mx-auto">
+            <FaExclamationCircle className="text-3xl text-rose-600 mx-auto" />
+            <h3 className="text-lg font-bold text-rose-900">{error}</h3>
+            <button
+              onClick={() => loadInterviews(currentPage)}
+              className="px-4 py-2 rounded-xl bg-rose-600 text-white text-xs font-bold shadow-md hover:bg-rose-700 transition-all"
+            >
+              Try Again
+            </button>
           </div>
-
         ) : interviews.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-12 text-center space-y-4 max-w-2xl mx-auto"
+          >
+            <div className="w-20 h-20 rounded-3xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center mx-auto text-3xl shadow-xs">
+              <FaRobot className="animate-bounce" />
+            </div>
 
-          <div className="max-w-4xl mx-auto">
-
-            <div className="rounded-[32px] border border-white/10 bg-white/5 p-16 text-center">
-
-              <div className="text-8xl mb-6">
-                🤖
-              </div>
-
-              <h2 className="text-4xl font-bold text-white mb-4">
-                No Interviews Yet
+            <div className="space-y-1">
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+                No Interview Sessions Found
               </h2>
-
-              <p className="text-slate-400">
-                Start your first AI-powered interview.
+              <p className="text-slate-500 text-xs font-medium max-w-sm mx-auto">
+                You haven't completed any AI interview sessions yet. Start your first mock interview session now!
               </p>
-
             </div>
 
-          </div>
-
+            <Link
+              to="/interviews/start"
+              className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-700 hover:to-cyan-600 text-white font-extrabold text-xs rounded-2xl shadow-lg shadow-indigo-500/25 hover:scale-105 active:scale-95 transition-all duration-200"
+            >
+              <FaRocket />
+              <span>Start First Interview</span>
+            </Link>
+          </motion.div>
         ) : (
-
-          <div className="max-w-7xl mx-auto">
-
-            <div className="flex justify-between items-center mb-6">
-
-              <p className="text-slate-300">
-                Page{" "}
-                <span className="text-cyan-400 font-bold">
-                  {currentPage}
-                </span>{" "}
-                of{" "}
-                <span className="text-cyan-400 font-bold">
-                  {totalPages}
-                </span>
+          <div className="space-y-6 relative z-10">
+            {/* Meta Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
+              <p className="text-xs font-extrabold text-slate-600">
+                Showing Page <span className="text-indigo-600 font-black">{currentPage}</span> of{" "}
+                <span className="text-indigo-600 font-black">{totalPages}</span>
               </p>
-
-              <p className="text-slate-400">
-                Total Interviews:{" "}
-                {totalInterviews}
-              </p>
-
+              <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+                Total Submissions: {totalInterviews}
+              </span>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-
-              {interviews.map(
-                (
-                  interview
-                ) => (
-                  <InterviewCard
-                    key={
-                      interview._id
-                    }
-                    interview={
-                      interview
-                    }
-                  />
-                )
-              )}
-
+            {/* Grid of Interview Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {interviews.map((interview) => (
+                <InterviewCard key={interview._id} interview={interview} />
+              ))}
             </div>
 
-            {/* Pagination */}
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 pt-6">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-extrabold text-xs hover:bg-indigo-50 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-1.5"
+                >
+                  <FaChevronLeft className="text-[10px]" />
+                  <span>Previous</span>
+                </button>
 
-            <div className="flex justify-center items-center gap-3 mt-10">
-
-              <button
-                onClick={() =>
-                  setCurrentPage(
-                    (
-                      prev
-                    ) =>
-                      prev - 1
-                  )
-                }
-                disabled={
-                  currentPage ===
-                  1
-                }
-                className="
-                  px-4 py-2
-                  rounded-xl
-                  bg-slate-800
-                  text-white
-                  disabled:opacity-50
-                "
-              >
-                Previous
-              </button>
-
-              {[
-                ...Array(
-                  totalPages
-                ),
-              ].map(
-                (
-                  _,
-                  index
-                ) => (
+                {[...Array(totalPages)].map((_, index) => (
                   <button
-                    key={
-                      index
-                    }
-                    onClick={() =>
-                      setCurrentPage(
-                        index +
-                          1
-                      )
-                    }
-                    className={`px-4 py-2 rounded-xl ${
-                      currentPage ===
-                      index +
-                        1
-                        ? "bg-cyan-500 text-white"
-                        : "bg-slate-800 text-slate-300"
+                    key={index}
+                    onClick={() => setCurrentPage(index + 1)}
+                    className={`w-9 h-9 rounded-xl font-black text-xs transition-all duration-200 ${
+                      currentPage === index + 1
+                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/20"
+                        : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-100"
                     }`}
                   >
-                    {index +
-                      1}
+                    {index + 1}
                   </button>
-                )
-              )}
+                ))}
 
-              <button
-                onClick={() =>
-                  setCurrentPage(
-                    (
-                      prev
-                    ) =>
-                      prev + 1
-                  )
-                }
-                disabled={
-                  currentPage ===
-                  totalPages
-                }
-                className="
-                  px-4 py-2
-                  rounded-xl
-                  bg-slate-800
-                  text-white
-                  disabled:opacity-50
-                "
-              >
-                Next
-              </button>
-
-            </div>
-
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-extrabold text-xs hover:bg-indigo-50 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-1.5"
+                >
+                  <span>Next</span>
+                  <FaChevronRight className="text-[10px]" />
+                </button>
+              </div>
+            )}
           </div>
-
         )}
-
       </div>
     </MainLayout>
   );

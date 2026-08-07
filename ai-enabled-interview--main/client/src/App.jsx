@@ -133,7 +133,7 @@ const AdminMessageList = lazy(() => import("./admin/pages/community/MessageList"
 const AdminAnalytics = lazy(() => import("./admin/pages/community/Analytics"));
 
 // Admin Analytics
-const AdminAnalyticsDashboard = lazy(() => import("./admin/pages/analytics/AnalyticsDashboard"));
+import AdminAnalyticsDashboard from "./admin/pages/analytics/AnalyticsDashboard";
 const AdminUserAnalytics = lazy(() => import("./admin/pages/analytics/UserAnalytics"));
 const AdminInterviewAnalytics = lazy(() => import("./admin/pages/analytics/InterviewAnalytics"));
 const AdminCodingAnalytics = lazy(() => import("./admin/pages/analytics/CodingAnalytics"));
