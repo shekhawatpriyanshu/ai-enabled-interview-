@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { FaEye, FaTrash, FaCommentDots, FaUser } from "react-icons/fa";
+import { FaEye, FaEdit, FaTrash, FaCommentDots, FaUser } from "react-icons/fa";
 
-const CommentTable = ({ comments = [], loading = false, onDelete }) => {
+const CommentTable = ({ comments = [], loading = false, onView, onEdit, onDelete }) => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-slate-200/90 shadow-xl">
@@ -44,7 +44,7 @@ const CommentTable = ({ comments = [], loading = false, onDelete }) => {
             <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-center">
               Date
             </th>
-            <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-center w-[130px]">
+            <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-center w-[140px]">
               Actions
             </th>
           </tr>
@@ -95,17 +95,26 @@ const CommentTable = ({ comments = [], loading = false, onDelete }) => {
 
               {/* Actions */}
               <td className="px-6 py-4">
-                <div className="flex justify-center items-center gap-2">
-                  <Link
-                    to={`/admin/community/discussion/${comment.discussion?._id}`}
-                    className="w-8.5 h-8.5 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
-                    title="View Parent Discussion"
+                <div className="flex justify-center items-center gap-1.5">
+                  <button
+                    onClick={() => onView && onView(comment)}
+                    className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
+                    title="View Full Comment"
                   >
                     <FaEye />
-                  </Link>
+                  </button>
+
                   <button
-                    onClick={() => onDelete(comment)}
-                    className="w-8.5 h-8.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
+                    onClick={() => onEdit && onEdit(comment)}
+                    className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
+                    title="Edit Comment"
+                  >
+                    <FaEdit />
+                  </button>
+
+                  <button
+                    onClick={() => onDelete && onDelete(comment)}
+                    className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
                     title="Delete Comment"
                   >
                     <FaTrash />
@@ -115,9 +124,11 @@ const CommentTable = ({ comments = [], loading = false, onDelete }) => {
             </tr>
           ))}
         </tbody>
+
       </table>
     </div>
   );
 };
+
 
 export default CommentTable;

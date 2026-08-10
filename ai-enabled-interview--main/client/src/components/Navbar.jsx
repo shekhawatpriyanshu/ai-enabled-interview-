@@ -8,7 +8,14 @@ import { getProfile } from "../services/ProfileService";
 const Navbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cached_profile");
+      return cached ? JSON.parse(cached) : null;
+    } catch (e) {
+      return null;
+    }
+  });
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -16,6 +23,7 @@ const Navbar = ({ toggleSidebar }) => {
         const data = await getProfile();
         if (data && data.profile) {
           setProfile(data.profile);
+          localStorage.setItem("cached_profile", JSON.stringify(data.profile));
         }
       } catch (err) {
         console.log("Failed to fetch profile in navbar:", err);
@@ -26,6 +34,9 @@ const Navbar = ({ toggleSidebar }) => {
     }
   }, [user]);
 
+  const userType = user?.userType || profile?.userType || "Student";
+  const isProfessional = userType === "Working Professional";
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -35,7 +46,7 @@ const Navbar = ({ toggleSidebar }) => {
     }
   };
 
-  const isProfessional = profile?.userType === "Working Professional";
+
 
   return (
     <header className="bg-gradient-to-r from-indigo-50/90 via-white to-purple-50/90 backdrop-blur-xl border-b border-indigo-100/80 px-4 sm:px-6 py-2.5 flex justify-between items-center sticky top-0 z-40 shadow-sm transition-all duration-300 relative overflow-hidden">

@@ -39,10 +39,10 @@ const InterviewCard = ({ interview }) => {
         />
 
         {/* Card Header: Icon + Title + Status Pill */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-3.5 min-w-0">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <div
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6 shadow-xs ${
+              className={`w-10 h-10 rounded-2xl flex items-center justify-center text-lg shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6 shadow-xs ${
                 isCompleted
                   ? "bg-gradient-to-tr from-emerald-500 to-teal-600 text-white shadow-emerald-500/20"
                   : "bg-gradient-to-tr from-amber-500 to-orange-500 text-white shadow-amber-500/20"
@@ -51,31 +51,33 @@ const InterviewCard = ({ interview }) => {
               <FaUserTie />
             </div>
 
-            <div className="min-w-0">
-              <h3 className="text-lg font-black text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors truncate">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors leading-snug break-words">
                 {interview.role || "Software Developer"}
               </h3>
-              <p className="text-xs font-bold text-slate-500 mt-0.5 capitalize">
+              <p className="text-[11px] font-bold text-slate-500 mt-0.5 capitalize truncate">
                 {interview.experienceLevel || "Intermediate"} Level
               </p>
             </div>
           </div>
 
           <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border shrink-0 shadow-2xs ${
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-tight border shrink-0 shadow-2xs self-start ${
               isCompleted
                 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                 : "bg-amber-50 text-amber-700 border-amber-200 animate-pulse"
             }`}
           >
             {isCompleted ? (
-              <FaCheckCircle className="text-emerald-600 text-xs" />
+              <FaCheckCircle className="text-emerald-600 text-[9px]" />
             ) : (
-              <FaHourglassHalf className="text-amber-600 text-xs animate-spin" />
+              <FaHourglassHalf className="text-amber-600 text-[9px] animate-spin" />
             )}
             <span>{interview.status}</span>
           </span>
         </div>
+
+
 
         {/* Card Metrics & Details */}
         <div className="mt-5 grid grid-cols-2 gap-3 pt-4 border-t border-slate-100">

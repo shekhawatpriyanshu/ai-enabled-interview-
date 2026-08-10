@@ -48,27 +48,29 @@ const TestCard = ({ test }) => {
         </p>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-2 gap-3 mt-5">
-          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 group-hover:bg-indigo-50/40 transition-colors">
-            <div className="flex items-center gap-1.5 text-indigo-600 text-xs font-bold uppercase tracking-wider">
-              <FaLayerGroup size={11} />
-              <span>Questions</span>
+        <div className="grid grid-cols-2 gap-2.5 mt-5">
+          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-2.5 sm:p-3 min-w-0 group-hover:bg-indigo-50/40 transition-colors flex flex-col justify-center">
+            <div className="flex items-center gap-1 text-indigo-600 text-[10px] font-black uppercase tracking-tight">
+              <FaLayerGroup size={10} className="shrink-0" />
+              <span className="whitespace-nowrap">Questions</span>
             </div>
-            <h3 className="text-xl font-extrabold text-slate-800 mt-1">
+            <h3 className="text-lg sm:text-xl font-extrabold text-slate-800 mt-1">
               {test.questions?.length || 0}
             </h3>
           </div>
 
-          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 group-hover:bg-purple-50/40 transition-colors">
-            <div className="flex items-center gap-1.5 text-purple-600 text-xs font-bold uppercase tracking-wider">
-              <FaClock size={11} />
-              <span>Duration</span>
+          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-2.5 sm:p-3 min-w-0 group-hover:bg-purple-50/40 transition-colors flex flex-col justify-center">
+            <div className="flex items-center gap-1 text-purple-600 text-[10px] font-black uppercase tracking-tight">
+              <FaClock size={10} className="shrink-0" />
+              <span className="whitespace-nowrap">Duration</span>
             </div>
-            <h3 className="text-xl font-extrabold text-slate-800 mt-1">
+            <h3 className="text-lg sm:text-xl font-extrabold text-slate-800 mt-1">
               {test.duration} min
             </h3>
           </div>
         </div>
+
+
 
         <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
           <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider flex items-center gap-1">

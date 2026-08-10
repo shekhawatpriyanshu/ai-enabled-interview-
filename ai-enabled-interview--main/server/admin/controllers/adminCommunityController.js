@@ -197,6 +197,53 @@ const getDiscussionById =
 
 
 // ==============================================
+// ==============================================
+// Update Discussion
+// PUT /api/admin/community/discussion/:id
+// ==============================================
+const updateDiscussion = async (req, res) => {
+  try {
+    const { title, content, category, tags } = req.body;
+
+    const discussion = await Discussion.findById(req.params.id);
+
+    if (!discussion) {
+      return res.status(404).json({
+        success: false,
+        message: "Discussion not found",
+      });
+    }
+
+    if (title !== undefined) discussion.title = title;
+    if (content !== undefined) discussion.content = content;
+    if (category !== undefined) discussion.category = category;
+
+    if (tags !== undefined) {
+      discussion.tags = Array.isArray(tags)
+        ? tags
+        : typeof tags === "string"
+        ? tags.split(",").map((t) => t.trim()).filter((t) => t.length > 0)
+        : [];
+    }
+
+    await discussion.save();
+
+    const updated = await Discussion.findById(discussion._id).populate("user", "name email");
+
+    res.status(200).json({
+      success: true,
+      message: "Discussion updated successfully",
+      discussion: updated,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ==============================================
 // Delete Discussion
 // DELETE /api/admin/community/discussion/:id
 // ==============================================
@@ -241,6 +288,7 @@ const deleteDiscussion =
       });
     }
   };
+
 
 // ==============================================
 // Get All Comments
@@ -331,6 +379,75 @@ const getDiscussionComments = async (req, res) => {
 
 
 // ==============================================
+// Get Single Comment Details
+// GET /api/admin/community/comment/:id
+// ==============================================
+const getCommentById = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.id)
+      .populate("user", "name email")
+      .populate("discussion", "title");
+
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        message: "Comment not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      comment,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ==============================================
+// Update Comment
+// PUT /api/admin/community/comment/:id
+// ==============================================
+const updateComment = async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    const comment = await Comment.findById(req.params.id);
+
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        message: "Comment not found",
+      });
+    }
+
+    if (text !== undefined) {
+      comment.text = text;
+    }
+
+    await comment.save();
+
+    const updated = await Comment.findById(comment._id)
+      .populate("user", "name email")
+      .populate("discussion", "title");
+
+    res.status(200).json({
+      success: true,
+      message: "Comment updated successfully",
+      comment: updated,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ==============================================
 // Delete Comment
 // DELETE /api/admin/community/comment/:id
 // ==============================================
@@ -360,6 +477,7 @@ const deleteComment = async (req, res) => {
     });
   }
 };
+
 // ==============================================
 // Get All Study Groups
 // GET /api/admin/community/groups
@@ -1135,6 +1253,75 @@ message:error.message
 
 
 // ==============================================
+// Get Single Message Details
+// GET /api/admin/community/message/:id
+// ==============================================
+const getMessageById = async (req, res) => {
+  try {
+    const message = await GroupMessage.findById(req.params.id)
+      .populate("sender", "name email role")
+      .populate("group", "name description");
+
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        message: "Message not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ==============================================
+// Update Message
+// PUT /api/admin/community/message/:id
+// ==============================================
+const updateMessage = async (req, res) => {
+  try {
+    const { message: messageText } = req.body;
+
+    const message = await GroupMessage.findById(req.params.id);
+
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        message: "Message not found",
+      });
+    }
+
+    if (messageText !== undefined) {
+      message.message = messageText;
+    }
+
+    await message.save();
+
+    const updated = await GroupMessage.findById(message._id)
+      .populate("sender", "name email")
+      .populate("group", "name");
+
+    res.status(200).json({
+      success: true,
+      message: "Message updated successfully",
+      data: updated,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ==============================================
 // Delete Message
 // DELETE /api/admin/community/message/:id
 // ==============================================
@@ -1304,7 +1491,10 @@ getDiscussions,
 
 getDiscussionById,
 
+updateDiscussion,
+
 deleteDiscussion,
+
 
 
 
@@ -1312,9 +1502,14 @@ deleteDiscussion,
 
 getComments,
 
+getCommentById,
+
+updateComment,
+
 getDiscussionComments,
 
 deleteComment,
+
 
 
 
@@ -1341,6 +1536,10 @@ removeMember,
 // Messages
 
 getMessages,
+
+getMessageById,
+
+updateMessage,
 
 getGroupMessages,
 

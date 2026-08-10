@@ -29,11 +29,30 @@ const experienceLevel =
   });
 }
 
+    // Fetch past interview questions asked to this candidate for the same role
+    const pastSessions = await InterviewSession.find({
+      user: req.user._id,
+      role: { $regex: new RegExp(`^${role}$`, "i") },
+    })
+      .sort({ createdAt: -1 })
+      .limit(5);
+
+    const pastQuestions = [];
+    pastSessions.forEach((session) => {
+      if (Array.isArray(session.questions)) {
+        session.questions.forEach((q) => {
+          if (q.question) pastQuestions.push(q.question);
+        });
+      }
+    });
+
     const generatedQuestions =
       await generateQuestions(
         role,
-        experienceLevel
+        experienceLevel,
+        pastQuestions
       );
+
 
     const interview =
       await InterviewSession.create({

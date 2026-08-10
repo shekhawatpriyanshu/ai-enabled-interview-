@@ -29,7 +29,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const { user, logout } = useAuth();
 
   const [loading, setLoading] = useState(false);
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cached_profile");
+      return cached ? JSON.parse(cached) : null;
+    } catch (e) {
+      return null;
+    }
+  });
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -37,6 +44,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         const data = await getProfile();
         if (data && data.profile) {
           setProfile(data.profile);
+          localStorage.setItem("cached_profile", JSON.stringify(data.profile));
         }
       } catch (error) {
         console.log("Failed to fetch profile for sidebar", error);
@@ -47,14 +55,19 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     }
   }, [user]);
 
+  const userType = user?.userType || profile?.userType || "Student";
+  const isProfessional = userType === "Working Professional";
+
   const getAvatarUrl = () => {
-    if (profile?.avatar) {
-      return profile.avatar.startsWith("http")
-        ? profile.avatar
-        : `${getBackendUrl()}/${profile.avatar.replace(/\\/g, "/")}`;
+    const avatar = profile?.avatar || user?.avatar;
+    if (avatar) {
+      return avatar.startsWith("http")
+        ? avatar
+        : `${getBackendUrl()}/${avatar.replace(/\\/g, "/")}`;
     }
     return null;
   };
+
 
   const handleLogout = async () => {
     try {
@@ -83,9 +96,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       items: [
         { name: "Start Interview", icon: <FaMicrophone />, path: "/interviews/start", color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
         { name: "My Interviews", icon: <FaUserTie />, path: "/interviews", color: "text-teal-400", bg: "bg-teal-500/10 border-teal-500/20" },
-        { name: "Resume Analyzer", icon: <FaFileAlt />, path: "/resume-analyzer", color: "text-cyan-400", bg: "bg-cyan-500/10 border-cyan-500/20" },
+        { name: " Resume & Portfolio Hub", icon: <FaFileAlt />, path: "/resume-analyzer", color: "text-cyan-400", bg: "bg-cyan-500/10 border-cyan-500/20" },
       ],
     },
+
+
+
     {
       title: "Practice & Assessment",
       items: [
@@ -148,17 +164,17 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-950"></span>
           </div>
 
-          <div className="min-w-0 flex-1 space-y-0.5">
-            <div className="flex items-center justify-between gap-1">
-              <span className="text-sm font-black text-white tracking-tight shrink-0">
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="flex items-center justify-between gap-1 flex-wrap">
+              <span className="text-sm font-black text-white tracking-tight truncate">
                 {user?.name || "Student"}
               </span>
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-lg border shadow-xs shrink-0 ${
-                profile?.userType === "Working Professional"
+
+              <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg border shadow-xs shrink-0 ${isProfessional
                   ? "bg-slate-900 border-cyan-500/50 text-cyan-300 ring-1 ring-cyan-500/30"
                   : "bg-slate-900 border-indigo-500/50 text-indigo-200 ring-1 ring-indigo-500/30"
-              }`}>
-                {profile?.userType === "Working Professional" ? (
+                }`}>
+                {isProfessional ? (
                   <>
                     <FaUserTie className="text-cyan-400 text-[9px]" />
                     <span>WORKING PROFESSIONAL</span>
@@ -171,10 +187,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 )}
               </span>
             </div>
-            <p className="text-xs font-bold text-slate-300 break-all leading-tight">
+            <p className="text-xs font-bold text-slate-400 truncate leading-tight">
               {user?.email || "user@example.com"}
             </p>
           </div>
+
         </div>
 
         {/* Mobile Close */}
@@ -205,26 +222,27 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                   to={menu.path}
                   onClick={handleNavClick}
                   className={`group relative flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-300 font-bold text-xs sm:text-sm tracking-wide ${active
-                      ? "bg-gradient-to-r from-blue-600 via-indigo-600 via-purple-600 to-cyan-500 text-white font-extrabold shadow-lg shadow-indigo-500/30 scale-[1.02] border-l-4 border-cyan-300"
-                      : "text-slate-300 hover:text-white hover:bg-slate-900/90 hover:translate-x-1.5 hover:shadow-md hover:border-slate-800 border border-transparent"
+                    ? "bg-gradient-to-r from-blue-600 via-indigo-600 via-purple-600 to-cyan-500 text-white font-extrabold shadow-lg shadow-indigo-500/30 scale-[1.02] border-l-4 border-cyan-300"
+                    : "text-slate-300 hover:text-white hover:bg-slate-900/90 hover:translate-x-1.5 hover:shadow-md hover:border-slate-800 border border-transparent"
                     }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div
                       className={`w-8 h-8 rounded-lg border flex items-center justify-center text-sm shrink-0 transition-all duration-300 ${active
-                          ? "bg-white/20 border-white/30 text-white"
-                          : `${menu.bg} ${menu.color} group-hover:scale-110 group-hover:rotate-6`
+                        ? "bg-white/20 border-white/30 text-white"
+                        : `${menu.bg} ${menu.color} group-hover:scale-110 group-hover:rotate-6`
                         }`}
                     >
                       {menu.icon}
                     </div>
-                    <span className="truncate">{menu.name}</span>
+                    <span className="leading-snug break-words">{menu.name}</span>
                   </div>
+
 
                   <FaChevronRight
                     className={`text-xs transition-all duration-300 shrink-0 ${active
-                        ? "text-white opacity-100 translate-x-0"
-                        : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-cyan-400"
+                      ? "text-white opacity-100 translate-x-0"
+                      : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-cyan-400"
                       }`}
                   />
                 </NavLink>

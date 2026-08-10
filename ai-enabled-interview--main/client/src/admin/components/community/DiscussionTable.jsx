@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { FaEye, FaTrash, FaComments, FaThumbsUp, FaCommentDots, FaUser } from "react-icons/fa";
+import { FaEye, FaEdit, FaTrash, FaComments, FaThumbsUp, FaCommentDots, FaUser } from "react-icons/fa";
 
-const DiscussionTable = ({ discussions = [], loading = false, onDelete }) => {
+const DiscussionTable = ({ discussions = [], loading = false, onEdit, onDelete }) => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-slate-200/90 shadow-xl">
@@ -47,7 +47,7 @@ const DiscussionTable = ({ discussions = [], loading = false, onDelete }) => {
             <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-center">
               Created
             </th>
-            <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-center w-[130px]">
+            <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-center w-[140px]">
               Actions
             </th>
           </tr>
@@ -115,17 +115,26 @@ const DiscussionTable = ({ discussions = [], loading = false, onDelete }) => {
 
               {/* Actions */}
               <td className="px-6 py-4">
-                <div className="flex justify-center items-center gap-2">
+                <div className="flex justify-center items-center gap-1.5">
                   <Link
                     to={`/admin/community/discussion/${discussion._id}`}
-                    className="w-8.5 h-8.5 rounded-xl bg-cyan-50 text-cyan-600 hover:bg-cyan-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
+                    className="w-8 h-8 rounded-xl bg-cyan-50 text-cyan-600 hover:bg-cyan-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
                     title="View Discussion"
                   >
                     <FaEye />
                   </Link>
+
                   <button
-                    onClick={() => onDelete(discussion)}
-                    className="w-8.5 h-8.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
+                    onClick={() => onEdit && onEdit(discussion)}
+                    className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
+                    title="Edit Discussion"
+                  >
+                    <FaEdit />
+                  </button>
+
+                  <button
+                    onClick={() => onDelete && onDelete(discussion)}
+                    className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
                     title="Delete Discussion"
                   >
                     <FaTrash />
@@ -135,9 +144,11 @@ const DiscussionTable = ({ discussions = [], loading = false, onDelete }) => {
             </tr>
           ))}
         </tbody>
+
       </table>
     </div>
   );
 };
+
 
 export default DiscussionTable;

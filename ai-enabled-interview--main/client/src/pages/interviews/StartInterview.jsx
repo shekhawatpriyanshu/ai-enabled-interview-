@@ -43,14 +43,7 @@ const StartInterview = () => {
 
             {/* Header Content */}
             <div className="text-center mb-10">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-6 shadow-sm">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-600"></span>
-                </span>
-                AI Interview Assistant v2.0
-              </div>
+
 
               {/* Bot Avatar Icon */}
               <div className="relative group w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-6 cursor-pointer">

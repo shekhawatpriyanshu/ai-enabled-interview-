@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { FaComments, FaChevronLeft, FaChevronRight, FaSearch } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 import useAdminCommunity from "../../hooks/useAdminCommunity";
 
 import DiscussionTable from "../../components/community/DiscussionTable";
 import DeleteModal from "../../components/community/DeleteModal";
+import EditDiscussionModal from "../../components/community/EditDiscussionModal";
 
 const DiscussionList = () => {
-  const { loading, getDiscussions, deleteDiscussion } = useAdminCommunity();
+  const { loading, getDiscussions, updateDiscussion, deleteDiscussion } = useAdminCommunity();
 
   const [discussions, setDiscussions] = useState([]);
   const [page, setPage] = useState(1);
@@ -15,7 +17,9 @@ const DiscussionList = () => {
   const [total, setTotal] = useState(0);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("-createdAt");
+
   const [selectedDiscussion, setSelectedDiscussion] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
   useEffect(() => {
@@ -37,9 +41,24 @@ const DiscussionList = () => {
     }
   };
 
+  const openEditModal = (discussion) => {
+    setSelectedDiscussion(discussion);
+    setShowEditModal(true);
+  };
+
   const openDeleteModal = (discussion) => {
     setSelectedDiscussion(discussion);
     setShowDelete(true);
+  };
+
+  const handleUpdate = async (id, updatedData) => {
+    const response = await updateDiscussion(id, updatedData);
+    if (response?.success) {
+      toast.success("Discussion updated successfully!");
+      setShowEditModal(false);
+      setSelectedDiscussion(null);
+      loadDiscussions();
+    }
   };
 
   const handleDelete = async () => {
@@ -48,6 +67,7 @@ const DiscussionList = () => {
     const response = await deleteDiscussion(selectedDiscussion._id);
 
     if (response?.success) {
+      toast.success("Discussion deleted successfully!");
       setShowDelete(false);
       setSelectedDiscussion(null);
       loadDiscussions();
@@ -68,7 +88,7 @@ const DiscussionList = () => {
             </span>
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-2">
-            Curate, monitor, and manage community discussion threads and topics.
+            Curate, monitor, edit, and manage community discussion threads and topics.
           </p>
         </div>
 
@@ -129,6 +149,7 @@ const DiscussionList = () => {
         <DiscussionTable
           loading={loading}
           discussions={discussions}
+          onEdit={openEditModal}
           onDelete={openDeleteModal}
         />
       </div>
@@ -158,12 +179,26 @@ const DiscussionList = () => {
         </div>
       )}
 
-      {/* 5. DELETE MODAL */}
+      {/* 5. EDIT MODAL */}
+      <EditDiscussionModal
+        open={showEditModal}
+        discussion={selectedDiscussion}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedDiscussion(null);
+        }}
+        onSave={handleUpdate}
+      />
+
+      {/* 6. DELETE MODAL */}
       <DeleteModal
         open={showDelete}
         title="Delete Discussion"
         message="Are you sure you want to permanently delete this discussion thread?"
-        onClose={() => setShowDelete(false)}
+        onClose={() => {
+          setShowDelete(false);
+          setSelectedDiscussion(null);
+        }}
         onConfirm={handleDelete}
       />
     </div>

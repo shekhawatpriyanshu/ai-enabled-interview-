@@ -16,7 +16,9 @@ import {
   FaChartLine,
   FaBolt,
   FaGraduationCap,
+  FaGlobe,
 } from "react-icons/fa";
+
 
 const Dashboard = () => {
   const [analytics, setAnalytics] = useState(null);
@@ -148,7 +150,18 @@ const Dashboard = () => {
       badge: "Assessment",
       badgeBg: "bg-amber-100 text-amber-700 border-amber-300",
     },
+    {
+      title: "AI Portfolio Builder",
+      desc: "Generate & publish a sleek developer portfolio website from your resume and stats",
+      icon: <FaGlobe className="text-2xl text-indigo-600" />,
+      cardBg: "bg-gradient-to-br from-indigo-50/70 via-white to-purple-50/40 border-indigo-200/80 hover:border-indigo-400",
+      iconBg: "bg-indigo-100 border-indigo-200",
+      link: "/portfolio/generator",
+      badge: "AI Portfolio",
+      badgeBg: "bg-indigo-100 text-indigo-700 border-indigo-300",
+    },
   ];
+
 
   return (
     <MainLayout showNavbar={true}>

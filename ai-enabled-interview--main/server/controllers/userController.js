@@ -26,10 +26,13 @@ const parseProfileFields = (req) => {
 
   if (req.file) {
     fields.avatar = req.file.location;
+  } else if (req.body.removeAvatar === "true" || req.body.avatar === "") {
+    fields.avatar = "";
   }
 
   return fields;
 };
+
 
 // CREATE PROFILE
 const createProfile = async (req, res) => {

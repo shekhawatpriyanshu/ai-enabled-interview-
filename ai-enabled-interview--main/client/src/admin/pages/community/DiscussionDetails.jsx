@@ -8,16 +8,22 @@ import {
   FaCalendarAlt,
   FaComments,
   FaTag,
+  FaEdit,
 } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 import AdminCommunityService from "../../services/AdminCommunityService";
+import useAdminCommunity from "../../hooks/useAdminCommunity";
+import EditDiscussionModal from "../../components/community/EditDiscussionModal";
 
 const DiscussionDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { updateDiscussion } = useAdminCommunity();
 
   const [loading, setLoading] = useState(true);
   const [discussion, setDiscussion] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     fetchDiscussion();
@@ -37,6 +43,16 @@ const DiscussionDetails = () => {
       setLoading(false);
     }
   };
+
+  const handleUpdate = async (discussionId, updatedData) => {
+    const res = await updateDiscussion(discussionId, updatedData);
+    if (res?.success) {
+      toast.success("Discussion updated successfully!");
+      setShowEditModal(false);
+      fetchDiscussion();
+    }
+  };
+
 
   if (loading) {
     return (
@@ -67,17 +83,27 @@ const DiscussionDetails = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-8 animate-[fadeIn_0.4s_ease-out] max-w-6xl mx-auto">
       {/* 1. BACK BUTTON & HEADER */}
-      <div className="border-b border-slate-200/80 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
+        <div>
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-slate-500 hover:text-purple-600 mb-3 transition-colors cursor-pointer"
+          >
+            <FaArrowLeft /> Back to Community
+          </button>
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+            {discussion.title}
+          </h1>
+        </div>
+
         <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-slate-500 hover:text-purple-600 mb-3 transition-colors cursor-pointer"
+          onClick={() => setShowEditModal(true)}
+          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-extrabold text-xs shadow-md shadow-indigo-500/25 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer shrink-0 self-start sm:self-auto"
         >
-          <FaArrowLeft /> Back to Community
+          <FaEdit /> Edit Discussion
         </button>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
-          {discussion.title}
-        </h1>
       </div>
+
 
       {/* 2. MAIN DISCUSSION CARD */}
       <div className="bg-white rounded-3xl shadow-xl border border-slate-200/90 p-6 sm:p-8 relative overflow-hidden space-y-6">
@@ -178,6 +204,14 @@ const DiscussionDetails = () => {
           </div>
         )}
       </div>
+
+      {/* EDIT MODAL */}
+      <EditDiscussionModal
+        open={showEditModal}
+        discussion={discussion}
+        onClose={() => setShowEditModal(false)}
+        onSave={handleUpdate}
+      />
     </div>
   );
 };

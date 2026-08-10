@@ -67,13 +67,14 @@ const ResumeAnalyzer = () => {
 
               <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
                 <span className="bg-gradient-to-r from-cyan-600 via-indigo-600 via-purple-600 to-fuchsia-500 bg-clip-text text-transparent">
-                  AI Resume Analyzer
+                  AI Resume & Portfolio Studio
                 </span>
               </h1>
 
               <p className="text-slate-600 text-sm font-semibold max-w-xl">
-                Upload your resume to get instant ATS match scores, missing keyword analysis, and AI suggestions tailored to your target role.
+                Upload your resume to get instant ATS compatibility scores, keyword match analysis, and 1-click AI developer portfolio website creation!
               </p>
+
             </div>
 
             <div className="w-16 h-16 rounded-3xl bg-cyan-50 border border-cyan-200 text-cyan-600 flex items-center justify-center text-3xl shadow-xs shrink-0">

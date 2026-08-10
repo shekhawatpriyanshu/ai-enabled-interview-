@@ -13,13 +13,18 @@ const {
     // Discussions
     getDiscussions,
     getDiscussionById,
+    updateDiscussion,
     deleteDiscussion,
+
 
 
     // Comments
     getComments,
+    getCommentById,
+    updateComment,
     getDiscussionComments,
     deleteComment,
+
 
 
     // Groups
@@ -36,6 +41,8 @@ const {
 
     // Messages
     getMessages,
+    getMessageById,
+    updateMessage,
     getGroupMessages,
     deleteMessage,
 
@@ -43,6 +50,7 @@ const {
 } = require(
     "../../admin/controllers/adminCommunityController"
 );
+
 
 
 
@@ -86,11 +94,19 @@ router.get(
 );
 
 
+router.put(
+    "/discussion/:id",
+    protectAdmin,
+    updateDiscussion
+);
+
+
 router.delete(
     "/discussion/:id",
     protectAdmin,
     deleteDiscussion
 );
+
 
 
 
@@ -112,11 +128,26 @@ router.get(
 );
 
 
+router.get(
+    "/comment/:id",
+    protectAdmin,
+    getCommentById
+);
+
+
+router.put(
+    "/comment/:id",
+    protectAdmin,
+    updateComment
+);
+
+
 router.delete(
     "/comment/:id",
     protectAdmin,
     deleteComment
 );
+
 
 
 
@@ -190,11 +221,24 @@ router.get(
 );
 
 
+router.get(
+    "/message/:id",
+    protectAdmin,
+    getMessageById
+);
+
+router.put(
+    "/message/:id",
+    protectAdmin,
+    updateMessage
+);
+
 router.delete(
     "/message/:id",
     protectAdmin,
     deleteMessage
 );
+
 
 
 

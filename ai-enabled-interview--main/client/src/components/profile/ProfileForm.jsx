@@ -15,11 +15,14 @@ import {
   FaBullseye,
   FaBookOpen,
   FaCheck,
+  FaTrash,
 } from "react-icons/fa";
+
 
 const ProfileForm = ({ initialData, onSubmit }) => {
   const [avatar, setAvatar] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
+  const [removeAvatar, setRemoveAvatar] = useState(false);
   const fileInputRef = useRef(null);
 
   const [userType, setUserType] = useState(initialData?.userType || "Student");
@@ -66,6 +69,16 @@ const ProfileForm = ({ initialData, onSubmit }) => {
     if (file) {
       setAvatar(file);
       setAvatarPreview(URL.createObjectURL(file));
+      setRemoveAvatar(false);
+    }
+  };
+
+  const handleDeleteImage = () => {
+    setAvatar(null);
+    setAvatarPreview("REMOVED");
+    setRemoveAvatar(true);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -76,6 +89,8 @@ const ProfileForm = ({ initialData, onSubmit }) => {
     const formData = new FormData();
     if (avatar) {
       formData.append("avatar", avatar);
+    } else if (removeAvatar) {
+      formData.append("removeAvatar", "true");
     }
 
     const cleanedSkills = form.skills
@@ -103,6 +118,7 @@ const ProfileForm = ({ initialData, onSubmit }) => {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <form onSubmit={submitHandler} className="space-y-8">
@@ -208,9 +224,9 @@ const ProfileForm = ({ initialData, onSubmit }) => {
           onClick={() => fileInputRef.current?.click()}
         >
           <div className="w-24 h-24 rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl bg-slate-800 flex items-center justify-center relative ring-4 ring-cyan-400/40 group-hover/avatar:ring-fuchsia-400/60 transition-all duration-300 group-hover/avatar:scale-105">
-            {avatarPreview ? (
+            {avatarPreview && avatarPreview !== "REMOVED" ? (
               <img src={avatarPreview} alt="Preview" className="w-full h-full object-cover" />
-            ) : initialData?.avatar ? (
+            ) : initialData?.avatar && !removeAvatar ? (
               <img
                 src={initialData.avatar.startsWith("http") ? initialData.avatar : `/${initialData.avatar}`}
                 alt="Current Avatar"
@@ -236,9 +252,9 @@ const ProfileForm = ({ initialData, onSubmit }) => {
         <div className="text-center sm:text-left space-y-1">
           <h3 className="text-lg font-black text-white group-hover:text-cyan-300 transition-colors">Profile Photo</h3>
           <p className="text-xs font-medium text-slate-300 max-w-sm">
-            Upload a high-resolution avatar to personalize your account.
+            Upload a high-resolution avatar or clear your profile photo.
           </p>
-          <div className="pt-2">
+          <div className="pt-2 flex flex-wrap items-center gap-2.5 justify-center sm:justify-start">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -247,8 +263,20 @@ const ProfileForm = ({ initialData, onSubmit }) => {
               <FaCamera className="text-xs" />
               <span>Upload New Photo</span>
             </button>
+
+            {(avatar || (initialData?.avatar && !removeAvatar)) && (
+              <button
+                type="button"
+                onClick={handleDeleteImage}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-extrabold text-xs shadow-md shadow-rose-500/25 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer inline-flex items-center gap-2"
+              >
+                <FaTrash className="text-xs text-white shrink-0" />
+                <span>Delete Photo</span>
+              </button>
+            )}
           </div>
         </div>
+
       </div>
 
       {/* Dynamic Fields Section Header */}

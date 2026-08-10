@@ -23,15 +23,28 @@ const AdminCommunityService = {
         return api.get(`/community/discussion/${id}`);
     },
 
+    updateDiscussion(id, data) {
+        return api.put(`/community/discussion/${id}`, data);
+    },
+
     deleteDiscussion(id) {
         return api.delete(`/community/discussion/${id}`);
     },
+
 
     // ==========================
     // Comments
     // ==========================
     getComments(params) {
         return api.get("/community/comments", { params });
+    },
+
+    getCommentById(id) {
+        return api.get(`/community/comment/${id}`);
+    },
+
+    updateComment(id, data) {
+        return api.put(`/community/comment/${id}`, data);
     },
 
     getDiscussionComments(id) {
@@ -41,6 +54,7 @@ const AdminCommunityService = {
     deleteComment(id) {
         return api.delete(`/community/comment/${id}`);
     },
+
 
     // ==========================
     // Groups
@@ -77,6 +91,14 @@ const AdminCommunityService = {
     // ==========================
     getMessages(params) {
         return api.get("/community/messages", { params });
+    },
+
+    getMessageById(id) {
+        return api.get(`/community/message/${id}`);
+    },
+
+    updateMessage(id, data) {
+        return api.put(`/community/message/${id}`, data);
     },
 
     getGroupMessages(id, params) {

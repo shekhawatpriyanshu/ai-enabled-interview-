@@ -43,22 +43,36 @@ const isMeaningfulAnswer = (
 // ===============================
 const generateQuestions = async (
   role,
-  experienceLevel
+  experienceLevel,
+  pastQuestions = []
 ) => {
   try {
+    const recentSample = pastQuestions.slice(0, 30);
+    const excludeInstruction =
+      recentSample.length > 0
+        ? `\nCRITICAL EXCLUSION RULE: The candidate has ALREADY answered the following questions in past interviews:\n${recentSample
+            .map((q) => `- "${q}"`)
+            .join("\n")}\nDO NOT repeat or ask any of the above questions or near-duplicates. You MUST generate 20 ENTIRELY NEW, unique questions.`
+        : "";
+
+    const randomSeed = Math.floor(Math.random() * 1000000);
+
     const prompt = `
 Generate exactly 20 multiple choice questions (MCQs) for a technical interview.
 
 Role: ${role}
 Experience Level: ${experienceLevel}
+Unique Session Seed: ${randomSeed}
 
 Rules:
 - Questions must be related ONLY to ${role}
+- Formulated specifically for ${experienceLevel} level expertise
 - No HR questions
 - No aptitude questions
 - No behavioral questions
 - Each question must have exactly 4 options.
 - Provide the exact correct option string in "correctAnswer".
+${excludeInstruction}
 - Return ONLY a JSON object containing a "questions" array.
 
 Example:
@@ -68,11 +82,6 @@ Example:
       "question": "Sample Question 1?",
       "options": ["Option A", "Option B", "Option C", "Option D"],
       "correctAnswer": "Option B"
-    },
-    {
-      "question": "Sample Question 2?",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correctAnswer": "Option A"
     }
   ]
 }
@@ -88,10 +97,11 @@ Example:
             content: prompt,
           },
         ],
-        temperature: 0.4,
+        temperature: 0.85,
         max_tokens: 8000,
         response_format: { type: "json_object" },
       });
+
 
     const text = cleanJSON(
       completion.choices[0].message

@@ -311,13 +311,14 @@ const CodingProblems = () => {
 
                       <div className="space-y-3">
                         <div className="flex items-start justify-between gap-3">
-                          <h3 className="text-base font-black text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+                          <h3 className="text-base font-black text-slate-900 group-hover:text-indigo-600 transition-colors whitespace-nowrap overflow-hidden">
                             {problem.title}
                           </h3>
                           <span className={`px-2.5 py-0.5 rounded-md text-xs font-black uppercase tracking-wider border shrink-0 ${style.badgeBg}`}>
                             {problem.difficulty || "Easy"}
                           </span>
                         </div>
+
 
                         <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
                           <Tag size={12} className="text-indigo-500" />
@@ -326,9 +327,10 @@ const CodingProblems = () => {
                           </span>
                         </div>
 
-                        <p className="text-slate-600 text-xs line-clamp-2 leading-relaxed font-medium">
+                        <p className="text-slate-600 text-xs leading-relaxed font-medium">
                           {problem.description || "Solve this coding problem using JavaScript, Python, C++, or Java."}
                         </p>
+
                       </div>
 
                       <div className={`mt-6 pt-4 border-t border-slate-200/60 flex items-center justify-between text-xs font-black transition-colors ${style.btnColor}`}>

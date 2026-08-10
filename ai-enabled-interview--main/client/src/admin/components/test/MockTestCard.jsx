@@ -44,11 +44,10 @@ const MockTestCard = ({ test, onDelete }) => {
             </span>
 
             <span
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
-                test.isActive !== false
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${test.isActive !== false
                   ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                   : "bg-slate-100 text-slate-600 border-slate-200"
-              }`}
+                }`}
             >
               {test.isActive !== false ? (
                 <>

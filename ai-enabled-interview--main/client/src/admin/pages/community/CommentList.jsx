@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
 import { FaCommentDots, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 import useAdminCommunity from "../../hooks/useAdminCommunity";
 
 import CommentTable from "../../components/community/CommentTable";
 import SearchBar from "../../components/community/SearchBar";
 import DeleteModal from "../../components/community/DeleteModal";
+import ViewCommentModal from "../../components/community/ViewCommentModal";
+import EditCommentModal from "../../components/community/EditCommentModal";
 
 const CommentList = () => {
-  const { loading, getComments, deleteComment } = useAdminCommunity();
+  const { loading, getComments, updateComment, deleteComment } = useAdminCommunity();
 
   const [comments, setComments] = useState([]);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [search, setSearch] = useState("");
+
   const [selectedComment, setSelectedComment] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
@@ -34,9 +40,29 @@ const CommentList = () => {
     }
   };
 
+  const openViewModal = (comment) => {
+    setSelectedComment(comment);
+    setShowViewModal(true);
+  };
+
+  const openEditModal = (comment) => {
+    setSelectedComment(comment);
+    setShowEditModal(true);
+  };
+
   const openDeleteModal = (comment) => {
     setSelectedComment(comment);
     setShowDeleteModal(true);
+  };
+
+  const handleUpdate = async (id, updatedText) => {
+    const response = await updateComment(id, { text: updatedText });
+    if (response?.success) {
+      toast.success("Comment updated successfully!");
+      setShowEditModal(false);
+      setSelectedComment(null);
+      loadComments();
+    }
   };
 
   const handleDelete = async () => {
@@ -45,6 +71,7 @@ const CommentList = () => {
     const response = await deleteComment(selectedComment._id);
 
     if (response?.success) {
+      toast.success("Comment deleted successfully!");
       setShowDeleteModal(false);
       setSelectedComment(null);
       loadComments();
@@ -65,7 +92,7 @@ const CommentList = () => {
             </span>
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-2">
-            Moderate, review, and curate all discussion comments posted across the community.
+            Moderate, view, edit, and curate all discussion comments posted across the community.
           </p>
         </div>
       </div>
@@ -84,6 +111,8 @@ const CommentList = () => {
         <CommentTable
           comments={comments}
           loading={loading}
+          onView={openViewModal}
+          onEdit={openEditModal}
           onDelete={openDeleteModal}
         />
       </div>
@@ -113,12 +142,36 @@ const CommentList = () => {
         </div>
       )}
 
-      {/* 5. DELETE MODAL */}
+      {/* 5. VIEW MODAL */}
+      <ViewCommentModal
+        open={showViewModal}
+        comment={selectedComment}
+        onClose={() => {
+          setShowViewModal(false);
+          setSelectedComment(null);
+        }}
+      />
+
+      {/* 6. EDIT MODAL */}
+      <EditCommentModal
+        open={showEditModal}
+        comment={selectedComment}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedComment(null);
+        }}
+        onSave={handleUpdate}
+      />
+
+      {/* 7. DELETE MODAL */}
       <DeleteModal
         open={showDeleteModal}
         title="Delete Comment"
         message="Are you sure you want to permanently remove this comment? This action cannot be undone."
-        onClose={() => setShowDeleteModal(false)}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedComment(null);
+        }}
         onConfirm={handleDelete}
       />
     </div>

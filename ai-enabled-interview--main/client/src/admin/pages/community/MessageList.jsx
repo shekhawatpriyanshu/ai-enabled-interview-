@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
 import { FaComments, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 import useAdminCommunity from "../../hooks/useAdminCommunity";
 
 import MessageTable from "../../components/community/MessageTable";
 import SearchBar from "../../components/community/SearchBar";
 import DeleteModal from "../../components/community/DeleteModal";
+import ViewMessageModal from "../../components/community/ViewMessageModal";
+import EditMessageModal from "../../components/community/EditMessageModal";
 
 const MessageList = () => {
-  const { loading, getMessages, deleteMessage } = useAdminCommunity();
+  const { loading, getMessages, updateMessage, deleteMessage } = useAdminCommunity();
 
   const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [search, setSearch] = useState("");
+
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
@@ -34,9 +40,29 @@ const MessageList = () => {
     }
   };
 
+  const openViewModal = (message) => {
+    setSelectedMessage(message);
+    setShowViewModal(true);
+  };
+
+  const openEditModal = (message) => {
+    setSelectedMessage(message);
+    setShowEditModal(true);
+  };
+
   const openDeleteModal = (message) => {
     setSelectedMessage(message);
     setShowDeleteModal(true);
+  };
+
+  const handleUpdate = async (id, updatedMessageText) => {
+    const res = await updateMessage(id, { message: updatedMessageText });
+    if (res?.success) {
+      toast.success("Message updated successfully!");
+      setShowEditModal(false);
+      setSelectedMessage(null);
+      loadMessages();
+    }
   };
 
   const handleDelete = async () => {
@@ -45,6 +71,7 @@ const MessageList = () => {
     const res = await deleteMessage(selectedMessage._id);
 
     if (res?.success) {
+      toast.success("Message deleted successfully!");
       setShowDeleteModal(false);
       setSelectedMessage(null);
       loadMessages();
@@ -65,7 +92,7 @@ const MessageList = () => {
             </span>
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-2">
-            Monitor, review, and moderate group chat messages across study communities.
+            Monitor, view, edit, and moderate group chat messages across study communities.
           </p>
         </div>
       </div>
@@ -84,6 +111,8 @@ const MessageList = () => {
         <MessageTable
           loading={loading}
           messages={messages}
+          onView={openViewModal}
+          onEdit={openEditModal}
           onDelete={openDeleteModal}
         />
       </div>
@@ -113,12 +142,36 @@ const MessageList = () => {
         </div>
       )}
 
-      {/* 5. DELETE MODAL */}
+      {/* 5. VIEW MODAL */}
+      <ViewMessageModal
+        open={showViewModal}
+        message={selectedMessage}
+        onClose={() => {
+          setShowViewModal(false);
+          setSelectedMessage(null);
+        }}
+      />
+
+      {/* 6. EDIT MODAL */}
+      <EditMessageModal
+        open={showEditModal}
+        message={selectedMessage}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedMessage(null);
+        }}
+        onSave={handleUpdate}
+      />
+
+      {/* 7. DELETE MODAL */}
       <DeleteModal
         open={showDeleteModal}
         title="Delete Message"
         message="Are you sure you want to permanently delete this group message?"
-        onClose={() => setShowDeleteModal(false)}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedMessage(null);
+        }}
         onConfirm={handleDelete}
       />
     </div>

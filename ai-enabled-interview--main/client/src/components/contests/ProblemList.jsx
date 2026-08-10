@@ -66,9 +66,10 @@ const ProblemList = ({ problems = [] }) => {
                     <p className="font-black text-slate-900 group-hover:text-indigo-600 transition-colors text-base">
                       {problem.title}
                     </p>
-                    <p className="text-xs text-slate-500 line-clamp-1 mt-0.5 font-medium">
+                    <p className="text-xs text-slate-500 mt-0.5 font-medium leading-relaxed">
                       {problem.description || "Solve this algorithmic challenge to earn contest points."}
                     </p>
+
                   </td>
 
                   <td className="px-6 py-4">

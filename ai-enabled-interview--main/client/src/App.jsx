@@ -60,6 +60,13 @@ const FeedbackScreen = lazy(() => import("./pages/interviews/FeedbackScreen"));
 const ResumeAnalyzer = lazy(() => import("./pages/resume/ResumeAnalyzer"));
 const ResumeReport = lazy(() => import("./pages/resume/ResumeReport"));
 
+// Portfolio Pages
+const PortfolioGenerator = lazy(() => import("./pages/PortfolioGenerator"));
+const PortfolioEditor = lazy(() => import("./pages/PortfolioEditor"));
+const PublicPortfolio = lazy(() => import("./pages/PublicPortfolio"));
+
+
+
 // Coding Pages
 const CodingProblems = lazy(() => import("./pages/coding/CodingProblems"));
 const ProblemDetails = lazy(() => import("./pages/coding/ProblemDetails"));
@@ -186,8 +193,35 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
+        {/* Public Portfolio Route */}
+        <Route
+          path="/p/:slug"
+          element={<PublicPortfolio />}
+        />
+
+
+        {/* Portfolio Generator & Editor Routes */}
+        <Route
+          path="/portfolio/generator"
+          element={
+            <ProtectedRoute>
+              <PortfolioGenerator />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/portfolio/editor"
+          element={
+            <ProtectedRoute>
+              <PortfolioEditor />
+            </ProtectedRoute>
+          }
+        />
+
+
         {/* Protected Routes */}
         <Route path="/" element={<Navigate to="/login" replace />} />
+
 
         <Route
           path="/dashboard"

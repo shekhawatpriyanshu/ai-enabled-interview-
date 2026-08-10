@@ -46,6 +46,8 @@ const communityRoutes =
   require("./routes/communityRoutes");
 
 const adminInterviewRoutes = require("./admin/routes/interviewRoutes");
+const portfolioRoutes = require("./routes/portfolioRoutes");
+
 
 const app = express();
 app.use(helmet());
@@ -73,6 +75,10 @@ app.use(activityLogger);
 app.use(
   "/api/coding",
   codingUserRoutes
+);
+app.use(
+  "/api/portfolio",
+  portfolioRoutes
 );
 app.use(
   "/api/submissions",
@@ -148,6 +154,11 @@ app.use(
   "/api/interviews",
   interviewRoutes
 );
+app.use(
+  "/api/portfolio",
+  portfolioRoutes
+);
+
 
 
 app.get("/", (req, res) => {

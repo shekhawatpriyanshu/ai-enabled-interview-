@@ -7,9 +7,11 @@ import {
   FaUser,
   FaLayerGroup,
   FaComments,
+  FaEye,
+  FaEdit,
 } from "react-icons/fa";
 
-const MessageTable = ({ messages = [], loading = false, onDelete }) => {
+const MessageTable = ({ messages = [], loading = false, onView, onEdit, onDelete }) => {
   const getFileIcon = (fileType) => {
     if (!fileType) return null;
 
@@ -69,8 +71,8 @@ const MessageTable = ({ messages = [], loading = false, onDelete }) => {
             <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-center">
               Date
             </th>
-            <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-center w-[120px]">
-              Action
+            <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-center w-[140px]">
+              Actions
             </th>
           </tr>
         </thead>
@@ -140,10 +142,26 @@ const MessageTable = ({ messages = [], loading = false, onDelete }) => {
 
               {/* Actions */}
               <td className="px-6 py-4">
-                <div className="flex justify-center items-center">
+                <div className="flex justify-center items-center gap-1.5">
                   <button
-                    onClick={() => onDelete(message)}
-                    className="w-8.5 h-8.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
+                    onClick={() => onView && onView(message)}
+                    className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
+                    title="View Message"
+                  >
+                    <FaEye />
+                  </button>
+
+                  <button
+                    onClick={() => onEdit && onEdit(message)}
+                    className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
+                    title="Edit Message"
+                  >
+                    <FaEdit />
+                  </button>
+
+                  <button
+                    onClick={() => onDelete && onDelete(message)}
+                    className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
                     title="Delete Message"
                   >
                     <FaTrash />
@@ -157,5 +175,6 @@ const MessageTable = ({ messages = [], loading = false, onDelete }) => {
     </div>
   );
 };
+
 
 export default MessageTable;

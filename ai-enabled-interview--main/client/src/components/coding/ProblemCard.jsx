@@ -25,9 +25,10 @@ const ProblemCard = ({ problem }) => {
 
       </div>
 
-      <p className="mt-4 text-gray-600 line-clamp-3">
+      <p className="mt-4 text-gray-600 leading-relaxed font-medium">
         {problem.description}
       </p>
+
 
       <div className="mt-6 flex justify-end">
 

@@ -98,13 +98,24 @@ const useAdminCommunity = () => {
 
 
 
-  const deleteDiscussion = (id) => {
+  const getDiscussionById = (id) => {
+    return handleRequest(
+      () => AdminCommunityService.getDiscussionById(id)
+    );
+  };
 
+  const updateDiscussion = (id, data) => {
+    return handleRequest(
+      () => AdminCommunityService.updateDiscussion(id, data)
+    );
+  };
+
+  const deleteDiscussion = (id) => {
     return handleRequest(
       () => AdminCommunityService.deleteDiscussion(id)
     );
-
   };
+
 
 
 
@@ -113,22 +124,29 @@ const useAdminCommunity = () => {
   // Comments
 
   const getComments = (params) => {
-
     return handleRequest(
       () => AdminCommunityService.getComments(params)
     );
-
   };
 
+  const getCommentById = (id) => {
+    return handleRequest(
+      () => AdminCommunityService.getCommentById(id)
+    );
+  };
 
+  const updateComment = (id, data) => {
+    return handleRequest(
+      () => AdminCommunityService.updateComment(id, data)
+    );
+  };
 
   const deleteComment = (id) => {
-
     return handleRequest(
       () => AdminCommunityService.deleteComment(id)
     );
-
   };
+
 
 
 
@@ -184,75 +202,56 @@ const useAdminCommunity = () => {
 
   // Messages
 
-
   const getMessages = (params) => {
-
     return handleRequest(
       () => AdminCommunityService.getMessages(params)
     );
-
   };
 
+  const getMessageById = (id) => {
+    return handleRequest(
+      () => AdminCommunityService.getMessageById(id)
+    );
+  };
 
+  const updateMessage = (id, data) => {
+    return handleRequest(
+      () => AdminCommunityService.updateMessage(id, data)
+    );
+  };
 
   const deleteMessage = (id) => {
-
     return handleRequest(
       () => AdminCommunityService.deleteMessage(id)
     );
-
   };
-
-
-
-
 
   return {
-
-
     loading,
-
     data,
-
-
     getDashboard,
-
     getAnalytics,
-
-
     getDiscussions,
-
+    getDiscussionById,
+    updateDiscussion,
     deleteDiscussion,
 
-
     getComments,
-
+    getCommentById,
+    updateComment,
     deleteComment,
 
-
     getGroups,
-
     getGroupById,
-
     deleteGroup,
-
     updateGroup,
-
     getGroupMembers,
-
     removeMember,
-
-
     getMessages,
-
+    getMessageById,
+    updateMessage,
     deleteMessage
-
-
   };
-
-
-
 };
-
 
 export default useAdminCommunity;

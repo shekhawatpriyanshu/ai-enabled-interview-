@@ -15,12 +15,34 @@ import {
 } from "react-icons/fa";
 import MainLayout from "../../layouts/MainLayout";
 
+import { generatePortfolio } from "../../services/portfolioService";
+import toast from "react-hot-toast";
+
 const ResumeReport = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [generatingPortfolio, setGeneratingPortfolio] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(true);
+
+  const handleBuildPortfolio = async () => {
+    try {
+      setGeneratingPortfolio(true);
+      const data = await generatePortfolio(id);
+      if (data.success) {
+        toast.success("Portfolio generated successfully!");
+        navigate("/portfolio/generator", { state: { portfolio: data.portfolio, stats: data.stats } });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to generate portfolio");
+    } finally {
+      setGeneratingPortfolio(false);
+    }
+  };
+
 
   useEffect(() => {
     loadAnalysis();
@@ -144,6 +166,44 @@ const ResumeReport = () => {
               </div>
             </div>
           </motion.div>
+
+          {/* Create Portfolio Website Banner */}
+          {showPrompt && (
+            <motion.div
+              variants={itemVariants}
+              className="bg-gradient-to-r from-purple-900 via-indigo-950 to-slate-900 border border-purple-500/30 rounded-3xl p-6 sm:p-8 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6"
+            >
+              <div className="space-y-2 text-center md:text-left">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-black uppercase tracking-wider border border-purple-500/30">
+                  <FaRocket className="text-purple-400" />
+                  <span>AI Portfolio Generator</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  Want to create a hosted Portfolio Website from this resume?
+                </h2>
+                <p className="text-slate-300 text-xs font-semibold max-w-xl">
+                  Automatically build and publish a sleek developer portfolio using your analyzed resume data. Choose from 50 template styles!
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-3 shrink-0">
+                <button
+                  onClick={handleBuildPortfolio}
+                  disabled={generatingPortfolio}
+                  className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-500 hover:opacity-95 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-indigo-500/30 active:scale-95 transition cursor-pointer disabled:opacity-50"
+                >
+                  {generatingPortfolio ? "Generating Portfolio..." : "🚀 Yes, Build My Portfolio"}
+                </button>
+                <button
+                  onClick={() => setShowPrompt(false)}
+                  className="px-4 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-slate-300 font-extrabold text-xs transition cursor-pointer border border-white/10"
+                >
+                  No, Thanks
+                </button>
+              </div>
+            </motion.div>
+          )}
+
 
           {/* Metric Cards Grid: ATS Score & Keyword Match */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
