@@ -1,18 +1,25 @@
 const DifficultyBadge = ({ difficulty }) => {
   const styles = {
-    Easy: "bg-green-100 text-green-700 border border-green-200",
-    Medium: "bg-yellow-100 text-yellow-700 border border-yellow-200",
-    Hard: "bg-red-100 text-red-700 border border-red-200",
+    Easy: "bg-emerald-50 text-emerald-700 border-emerald-200/90",
+    Medium: "bg-amber-50 text-amber-700 border-amber-200/90",
+    Hard: "bg-rose-50 text-rose-700 border-rose-200/90",
+  };
+
+  const icons = {
+    Easy: "🟢",
+    Medium: "🟡",
+    Hard: "🔴",
   };
 
   return (
     <span
-      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border shrink-0 ${
         styles[difficulty] ||
-        "bg-gray-100 text-gray-700 border border-gray-200"
+        "bg-slate-100 text-slate-700 border-slate-200"
       }`}
     >
-      {difficulty}
+      <span className="text-[10px]">{icons[difficulty] || "⚪"}</span>
+      {difficulty || "Normal"}
     </span>
   );
 };

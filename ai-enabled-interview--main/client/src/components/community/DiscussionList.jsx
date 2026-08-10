@@ -6,7 +6,7 @@ import DiscussionCard from "./DiscussionCard";
 import LoadingSkeleton from "./LoadingSkeleton";
 import EmptyState from "./EmptyState";
 
-const DiscussionList = () => {
+const DiscussionList = ({ limit }) => {
   const {
     discussions,
     loading,
@@ -30,16 +30,16 @@ const DiscussionList = () => {
     );
   }
 
-  return (
-    <div className="grid gap-6">
+  const displayedDiscussions = limit ? discussions.slice(0, limit) : discussions;
 
-      {discussions.map((discussion) => (
+  return (
+    <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+      {displayedDiscussions.map((discussion) => (
         <DiscussionCard
           key={discussion._id}
           discussion={discussion}
         />
       ))}
-
     </div>
   );
 };

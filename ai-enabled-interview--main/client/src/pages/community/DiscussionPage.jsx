@@ -121,8 +121,8 @@ const DiscussionsPage = () => {
                     setSelectedTag(tag)
                   }
                   className={`px-4 py-2 rounded-full transition ${selectedTag === tag
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 hover:bg-gray-200"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 hover:bg-gray-200"
                     }`}
                 >
                   {tag}

@@ -178,7 +178,7 @@ const GroupDetails = () => {
                   <p className="text-xs text-slate-500">{group.members?.length || 0} members joined</p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={() => setIsMembersModalOpen(false)}
                 className="text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full p-2 transition"
               >
@@ -195,7 +195,7 @@ const GroupDetails = () => {
                   const memberIdStr = member._id?.toString() || member.toString();
                   const isOwner = (group.owner?._id || group.owner) === memberIdStr;
                   const isActive = activeMembers?.some((mId) => mId?.toString() === memberIdStr);
-                  
+
                   return (
                     <div key={memberIdStr || idx} className="flex items-center justify-between p-2 hover:bg-slate-50 rounded-2xl transition">
                       <div className="flex items-center gap-3">
@@ -204,8 +204,8 @@ const GroupDetails = () => {
                             {(member.name || "U")[0].toUpperCase()}
                           </div>
                           {isActive && (
-                            <span 
-                              className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white animate-pulse" 
+                            <span
+                              className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white animate-pulse"
                               title="Online"
                             />
                           )}

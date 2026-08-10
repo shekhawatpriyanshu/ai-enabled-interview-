@@ -101,8 +101,8 @@ const Leaderboard = () => {
           <p className="text-xl font-bold text-green-600">
             {leaderboard.length > 0
               ? Math.max(
-                  ...leaderboard.map((l) => l.score)
-                )
+                ...leaderboard.map((l) => l.score)
+              )
               : 0}
           </p>
         </div>
@@ -114,11 +114,11 @@ const Leaderboard = () => {
           <p className="text-xl font-bold text-blue-600">
             {leaderboard.length > 0
               ? (
-                  leaderboard.reduce(
-                    (acc, cur) => acc + cur.score,
-                    0
-                  ) / leaderboard.length
-                ).toFixed(2)
+                leaderboard.reduce(
+                  (acc, cur) => acc + cur.score,
+                  0
+                ) / leaderboard.length
+              ).toFixed(2)
               : 0}
           </p>
         </div>

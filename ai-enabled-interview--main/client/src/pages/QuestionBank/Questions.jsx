@@ -88,52 +88,58 @@ const Questions = () => {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
-        <QuestionHeader
-          title="Question Bank"
-          subtitle="Practice interview questions by topic, company, and difficulty."
-          showButton={false}
-        />
+      <div className="bg-slate-50 text-slate-800 p-4 sm:p-6 lg:p-8 space-y-6 min-h-screen">
+        <div className="max-w-7xl mx-auto space-y-6 animate-[fadeIn_0.4s_ease-out]">
+          <QuestionHeader
+            title="Question Bank"
+            subtitle="Practice interview questions by topic, company, and difficulty."
+            showButton={false}
+          />
 
-        <div className="flex flex-col md:flex-row gap-4 items-center">
-          <div className="flex-1 w-full">
-            <SearchBar value={searchQuery} onChange={setSearchQuery} />
+          <div className="flex flex-col md:flex-row gap-4 items-center">
+            <div className="flex-1 w-full">
+              <SearchBar value={searchQuery} onChange={setSearchQuery} />
+            </div>
           </div>
+
+          <FilterBar
+            filters={filters}
+            setFilters={setFilters}
+            topics={topics}
+            companies={companies}
+          />
+
+          <QuestionTable questions={questions} loading={loading} />
+
+          {/* Pagination Controls */}
+          {!loading && totalPages > 1 && (
+            <div className="bg-white/90 border border-slate-200/90 rounded-3xl p-4 flex flex-wrap justify-between items-center gap-4 mt-6 shadow-sm">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-5 py-2.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-sm flex items-center gap-2"
+              >
+                ← Previous
+              </button>
+
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-500">
+                <span>Page</span>
+                <span className="px-3.5 py-1 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-700 font-extrabold">
+                  {currentPage}
+                </span>
+                <span>of <strong className="text-slate-800 font-bold">{totalPages}</strong></span>
+              </div>
+
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-5 py-2.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-sm flex items-center gap-2"
+              >
+                Next →
+              </button>
+            </div>
+          )}
         </div>
-
-        <FilterBar
-          filters={filters}
-          setFilters={setFilters}
-          topics={topics}
-          companies={companies}
-        />
-
-        <QuestionTable questions={questions} loading={loading} />
-
-        {/* Pagination Controls */}
-        {!loading && totalPages > 1 && (
-          <div className="flex justify-center items-center gap-2 mt-6 pb-6">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            >
-              Previous
-            </button>
-
-            <span className="text-slate-600 text-sm font-medium mx-2">
-              Page <strong className="text-slate-900">{currentPage}</strong> of <strong className="text-slate-900">{totalPages}</strong>
-            </span>
-
-            <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            >
-              Next
-            </button>
-          </div>
-        )}
       </div>
     </MainLayout>
   );

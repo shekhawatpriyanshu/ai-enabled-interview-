@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Heart, MessageCircle, Calendar, User } from "lucide-react";
+import { Heart, MessageCircle, Calendar, User, ArrowRight, Sparkles } from "lucide-react";
 
 import useCommunity from "../../hooks/useCommunity";
 
@@ -15,85 +15,87 @@ const DiscussionCard = ({ discussion }) => {
   };
 
   return (
-    <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md hover:scale-[1.01] transition-all duration-300 p-6">
+    <div className="group bg-gradient-to-br from-indigo-50/80 via-white to-purple-50/40 rounded-3xl p-6 sm:p-7 border border-indigo-200/90 shadow-sm hover:shadow-xl hover:scale-[1.015] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col justify-between">
+      {/* Top Accent Line */}
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-600 via-fuchsia-500 to-cyan-500" />
 
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-md shadow-cyan-500/10 text-white flex items-center justify-center font-semibold text-lg">
-          {discussion?.user?.name?.charAt(0)?.toUpperCase() || (
-            <User size={18} />
-          )}
-        </div>
+      <div className="space-y-4">
+        {/* Card Header: Author Info & Tag Badge */}
+        <div className="flex items-center justify-between gap-3 pt-1">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-black text-sm shadow-md shadow-purple-500/20 shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+              {discussion?.user?.name?.charAt(0)?.toUpperCase() || (
+                <User size={18} className="shrink-0" />
+              )}
+            </div>
 
-        <div>
-          <h3 className="font-semibold text-slate-800">
-            {discussion?.user?.name || "Anonymous"}
-          </h3>
-
-          <div className="flex items-center gap-1.5 text-xs text-slate-500">
-            <Calendar size={13} className="text-slate-400" />
-            {new Date(discussion.createdAt).toLocaleDateString()}
+            <div>
+              <h3 className="font-extrabold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors break-words">
+                {discussion?.user?.name || "Anonymous Preparer"}
+              </h3>
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500">
+                <Calendar size={12} className="text-indigo-500 shrink-0" />
+                <span>{new Date(discussion.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+              </div>
+            </div>
           </div>
+
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-purple-100/90 text-purple-800 border border-purple-200 text-[10px] font-black uppercase tracking-wider shrink-0 shadow-2xs">
+            <Sparkles size={11} className="text-purple-600 animate-pulse shrink-0" />
+            <span>Discussion</span>
+          </span>
         </div>
+
+        {/* Title - Full Text */}
+        <h2 className="text-xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors tracking-tight leading-snug break-words">
+          {discussion.title}
+        </h2>
+
+        {/* Content Preview - Full Text */}
+        <p className="text-slate-600 text-xs sm:text-sm font-semibold leading-relaxed bg-white/80 p-4 rounded-2xl border border-slate-200/70 shadow-2xs whitespace-normal break-words">
+          {discussion.content}
+        </p>
+
+        {/* Tags Row */}
+        {discussion.tags?.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {discussion.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200/80 text-indigo-700 font-extrabold text-xs shadow-2xs hover:scale-105 transition-transform"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Title */}
-      <h2 className="text-xl font-bold text-slate-800 mb-3 hover:text-cyan-600 transition duration-200">
-        {discussion.title}
-      </h2>
-
-      {/* Content */}
-      <p className="text-slate-600 text-sm line-clamp-3 mb-5 leading-relaxed">
-        {discussion.content}
-      </p>
-
-      {/* Tags */}
-      {discussion.tags?.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-5">
-          {discussion.tags.map((tag, index) => (
-            <span
-              key={index}
-              className="px-3 py-1 rounded-full bg-cyan-50/60 border border-cyan-100 text-cyan-700 font-semibold text-xs transition duration-200 hover:bg-cyan-100/80"
-            >
-              #{tag}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Footer */}
-      <div className="flex justify-between items-center border-t border-slate-100 pt-4 mt-2">
-
-        <div className="flex gap-5">
-
+      {/* Footer Metrics & CTA Button */}
+      <div className="pt-4 border-t border-indigo-100/80 mt-4 space-y-3">
+        <div className="flex items-center justify-between gap-2">
           <button
+            type="button"
             onClick={handleLike}
-            className="flex items-center gap-1.5 text-rose-500 hover:text-rose-600 font-medium text-sm transition"
+            className="flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-rose-50 border border-rose-200/90 text-rose-700 text-xs font-black hover:bg-rose-100 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer shadow-2xs"
           >
-            <Heart size={16} className="fill-current text-rose-500/10 hover:fill-rose-500" />
-
-            <span>
-              {discussion.likes?.length || 0}
-            </span>
+            <Heart size={14} className="fill-rose-500 text-rose-600 shrink-0" />
+            <span>{discussion.likes?.length || 0} Likes</span>
           </button>
 
-          <div className="flex items-center gap-1.5 text-slate-500 font-medium text-sm">
-            <MessageCircle size={16} />
-
-            <span>
-              {discussion.comments?.length || 0}
-            </span>
+          <div className="flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-indigo-50 border border-indigo-200/90 text-indigo-700 text-xs font-black shadow-2xs">
+            <MessageCircle size={14} className="text-indigo-600 shrink-0" />
+            <span>{discussion.comments?.length || 0} Comments</span>
           </div>
-
         </div>
 
         <Link
           to={`/community/discussions/${discussion._id}`}
-          className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-sm font-semibold text-sm transition-all duration-200 hover:scale-[1.02] inline-flex items-center"
+          className="w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white font-black text-xs uppercase tracking-wider shadow-md shadow-purple-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-200 cursor-pointer text-center"
         >
-          View Discussion
+          <span>View Discussion</span>
+          <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform shrink-0" />
         </Link>
-
       </div>
 
     </div>

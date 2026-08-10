@@ -8,7 +8,7 @@ import {
 
 const CommunityHeader = ({
   search = "",
-  setSearch = () => {},
+  setSearch = () => { },
 }) => {
   return (
     <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm p-6 mb-6">

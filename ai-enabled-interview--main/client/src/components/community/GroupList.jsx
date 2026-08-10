@@ -6,7 +6,7 @@ import GroupCard from "./GroupCard";
 import LoadingSkeleton from "./LoadingSkeleton";
 import EmptyState from "./EmptyState";
 
-const GroupList = () => {
+const GroupList = ({ limit }) => {
   const {
     groups,
     loading,
@@ -30,9 +30,11 @@ const GroupList = () => {
     );
   }
 
+  const displayedGroups = limit ? groups.slice(0, limit) : groups;
+
   return (
-    <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-      {groups.map((group) => (
+    <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+      {displayedGroups.map((group) => (
         <GroupCard
           key={group._id}
           group={group}

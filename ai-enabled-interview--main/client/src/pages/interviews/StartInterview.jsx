@@ -10,111 +10,106 @@ import {
 
 const StartInterview = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  const [loading, setLoading] =
-    useState(false);
+  const handleStartInterview = async (formData) => {
+    try {
+      setLoading(true);
 
-  const handleStartInterview =
-    async (formData) => {
-      try {
-        setLoading(true);
+      const response = await startInterview(formData);
 
-        const response =
-          await startInterview(
-            formData
-          );
-
-        if (
-          response.success
-        ) {
-          navigate(
-            `/interviews/${response.interview._id}`
-          );
-        }
-      } catch (error) {
-        console.error(error);
-
-        alert(
-          error?.response?.data
-            ?.message ||
-          "Failed to start interview"
-        );
-      } finally {
-        setLoading(false);
+      if (response.success) {
+        navigate(`/interviews/${response.interview._id}`);
       }
-    };
+    } catch (error) {
+      console.error(error);
+      alert(
+        error?.response?.data?.message ||
+        "Failed to start interview"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <MainLayout showNavbar={false}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-950 flex items-center justify-center px-6">
+      <div className="relative min-h-screen bg-slate-50 text-slate-800 flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-hidden">
+        <div className="relative z-10 w-full max-w-4xl my-8">
+          {/* Main Card Container */}
+          <div className="relative bg-white border border-slate-200/90 rounded-3xl shadow-xl p-6 sm:p-10 md:p-12 transition-all duration-500 overflow-hidden">
+            {/* Top Accent Gradient Bar */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500" />
 
-        <div className="w-full max-w-4xl">
-
-          <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-10 md:p-14">
-
+            {/* Header Content */}
             <div className="text-center mb-10">
-              <div className="w-28 h-28 mx-auto rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center text-6xl mb-6 shadow-[0_0_40px_rgba(6,182,212,0.4)] animate-[pulse_3s_ease-in-out_infinite] hover:scale-110 transition-transform duration-300 cursor-default">
-                🤖
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-6 shadow-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-600"></span>
+                </span>
+                AI Interview Assistant v2.0
               </div>
 
-              <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-400 mb-4 tracking-tight">
-                Mock Interview
+              {/* Bot Avatar Icon */}
+              <div className="relative group w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-6 cursor-pointer">
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 blur-lg opacity-30 group-hover:opacity-70 transition-opacity duration-300"></div>
+                <div className="relative w-full h-full rounded-3xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 flex items-center justify-center text-5xl sm:text-6xl shadow-md transform group-hover:scale-105 group-hover:rotate-3 transition-transform duration-300">
+                  🤖
+                </div>
+              </div>
+
+              {/* Gradient Title */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-3">
+                Launch Your{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500">
+                  Mock Interview
+                </span>
               </h1>
 
-              <p className="text-slate-300 text-lg mb-2 max-w-xl mx-auto font-medium">
-                Customize your interview settings and prepare to be challenged by our advanced AI interviewer.
+              <p className="text-slate-500 text-sm sm:text-base max-w-xl mx-auto font-semibold leading-relaxed">
+                Select your target tech stack and experience level. Our AI interviewer will formulate realistic questions and evaluate your responses in real time.
               </p>
             </div>
 
+            {/* Interactive Form */}
             <InterviewForm
-              onSubmit={
-                handleStartInterview
-              }
+              onSubmit={handleStartInterview}
               loading={loading}
             />
 
-            <div className="mt-10 border-t border-white/10 pt-6">
-
-              <div className="grid md:grid-cols-3 gap-6">
-
-                <div className="bg-white/5 rounded-xl p-5 text-center">
-                  <h3 className="text-cyan-400 font-bold text-lg">
-                    🎯 Role Based
-                  </h3>
-
-                  <p className="text-slate-300 mt-2 text-sm">
-                    Questions tailored specifically to your selected role.
+            {/* Bottom Feature Cards */}
+            <div className="mt-12 border-t border-slate-100 pt-8">
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="group bg-slate-50/80 hover:bg-indigo-50/40 border border-slate-200/80 hover:border-indigo-300 rounded-2xl p-4 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                  <div className="text-2xl mb-2 group-hover:scale-125 transition-transform duration-300">🎯</div>
+                  <h3 className="text-indigo-700 font-bold text-sm">Role Based</h3>
+                  <p className="text-slate-500 mt-1 text-xs font-semibold leading-normal">
+                    Questions customized specifically to your chosen tech stack.
                   </p>
                 </div>
 
-                <div className="bg-white/5 rounded-xl p-5 text-center">
-                  <h3 className="text-purple-400 font-bold text-lg">
-                    🧠 AI Evaluation
-                  </h3>
-
-                  <p className="text-slate-300 mt-2 text-sm">
-                    Receive instant feedback and performance analysis.
+                <div className="group bg-slate-50/80 hover:bg-purple-50/40 border border-slate-200/80 hover:border-purple-300 rounded-2xl p-4 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                  <div className="text-2xl mb-2 group-hover:scale-125 transition-transform duration-300">🧠</div>
+                  <h3 className="text-purple-700 font-bold text-sm">AI Evaluation</h3>
+                  <p className="text-slate-500 mt-1 text-xs font-semibold leading-normal">
+                    Get real-time grading, feedback, and optimization suggestions.
                   </p>
                 </div>
 
-                <div className="bg-white/5 rounded-xl p-5 text-center">
-                  <h3 className="text-green-400 font-bold text-lg">
-                    📈 Detailed Reports
-                  </h3>
-
-                  <p className="text-slate-300 mt-2 text-sm">
-                    Track strengths, weaknesses, and improvement areas.
+                <div className="group bg-slate-50/80 hover:bg-emerald-50/40 border border-slate-200/80 hover:border-emerald-300 rounded-2xl p-4 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                  <div className="text-2xl mb-2 group-hover:scale-125 transition-transform duration-300">📈</div>
+                  <h3 className="text-emerald-700 font-bold text-sm">Detailed Analytics</h3>
+                  <p className="text-slate-500 mt-1 text-xs font-semibold leading-normal">
+                    Track performance metrics, confidence score, and answer depth.
                   </p>
                 </div>
-
               </div>
-
             </div>
 
           </div>
-
         </div>
-
       </div>
     </MainLayout>
   );

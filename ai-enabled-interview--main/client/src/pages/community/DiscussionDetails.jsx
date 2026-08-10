@@ -74,8 +74,8 @@ const DiscussionDetails = () => {
 
               {discussion.user?.name
                 ? discussion.user.name
-                    .charAt(0)
-                    .toUpperCase()
+                  .charAt(0)
+                  .toUpperCase()
                 : <User size={18} />}
 
             </div>

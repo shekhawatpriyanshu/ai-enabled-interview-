@@ -48,14 +48,14 @@ const GroupForm = () => {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Failed to create study group."
+        "Failed to create study group."
       );
     }
   };
 
   return (
     <div className="w-full bg-white/70 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white p-8 md:p-10 relative overflow-hidden">
-      
+
       {/* Decorative Blur Backgrounds */}
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-purple-400/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-400/20 rounded-full blur-3xl pointer-events-none" />
@@ -129,11 +129,10 @@ const GroupForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`px-8 py-3.5 rounded-xl text-white font-bold transition-all duration-300 shadow-lg text-center ${
-              loading
+            className={`px-8 py-3.5 rounded-xl text-white font-bold transition-all duration-300 shadow-lg text-center ${loading
                 ? "bg-gray-400 cursor-not-allowed shadow-none"
                 : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 hover:shadow-indigo-500/40 hover:-translate-y-1 active:scale-95"
-            }`}
+              }`}
           >
             {loading
               ? "Creating..."
