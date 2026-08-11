@@ -13,6 +13,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Test EC2 SSH connectivity
+        run: |
+          echo "Testing EC2: ${{ secrets.EC2_HOST }}"
+          nc -vz -w 15 ${{ secrets.EC2_HOST }} 22
+
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.2.0
         with:
