@@ -29,10 +29,12 @@ type:String,
 enum:[
 "Accepted",
 "Wrong Answer",
+"WRONG_ANSWER",
 "COMPILATION_ERROR",
 "RUNTIME_ERROR",
 "TIME_LIMIT",
-"MEMORY_LIMIT"
+"MEMORY_LIMIT",
+"SUCCESS"
 ]
 },
 

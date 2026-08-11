@@ -13,7 +13,8 @@ const languageMap={
     javascript:102,
     python:100,
     java:91,
-    cpp:105
+    cpp:105,
+    c:103
 };
 
 //---------------------------------------
@@ -44,11 +45,23 @@ exports.runCode = async(req,res)=>{
             problem
         );
 
+        // Convert input to line-by-line format the wrapper expects
+        let stdinStr = "";
+        if (typeof input === "object" && input !== null && !Array.isArray(input)) {
+            stdinStr = Object.values(input).map(v =>
+                typeof v === "object" ? JSON.stringify(v) : String(v)
+            ).join("\n");
+        } else if (Array.isArray(input)) {
+            stdinStr = JSON.stringify(input);
+        } else {
+            stdinStr = String(input || "");
+        }
+
         // Create Judge0 job
         const token = await createSubmission(
             wrappedCode,
             languageMap[language],
-            JSON.stringify(input),
+            stdinStr,
             problem.limits
         );
 

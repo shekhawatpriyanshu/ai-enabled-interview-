@@ -64,7 +64,50 @@ const codingProblemSchema = new mongoose.Schema(
       },
     ],
 
+    // AI-generated function metadata
+    functionName: {
+      type: String,
+      default: "solve",
+    },
+
+    parameters: [
+      {
+        name: { type: String },
+        type: { type: String },
+      },
+    ],
+
+    returnType: {
+      type: String,
+      default: "string",
+    },
+
+    helperClasses: [
+      {
+        type: String,
+      },
+    ],
+
+    // Test cases for submission judging (with hidden flag)
     testCases: [testCaseSchema],
+
+    // Examples for display (same structure, typically visible)
+    examples: [
+      {
+        input: {
+          type: mongoose.Schema.Types.Mixed,
+          default: "",
+        },
+        output: {
+          type: mongoose.Schema.Types.Mixed,
+          default: "",
+        },
+        explanation: {
+          type: String,
+          default: "",
+        },
+      },
+    ],
 
     limits: {
       time: { type: Number, default: 2 },
@@ -97,6 +140,14 @@ const codingProblemSchema = new mongoose.Schema(
         default: "",
       },
     },
+
+    // Legacy boilerPlate field (for backwards compatibility)
+    boilerPlate: [
+      {
+        language: { type: String },
+        code: { type: String },
+      },
+    ],
 
     solution: {
       type: String,

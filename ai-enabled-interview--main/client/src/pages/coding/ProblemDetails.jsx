@@ -146,13 +146,38 @@ const ProblemDetails = () => {
         toast.error(res.message || "Submission failed.");
         return;
       }
-      toast.success("Code submitted successfully!");
-      setStatus(res.submission?.status || "Accepted");
-      setScore(res.submission?.score || 100);
-      setOutput("Submission completed successfully.");
+
+      const submissionStatus = res.status || res.submission?.status || "Unknown";
+      const isPassed = res.passed === true || submissionStatus === "Accepted";
+
+      setStatus(submissionStatus);
       setRuntime(res.runtime || "--");
       setMemory(res.memory || "--");
-      setExpectedOutput("");
+
+      if (isPassed) {
+        toast.success("All test cases passed!");
+        setScore(100);
+        setOutput("All test cases passed successfully!");
+        setExpectedOutput("");
+      } else {
+        // Show test case details for failed submissions
+        const testCases = res.testCases || [];
+        const passedCount = testCases.filter(t => t.status === "SUCCESS").length;
+        const totalCount = testCases.length;
+
+        const failedCase = testCases.find(t => t.status !== "SUCCESS" || (t.actual !== null && t.expected !== null));
+        let outputMsg = `${passedCount}/${totalCount} test cases passed.`;
+        if (failedCase && failedCase.actual !== null) {
+          outputMsg += `\n\nYour Output: ${failedCase.actual}`;
+        }
+
+        setOutput(outputMsg);
+        setExpectedOutput(failedCase?.expected !== null && failedCase?.expected !== undefined
+          ? (typeof failedCase.expected === "object" ? JSON.stringify(failedCase.expected) : String(failedCase.expected))
+          : "");
+        setScore(0);
+        toast.error(`${submissionStatus}: ${passedCount}/${totalCount} test cases passed.`);
+      }
     } catch (error) {
       const errData = error.response?.data;
       setStatus(errData?.status || "Submission Error");
@@ -264,8 +289,8 @@ const ProblemDetails = () => {
                         Example {idx + 1}:
                       </h3>
                       <div className="bg-[#1e1e1e] p-5 rounded-xl border-l-4 border-cyan-500/50 group-hover:border-cyan-400 font-mono text-sm shadow-inner transition-all duration-300 hover:shadow-lg hover:shadow-cyan-900/10">
-                        <div className="mb-2"><span className="text-slate-500 select-none mr-2">Input:</span><span className="text-slate-200 bg-slate-800 px-2 py-1 rounded">{tc.input}</span></div>
-                        <div className="mb-2"><span className="text-slate-500 select-none mr-2">Output:</span><span className="text-green-400/90 bg-slate-800 px-2 py-1 rounded">{tc.output}</span></div>
+                        <div className="mb-2"><span className="text-slate-500 select-none mr-2">Input:</span><span className="text-slate-200 bg-slate-800 px-2 py-1 rounded">{typeof tc.input === 'object' ? JSON.stringify(tc.input) : String(tc.input)}</span></div>
+                        <div className="mb-2"><span className="text-slate-500 select-none mr-2">Output:</span><span className="text-green-400/90 bg-slate-800 px-2 py-1 rounded">{typeof tc.output === 'object' ? JSON.stringify(tc.output) : String(tc.output)}</span></div>
                         {tc.explanation && (<div className="mt-4 pt-3 border-t border-slate-800/50 leading-relaxed"><span className="text-slate-500 select-none block mb-1">Explanation:</span><span className="text-slate-400 text-xs font-sans">{tc.explanation}</span></div>)}
                       </div>
                     </div>

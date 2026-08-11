@@ -6,7 +6,7 @@ const SearchBar = ({
   placeholder = "Search questions by title, tags, or topic...",
 }) => {
   return (
-    <div className="relative w-full group">
+    <div className="relative w-10px group">
       {/* Search Icon */}
       <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
         <Search size={20} />

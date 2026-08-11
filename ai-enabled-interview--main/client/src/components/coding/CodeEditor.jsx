@@ -36,9 +36,11 @@ const CodeEditor = ({
   onMount
 }) => {
   useEffect(() => {
+    // Only set default template if code is empty/undefined
+    // Don't overwrite existing code (e.g., saved drafts or problem starter code)
     if (!code) {
       setCode(
-        languageTemplates[language]
+        languageTemplates[language] || ""
       );
     }
   }, [language]);

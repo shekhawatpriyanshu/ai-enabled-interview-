@@ -13,7 +13,9 @@ function processJudgeResult(result) {
         return {
             success: false,
             type: "COMPILATION_ERROR",
-            message: result.compile_output || "Compilation failed"
+            message: result.compile_output || "Compilation failed",
+            time: result.time || 0,
+            memory: result.memory || 0
         };
     }
 
@@ -24,7 +26,9 @@ function processJudgeResult(result) {
         return {
             success: false,
             type: "RUNTIME_ERROR",
-            message: result.stderr || "Runtime exception"
+            message: result.stderr || "Runtime exception",
+            time: result.time || 0,
+            memory: result.memory || 0
         };
     }
 
@@ -35,18 +39,22 @@ function processJudgeResult(result) {
         return {
             success: false,
             type: "TIME_LIMIT",
-            message: "Execution time exceeded"
+            message: "Execution time exceeded",
+            time: result.time || 0,
+            memory: result.memory || 0
         };
     }
 
     //--------------------------------
-    // Memory Limit
+    // Memory Limit Exceeded
     //--------------------------------
     if (status === "Memory Limit Exceeded") {
         return {
             success: false,
             type: "MEMORY_LIMIT",
-            message: "Memory limit exceeded"
+            message: "Memory limit exceeded",
+            time: result.time || 0,
+            memory: result.memory || 0
         };
     }
 
@@ -56,9 +64,12 @@ function processJudgeResult(result) {
     return {
         success: true,
         type: "SUCCESS",
-        output: (result.stdout || "").trim()
-    };
+        output: (result.stdout || "").trim(),
 
+        // IMPORTANT
+        time: result.time || 0,
+        memory: result.memory || 0
+    };
 }
 
 module.exports = {

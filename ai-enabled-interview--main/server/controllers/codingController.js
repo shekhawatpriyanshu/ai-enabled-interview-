@@ -8,7 +8,6 @@ const {
 const {
   processJudgeResult
 } = require("../utils/judgeResultHandler");
-const { executeCode } = require("../services/judge0Services");
 const CodingProblem = require("../models/codingProblem");
 const Submission = require("../models/codeSubmission");
 const { generateCodingProblem } = require("../services/codingAIService");
@@ -173,7 +172,7 @@ const getSubmissionById =
     try {
 
       const submission =
-        await CodeSubmission.findOne({
+        await Submission.findOne({
 
           _id: req.params.id,
 
@@ -232,7 +231,7 @@ const getMySubmissions =
     try {
 
       const submissions =
-        await CodeSubmission.find({
+        await Submission.find({
 
           user: req.user._id,
 
@@ -445,32 +444,72 @@ const submitCode = async (req, res) => {
 
     const testResults = [];
 
-    const visibleCases = problem.testCases.filter(tc => !tc.isHidden);
-    const hiddenCases = problem.testCases.filter(tc => tc.isHidden);
+    // Use testCases if available, fall back to examples
+    const cases = (problem.testCases && problem.testCases.length > 0)
+      ? problem.testCases
+      : (problem.examples || []);
+
+    const visibleCases = cases.filter(tc => !tc.isHidden);
+    const hiddenCases = cases.filter(tc => tc.isHidden);
     const allCases = [...visibleCases, ...hiddenCases];
 
     for (const testCase of allCases) {
+      // Convert input to line-by-line format the wrapper expects
+      let stdinStr = "";
+      const inp = testCase.input;
+      if (typeof inp === "object" && inp !== null && !Array.isArray(inp)) {
+        // Object input: each value on a separate line
+        stdinStr = Object.values(inp).map(v =>
+          typeof v === "object" ? JSON.stringify(v) : String(v)
+        ).join("\n");
+      } else if (Array.isArray(inp)) {
+        stdinStr = JSON.stringify(inp);
+      } else {
+        stdinStr = String(inp);
+      }
+
       const token = await createSubmission(
         wrappedCode,
         languageMap[language],
-        JSON.stringify(testCase.input),
+        stdinStr,
         problem.limits
       );
 
       const result = await waitForResult(token);
       const execution = processJudgeResult(result);
 
+
+      console.log("========== JUDGE0 RESULT ==========");
+      console.log("Status:", result.status);
+      console.log("Time:", result.time);
+      console.log("Memory:", result.memory);
+      console.log("Stdout:", result.stdout);
+      console.log("Stderr:", result.stderr);
+      console.log("==================================");
+
+
       testResults.push({
         input: testCase.input,
         expected: testCase.output,
         actual: execution.output || "",
         status: execution.type,
-        message: execution.message || ""
+        message: execution.message || "",
+        time: execution.time || 0,
+        memory: execution.memory || 0
       });
     }
 
     let passed = true;
     let finalStatus = "Accepted";
+
+    // Normalize output for comparison:
+    // - Remove all whitespace (Python prints "[1, 2, 3]" vs JSON "[1,2,3]")
+    // - Normalize single quotes to double quotes (Python uses ' for strings)
+    const normalizeOutput = (str) => {
+      return String(str).trim()
+        .replace(/\s+/g, '')        // remove all whitespace
+        .replace(/'/g, '"');        // Python uses single quotes
+    };
 
     for (const test of testResults) {
       if (test.status !== "SUCCESS") {
@@ -479,12 +518,16 @@ const submitCode = async (req, res) => {
         break;
       }
 
-      const actual = test.actual.trim();
-      const expected = JSON.stringify(test.expected).trim();
+      const actual = normalizeOutput(test.actual);
+      // Normalize expected: if it's an object/array, stringify it; otherwise use as string
+      const expectedRaw = (typeof test.expected === "object" && test.expected !== null)
+        ? JSON.stringify(test.expected)
+        : String(test.expected);
+      const expected = normalizeOutput(expectedRaw);
 
       if (actual !== expected) {
         passed = false;
-        finalStatus = "WRONG_ANSWER";
+        finalStatus = "Wrong Answer";
         break;
       }
     }

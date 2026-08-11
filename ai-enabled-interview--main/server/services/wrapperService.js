@@ -32,21 +32,51 @@ const CPP_TYPES = {
 // -----------------------------------------
 
 function getFunctionName(problem) {
-    if (!problem.boilerPlate || !problem.boilerPlate.length) return "solve";
-    try {
-        const javaBoilerplate = problem.boilerPlate.find(bp => bp.language === 'java' || bp.language === 'javascript' || bp.language === 'python');
-        if (!javaBoilerplate) return "solve";
-        const code = javaBoilerplate.code;
-        const functionMatch = code.match(/(?:public\s+\w+\s+|function\s+|def\s+)(\w+)\s*\(/);
-        if (functionMatch) return functionMatch[1];
-    } catch (e) {}
+    // First check if AI service set functionName directly
+    if (problem.functionName) return problem.functionName;
+    
+    // Try to extract from starterCode (the actual schema field)
+    if (problem.starterCode) {
+        try {
+            const codeToCheck = problem.starterCode.javascript || problem.starterCode.python || problem.starterCode.java || "";
+            if (codeToCheck) {
+                const functionMatch = codeToCheck.match(/(?:public\s+\w+\s+|function\s+|def\s+|var\s+)(\w+)\s*[=(]/);
+                if (functionMatch) return functionMatch[1];
+            }
+        } catch (e) {}
+    }
+    
+    // Legacy: check boilerPlate if it exists
+    if (problem.boilerPlate && problem.boilerPlate.length) {
+        try {
+            const bp = problem.boilerPlate.find(bp => bp.language === 'java' || bp.language === 'javascript' || bp.language === 'python');
+            if (bp) {
+                const functionMatch = bp.code.match(/(?:public\s+\w+\s+|function\s+|def\s+)(\w+)\s*\(/);
+                if (functionMatch) return functionMatch[1];
+            }
+        } catch (e) {}
+    }
+    
     return "solve";
 }
 
 function getParameters(problem) {
-    if (!problem.testCases || !problem.testCases.length) return [];
+    // First check if AI service set parameters directly
+    if (problem.parameters && Array.isArray(problem.parameters) && problem.parameters.length > 0) {
+        return problem.parameters.map(p => ({
+            name: p.name || 'input',
+            type: p.type || 'string'
+        }));
+    }
+    
+    // Fall back to inferring from test cases
+    const testCases = (problem.testCases && problem.testCases.length > 0)
+        ? problem.testCases
+        : (problem.examples || []);
+    
+    if (!testCases.length) return [];
     try {
-        const sampleCase = problem.testCases[0];
+        const sampleCase = testCases[0];
         const inputs = sampleCase.input;
         if (typeof inputs === "string") {
             return [{ name: "input", type: "string" }];
@@ -98,9 +128,38 @@ function normalizeCode(code) {
 }
 
 // -----------------------------------------
+// Detect Self-Contained I/O Code
+// -----------------------------------------
+// If user code already reads from stdin and writes to stdout,
+// wrapping it would cause conflicts (double stdin reads, missing classes, etc.)
+function hasOwnIO(language, code) {
+    switch (language) {
+        case 'python':
+            return /\binput\s*\(/.test(code) || /sys\.stdin/.test(code);
+        case 'javascript':
+            return /process\.stdin/.test(code) || /require\s*\(\s*['"]readline['"]\s*\)/.test(code) ||
+                   (/require\s*\(\s*['"]fs['"]\s*\)/.test(code) && /readFileSync\s*\(\s*0/.test(code));
+        case 'java':
+            return /new\s+Scanner\s*\(\s*System\.in\s*\)/.test(code) || /BufferedReader/.test(code);
+        case 'cpp':
+            return /\bcin\s*>>/.test(code) || /\bscanf\s*\(/.test(code) || /\bgetline\s*\(/.test(code);
+        case 'c':
+            return /\bscanf\s*\(/.test(code) || /\bgets\s*\(/.test(code) || /\bfgets\s*\(/.test(code);
+        default:
+            return false;
+    }
+}
+
+// -----------------------------------------
 // Dispatcher
 // -----------------------------------------
 function generateWrapper(language, code, problem) {
+    // If user code has its own I/O handling, don't wrap it
+    // — just return it as-is to avoid conflicts
+    if (hasOwnIO(language, code)) {
+        return normalizeCode(code);
+    }
+
     switch (language) {
         case "java": return buildJavaWrapper(code, problem);
         case "javascript": return buildJavascriptWrapper(code, problem);
