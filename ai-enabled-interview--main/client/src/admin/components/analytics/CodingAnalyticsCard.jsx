@@ -92,23 +92,9 @@ const CodingAnalyticsCard = ({ analytics }) => {
             </h3>
           </div>
 
-          <div className="border border-orange-200/80 bg-gradient-to-br from-orange-50/80 to-amber-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
-            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-              <FaExclamationTriangle className="text-orange-500" /> Runtime Error
-            </p>
-            <h3 className="text-3xl font-black text-orange-700 mt-1">
-              {analytics.runtimeError || 0}
-            </h3>
-          </div>
 
-          <div className="border border-amber-200/80 bg-gradient-to-br from-amber-50/80 to-yellow-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
-            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-              <FaBug className="text-amber-500" /> Compile Error
-            </p>
-            <h3 className="text-3xl font-black text-amber-700 mt-1">
-              {analytics.compileError || 0}
-            </h3>
-          </div>
+
+
         </div>
 
         {/* Right Side: Doughnut Chart */}

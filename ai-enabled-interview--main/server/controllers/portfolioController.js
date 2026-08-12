@@ -55,16 +55,27 @@ const generatePortfolio = async (req, res) => {
         const platformStats =
             await getPortfolioStats(userId);
 
-        // 4. Create username/slug
+        // 4. Create username/slug (handle duplicates)
         const name =
             portfolioData.personal?.name ||
             `user-${userId.toString().slice(-6)}`;
 
-        const slug = name
+        let slug = name
             .toLowerCase()
             .trim()
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/^-|-$/g, "");
+
+        // Check if another user already has this slug
+        const existingPortfolio = await Portfolio.findOne({
+            slug,
+            user: { $ne: userId },
+        });
+
+        if (existingPortfolio) {
+            // Append a short unique suffix from userId to avoid collision
+            slug = `${slug}-${userId.toString().slice(-6)}`;
+        }
 
         // 5. Save/update portfolio
         const portfolio =
@@ -93,7 +104,7 @@ const generatePortfolio = async (req, res) => {
                     isPublished: true,
                 },
                 {
-                    new: true,
+                    returnDocument: 'after',
                     upsert: true,
                 }
 
@@ -186,7 +197,7 @@ const publishPortfolio = async (req, res) => {
         ...(template ? { template } : {}),
       },
       {
-        new: true,
+        returnDocument: 'after',
       }
     );
 
@@ -249,7 +260,7 @@ const updatePortfolio = async (req, res) => {
                 ...(slug ? { slug } : {}),
                 ...(typeof isPublished === "boolean" ? { isPublished } : {}),
             },
-            { new: true, upsert: true }
+            { returnDocument: 'after', upsert: true }
         );
 
         const stats = await getPortfolioStats(req.user._id);

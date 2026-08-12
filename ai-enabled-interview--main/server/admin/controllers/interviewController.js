@@ -14,11 +14,11 @@ exports.getAllInterviews = async (req, res) => {
     const status = req.query.status || "";
     const experience = req.query.experience || "";
 
-if (experience) {
-    query.experienceLevel = experience;
-}
-
     const query = {};
+
+    if (experience) {
+      query.experienceLevel = experience;
+    }
 
     if (status) {
       query.status = status;

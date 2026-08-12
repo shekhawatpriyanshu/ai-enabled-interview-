@@ -2,7 +2,7 @@ import { FaClipboardList, FaCheckCircle, FaExclamationCircle, FaQuestionCircle }
 
 const MockTestStats = ({ tests = [] }) => {
   const total = tests.length;
-  const active = tests.filter((t) => t.isActive).length;
+  const active = tests.filter((t) => t.isActive !== false).length;
   const inactive = total - active;
   const totalQuestions = tests.reduce(
     (acc, curr) => acc + (curr.questions?.length || 0),

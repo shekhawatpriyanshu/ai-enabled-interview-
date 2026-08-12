@@ -91,13 +91,7 @@ const InterviewAnalyticsCard = ({ analytics }) => {
             borderColor="border-amber-200/80"
           />
 
-          <Card
-            title="Cancelled"
-            value={analytics.cancelled || 0}
-            color="text-rose-700"
-            bgColor="bg-gradient-to-br from-rose-50/80 to-red-50/40"
-            borderColor="border-rose-200/80"
-          />
+
 
           <Card
             title="Completion Rate"

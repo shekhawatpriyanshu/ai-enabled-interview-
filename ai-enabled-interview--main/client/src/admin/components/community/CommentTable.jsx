@@ -1,11 +1,24 @@
 import { Link } from "react-router-dom";
-import { FaEye, FaEdit, FaTrash, FaCommentDots, FaUser } from "react-icons/fa";
+import {
+  FaEye,
+  FaEdit,
+  FaTrash,
+  FaCommentDots,
+  FaUser,
+} from "react-icons/fa";
 
-const CommentTable = ({ comments = [], loading = false, onView, onEdit, onDelete }) => {
+const CommentTable = ({
+  comments = [],
+  loading = false,
+  onView,
+  onEdit,
+  onDelete,
+}) => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-slate-200/90 shadow-xl">
         <div className="h-10 w-10 border-4 border-purple-500/30 border-t-purple-600 rounded-full animate-spin"></div>
+
         <p className="mt-4 text-xs font-extrabold text-slate-500 uppercase tracking-wider">
           Loading Comments...
         </p>
@@ -19,7 +32,11 @@ const CommentTable = ({ comments = [], loading = false, onView, onEdit, onDelete
         <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-500 text-white flex items-center justify-center text-3xl shadow-lg shadow-purple-500/30 animate-pulse">
           <FaCommentDots />
         </div>
-        <h3 className="text-lg font-black text-slate-900">No Comments Found</h3>
+
+        <h3 className="text-lg font-black text-slate-900">
+          No Comments Found
+        </h3>
+
         <p className="text-slate-500 text-xs font-semibold">
           Try refining your search keyword to find matching comments.
         </p>
@@ -35,20 +52,25 @@ const CommentTable = ({ comments = [], loading = false, onView, onEdit, onDelete
             <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-left">
               User
             </th>
+
             <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-left">
               Discussion
             </th>
+
             <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-left">
               Comment Text
             </th>
+
             <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-center">
               Date
             </th>
+
             <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500 text-center w-[140px]">
               Actions
             </th>
           </tr>
         </thead>
+
         <tbody className="divide-y divide-slate-100">
           {comments.map((comment) => (
             <tr
@@ -59,13 +81,19 @@ const CommentTable = ({ comments = [], loading = false, onView, onEdit, onDelete
               <td className="px-6 py-4 text-left">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center font-black text-sm shadow-md shadow-purple-500/20 group-hover:scale-110 group-hover:rotate-6 transition-transform shrink-0">
-                    {comment.user?.name ? comment.user.name.charAt(0).toUpperCase() : <FaUser />}
+                    {comment.user?.name ? (
+                      comment.user.name.charAt(0).toUpperCase()
+                    ) : (
+                      <FaUser />
+                    )}
                   </div>
+
                   <div className="min-w-0">
-                    <p className="font-black text-sm text-slate-900 group-hover:text-purple-600 transition-colors truncate">
+                    <p className="font-black text-sm text-slate-900 group-hover:text-purple-600 transition-colors break-words">
                       {comment.user?.name || "Anonymous User"}
                     </p>
-                    <p className="text-xs text-slate-500 font-semibold truncate">
+
+                    <p className="text-xs text-slate-500 font-semibold break-words">
                       {comment.user?.email || "-"}
                     </p>
                   </div>
@@ -74,7 +102,7 @@ const CommentTable = ({ comments = [], loading = false, onView, onEdit, onDelete
 
               {/* Discussion Column */}
               <td className="px-6 py-4 text-left">
-                <p className="font-extrabold text-sm text-slate-800 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+                <p className="font-extrabold text-sm text-slate-800 group-hover:text-indigo-600 transition-colors break-words whitespace-normal">
                   {comment.discussion?.title || "Untitled Discussion"}
                 </p>
               </td>
@@ -82,20 +110,23 @@ const CommentTable = ({ comments = [], loading = false, onView, onEdit, onDelete
               {/* Comment Text */}
               <td className="px-6 py-4 text-left">
                 <div className="bg-slate-50/80 group-hover:bg-white p-3 rounded-xl border border-slate-100 group-hover:border-purple-200 transition-all">
-                  <p className="text-xs text-slate-700 font-medium leading-relaxed line-clamp-2 max-w-md">
-                    {comment.text}
+                  <p className="text-xs text-slate-700 font-medium leading-relaxed max-w-md whitespace-normal break-words">
+                    {comment.text || "No comment text"}
                   </p>
                 </div>
               </td>
 
               {/* Date */}
               <td className="px-6 py-4 text-center text-xs font-bold text-slate-500">
-                {new Date(comment.createdAt).toLocaleDateString()}
+                {comment.createdAt
+                  ? new Date(comment.createdAt).toLocaleDateString()
+                  : "-"}
               </td>
 
               {/* Actions */}
               <td className="px-6 py-4">
                 <div className="flex justify-center items-center gap-1.5">
+                  {/* View */}
                   <button
                     onClick={() => onView && onView(comment)}
                     className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
@@ -104,6 +135,7 @@ const CommentTable = ({ comments = [], loading = false, onView, onEdit, onDelete
                     <FaEye />
                   </button>
 
+                  {/* Edit */}
                   <button
                     onClick={() => onEdit && onEdit(comment)}
                     className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
@@ -112,6 +144,7 @@ const CommentTable = ({ comments = [], loading = false, onView, onEdit, onDelete
                     <FaEdit />
                   </button>
 
+                  {/* Delete */}
                   <button
                     onClick={() => onDelete && onDelete(comment)}
                     className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm hover:shadow hover:scale-105 active:scale-95 cursor-pointer"
@@ -124,11 +157,9 @@ const CommentTable = ({ comments = [], loading = false, onView, onEdit, onDelete
             </tr>
           ))}
         </tbody>
-
       </table>
     </div>
   );
 };
-
 
 export default CommentTable;

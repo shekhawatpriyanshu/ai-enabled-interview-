@@ -33,9 +33,10 @@ const Dashboard = () => {
 
     const [loading, setLoading] = useState(true);
     const [showSettings, setShowSettings] = useState(false);
-    const [showOnlineModal, setShowOnlineModal] = useState(false);
-    const [onlineUsers, setOnlineUsers] = useState([]);
-    const [loadingOnlineUsers, setLoadingOnlineUsers] = useState(false);
+    const [showDataModal, setShowDataModal] = useState(false);
+    const [selectedCard, setSelectedCard] = useState("");
+    const [modalData, setModalData] = useState([]);
+    const [loadingModalData, setLoadingModalData] = useState(false);
 
     const loadDashboard = async () => {
         try {
@@ -76,6 +77,78 @@ const Dashboard = () => {
             socket.off("new_activity");
         };
     }, []);
+
+    const formatTime = (date) => {
+        const d = new Date(date);
+        const now = new Date();
+        const diff = now - d;
+        if (diff < 60000) return 'Just now';
+        if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+        if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    };
+
+    const getItemTitle = (item, type) => {
+        switch (type) {
+            case "Total Users":
+            case "Online Users":
+                return item.name || "Unknown User";
+
+            case "Interviews Submitted":
+                return item.role || item.user?.name || "Interview Session";
+
+            case "Coding Problems":
+                return item.title || item.name || "Coding Problem";
+
+            case "Active Groups":
+                return item.name || item.title || "Community";
+
+            default:
+                return item.name || item.title || "Item";
+        }
+    };
+
+    const getItemSubtitle = (item, type) => {
+        switch (type) {
+            case "Total Users":
+            case "Online Users":
+                return item.email || "No email available";
+
+            case "Interviews Submitted":
+                return item.user?.name || item.user?.email || (item.createdAt ? formatTime(item.createdAt) : "Interview session");
+
+            case "Coding Problems":
+                return item.difficulty || item.topic || "Coding Problem";
+
+            case "Active Groups":
+                return item.description || `${item.membersCount || item.members?.length || 0} members`;
+
+            default:
+                return "";
+        }
+    };
+
+    const getItemStatus = (item, type) => {
+        switch (type) {
+            case "Online Users":
+                return "Online";
+
+            case "Total Users":
+                return item.isVerified ? "Verified" : "Unverified";
+
+            case "Interviews Submitted":
+                return item.status || "Submitted";
+
+            case "Coding Problems":
+                return item.difficulty || "Problem";
+
+            case "Active Groups":
+                return `${item.membersCount || item.members?.length || 0} Members`;
+
+            default:
+                return "View";
+        }
+    };
 
     const cards = [
         {
@@ -141,35 +214,62 @@ const Dashboard = () => {
         );
     }
 
-    const formatTime = (date) => {
-        const d = new Date(date);
-        const now = new Date();
-        const diff = now - d;
-        if (diff < 60000) return 'Just now';
-        if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
-        if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
-        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-    };
-
     const handleLogout = async () => {
         await logout();
         navigate("/admin/login");
     };
 
     const handleCardClick = async (cardTitle) => {
-        if (cardTitle === "Online Users") {
-            setShowOnlineModal(true);
-            try {
-                setLoadingOnlineUsers(true);
-                const res = await adminApi.get("/auth/online-users");
-                if (res.data && res.data.users) {
-                    setOnlineUsers(res.data.users);
-                }
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoadingOnlineUsers(false);
+        setSelectedCard(cardTitle);
+        setShowDataModal(true);
+        setLoadingModalData(true);
+        setModalData([]);
+
+        try {
+            let endpoint = "";
+
+            switch (cardTitle) {
+                case "Total Users":
+                    endpoint = "/users?limit=100";
+                    break;
+
+                case "Interviews Submitted":
+                    endpoint = "/interviews?limit=100";
+                    break;
+
+                case "Coding Problems":
+                    endpoint = "/coding?limit=100";
+                    break;
+
+                case "Active Groups":
+                    endpoint = "/community/groups?limit=100";
+                    break;
+
+                case "Online Users":
+                    endpoint = "/auth/online-users";
+                    break;
+
+                default:
+                    return;
             }
+
+            const res = await adminApi.get(endpoint);
+            const data = res.data;
+
+            // Extract the correct array based on the response shape
+            const items = data?.users
+                || data?.interviews
+                || data?.problems
+                || data?.groups
+                || data?.data
+                || [];
+
+            setModalData(items);
+        } catch (error) {
+            console.error("Failed to load dashboard data:", error);
+            setModalData([]);
+        } finally {
+            setLoadingModalData(false);
         }
     };
 
@@ -230,7 +330,7 @@ const Dashboard = () => {
                     <div
                         key={index}
                         onClick={() => handleCardClick(card.title)}
-                        className={`group ${card.cardBg} rounded-3xl border p-5 shadow-sm hover:shadow-xl ${card.glow} hover:-translate-y-1.5 transition-all duration-300 relative overflow-hidden flex flex-col justify-between ${card.title === "Online Users" ? "cursor-pointer" : ""}`}
+                        className={`group ${card.cardBg} rounded-3xl border p-5 shadow-sm hover:shadow-xl ${card.glow} hover:-translate-y-1.5 transition-all duration-300 relative overflow-hidden flex flex-col justify-between cursor-pointer`}
                     >
                         {/* Top Accent Line */}
                         <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${card.topBar}`} />
@@ -304,40 +404,40 @@ const Dashboard = () => {
                     </div>
 
                     <div className="grid gap-3.5">
-                        <button 
-                            className="bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 text-white p-4 rounded-2xl hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-purple-500/25 transition-all duration-300 font-bold text-xs uppercase tracking-wider flex justify-between items-center group cursor-pointer" 
+                        <button
+                            className="bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 text-white p-4 rounded-2xl hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-purple-500/25 transition-all duration-300 font-bold text-xs uppercase tracking-wider flex justify-between items-center group cursor-pointer"
                             onClick={() => navigate("/admin/users")}
                         >
                             <span>Manage Registered Users</span>
                             <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
                         </button>
 
-                        <button 
-                            className="bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white p-4 rounded-2xl hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-purple-500/25 transition-all duration-300 font-bold text-xs uppercase tracking-wider flex justify-between items-center group cursor-pointer" 
+                        <button
+                            className="bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white p-4 rounded-2xl hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-purple-500/25 transition-all duration-300 font-bold text-xs uppercase tracking-wider flex justify-between items-center group cursor-pointer"
                             onClick={() => navigate("/admin/interviews")}
                         >
                             <span>View Interview Sessions</span>
                             <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
                         </button>
 
-                        <button 
-                            className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 rounded-2xl hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-emerald-500/25 transition-all duration-300 font-bold text-xs uppercase tracking-wider flex justify-between items-center group cursor-pointer" 
+                        <button
+                            className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 rounded-2xl hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-emerald-500/25 transition-all duration-300 font-bold text-xs uppercase tracking-wider flex justify-between items-center group cursor-pointer"
                             onClick={() => navigate("/admin/coding")}
                         >
                             <span>Manage Coding Problems</span>
                             <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
                         </button>
 
-                        <button 
-                            className="bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 rounded-2xl hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-amber-500/25 transition-all duration-300 font-bold text-xs uppercase tracking-wider flex justify-between items-center group cursor-pointer" 
+                        <button
+                            className="bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 rounded-2xl hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-amber-500/25 transition-all duration-300 font-bold text-xs uppercase tracking-wider flex justify-between items-center group cursor-pointer"
                             onClick={() => navigate("/admin/analytics")}
                         >
                             <span>View Platform Analytics</span>
                             <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
                         </button>
 
-                        <button 
-                            className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-4 rounded-2xl hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-cyan-500/25 transition-all duration-300 font-bold text-xs uppercase tracking-wider flex justify-between items-center group cursor-pointer" 
+                        <button
+                            className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-4 rounded-2xl hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-cyan-500/25 transition-all duration-300 font-bold text-xs uppercase tracking-wider flex justify-between items-center group cursor-pointer"
                             onClick={() => navigate("/admin/achievement")}
                         >
                             <span>Manage Achievements</span>
@@ -347,50 +447,70 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* 4. Online Users Modal */}
-            {showOnlineModal && (
+            {/* 4. Data Modal */}
+            {showDataModal && (
                 <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-[fadeIn_0.2s_ease-out]">
-                    <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 relative border border-slate-200 overflow-hidden">
+                    <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 relative border border-slate-200 overflow-hidden">
+                        {/* Top Gradient */}
                         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500" />
-                        
-                        <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4 mt-1">
-                            <div className="flex items-center gap-2">
-                                <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <h2 className="text-lg font-bold text-slate-800">Online Platform Users</h2>
-                                <span className="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
-                                    {onlineUsers.length}
+
+                        {/* Header */}
+                        <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5 mt-1">
+                            <div className="flex items-center gap-3">
+                                <span className="w-3 h-3 rounded-full bg-indigo-500 animate-pulse"></span>
+                                <h2 className="text-lg font-bold text-slate-800">
+                                    {selectedCard}
+                                </h2>
+                                <span className="bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-indigo-200">
+                                    {modalData.length}
                                 </span>
                             </div>
+
                             <button
-                                onClick={() => setShowOnlineModal(false)}
+                                onClick={() => setShowDataModal(false)}
                                 className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-rose-500 hover:text-white flex items-center justify-center text-slate-500 transition-all duration-200 cursor-pointer"
                             >
                                 <FaTimes size={14} />
                             </button>
                         </div>
 
-                        <div className="max-h-80 overflow-y-auto space-y-3 pr-1">
-                            {loadingOnlineUsers ? (
-                                <p className="text-center py-8 text-xs font-semibold text-slate-500 uppercase tracking-wider animate-pulse">Loading active users...</p>
-                            ) : onlineUsers.length > 0 ? (
-                                onlineUsers.map((u) => (
-                                    <div key={u._id} className="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-indigo-50/40 rounded-2xl transition-all duration-200 border border-slate-100">
-                                        <div className="min-w-0 flex-1 pr-2">
-                                            <h4 className="font-semibold text-slate-800 text-xs sm:text-sm truncate">{u.name}</h4>
-                                            <p className="text-[11px] text-slate-400 font-normal truncate mt-0.5">{u.email}</p>
+                        {/* Content */}
+                        {loadingModalData ? (
+                            <div className="text-center py-12">
+                                <div className="h-8 w-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
+                                <p className="mt-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    Loading {selectedCard}...
+                                </p>
+                            </div>
+                        ) : modalData.length > 0 ? (
+                            <div className="max-h-[420px] overflow-y-auto space-y-3 pr-1">
+                                {modalData.map((item, index) => (
+                                    <div
+                                        key={item._id || index}
+                                        className="flex items-center justify-between p-4 bg-slate-50 hover:bg-indigo-50/40 rounded-2xl transition-all duration-200 border border-slate-100"
+                                    >
+                                        <div className="min-w-0 flex-1">
+                                            <h4 className="font-semibold text-slate-800 text-sm truncate">
+                                                {getItemTitle(item, selectedCard)}
+                                            </h4>
+                                            <p className="text-[11px] text-slate-400 mt-1 truncate">
+                                                {getItemSubtitle(item, selectedCard)}
+                                            </p>
                                         </div>
-                                        <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full text-[11px] font-semibold border border-emerald-200 shrink-0">
-                                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                            Online
+
+                                        <div className="ml-4 shrink-0">
+                                            <span className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-[11px] font-semibold border border-indigo-200">
+                                                {getItemStatus(item, selectedCard)}
+                                            </span>
                                         </div>
                                     </div>
-                                ))
-                            ) : (
-                                <div className="text-center py-8 text-slate-400 text-xs font-medium">
-                                    No users currently online.
-                                </div>
-                            )}
-                        </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-12 text-slate-400 text-sm font-medium">
+                                No {selectedCard.toLowerCase()} found.
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

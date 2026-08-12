@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FaPlus,
@@ -13,6 +13,7 @@ import {
 } from "react-icons/fa";
 
 import useQuestion from "../../hooks/useQuestion";
+import questionService from "../../services/questionService";
 import QuestionTable from "../../components/questionBank/QuestionTable";
 import QuestionCard from "../../components/questionBank/QuestionCard";
 import QuestionFilters from "../../components/questionBank/QuestionFilters";
@@ -39,6 +40,12 @@ const QuestionList = () => {
 
   const [viewMode, setViewMode] = useState("grid"); // "grid" or "table"
   const [totalPages, setTotalPages] = useState(1);
+  const [questionStats, setQuestionStats] = useState({
+    total: 0,
+    easy: 0,
+    medium: 0,
+    hard: 0,
+  });
 
   const loadQuestions = async (currentFilters) => {
     const res = await fetchQuestions(currentFilters);
@@ -47,8 +54,28 @@ const QuestionList = () => {
     }
   };
 
+  const loadStats = async () => {
+    try {
+      const [allRes, easyRes, mediumRes, hardRes] = await Promise.all([
+        questionService.getQuestions({ limit: 1 }),
+        questionService.getQuestions({ limit: 1, difficulty: "Easy" }),
+        questionService.getQuestions({ limit: 1, difficulty: "Medium" }),
+        questionService.getQuestions({ limit: 1, difficulty: "Hard" }),
+      ]);
+      setQuestionStats({
+        total: allRes.data.totalQuestions || 0,
+        easy: easyRes.data.totalQuestions || 0,
+        medium: mediumRes.data.totalQuestions || 0,
+        hard: hardRes.data.totalQuestions || 0,
+      });
+    } catch (error) {
+      console.log("Failed to load question stats:", error);
+    }
+  };
+
   useEffect(() => {
     loadInitialData();
+    loadStats();
   }, []);
 
   useEffect(() => {
@@ -82,14 +109,8 @@ const QuestionList = () => {
     }
   };
 
-  // Stats calculation
-  const stats = useMemo(() => {
-    const total = questions.length;
-    const easy = questions.filter((q) => q.difficulty === "Easy").length;
-    const medium = questions.filter((q) => q.difficulty === "Medium").length;
-    const hard = questions.filter((q) => q.difficulty === "Hard").length;
-    return { total, easy, medium, hard };
-  }, [questions]);
+  // Stats from API (not just current page)
+  const stats = questionStats;
 
   return (
     <div className="space-y-6 pb-12">
@@ -124,7 +145,7 @@ const QuestionList = () => {
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-400" />
           <div className="flex items-center justify-between mb-2 pt-1">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
-              Total Loaded
+              Total Questions
             </span>
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-blue-600 text-white flex items-center justify-center text-lg shadow-md shadow-indigo-500/30 group-hover:scale-110 group-hover:rotate-6 transition-transform">
               <FaLayerGroup />
