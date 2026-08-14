@@ -9,7 +9,7 @@ const Question = require("../models/question");
 // GET ALL TESTS
 const getTests = async (req, res) => {
   try {
-    const tests = await Test.find()
+    const tests = await Test.find({ isActive: { $ne: false } })
       .populate(
         "createdBy",
         "name email"

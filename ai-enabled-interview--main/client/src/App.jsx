@@ -188,664 +188,664 @@ function App() {
         <Suspense fallback={<PageLoader />}>
           <Routes>
 
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+            {/* Public Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        {/* Public Portfolio Route */}
-        <Route
-          path="/p/:slug"
-          element={<PublicPortfolio />}
-        />
-
-
-        {/* Portfolio Generator & Editor Routes */}
-        <Route
-          path="/portfolio/generator"
-          element={
-            <ProtectedRoute>
-              <PortfolioGenerator />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/portfolio/editor"
-          element={
-            <ProtectedRoute>
-              <PortfolioEditor />
-            </ProtectedRoute>
-          }
-        />
+            {/* Public Portfolio Route */}
+            <Route
+              path="/p/:slug"
+              element={<PublicPortfolio />}
+            />
 
 
-        {/* Protected Routes */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+            {/* Portfolio Generator & Editor Routes */}
+            <Route
+              path="/portfolio/generator"
+              element={
+                <ProtectedRoute>
+                  <PortfolioGenerator />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/portfolio/editor"
+              element={
+                <ProtectedRoute>
+                  <PortfolioEditor />
+                </ProtectedRoute>
+              }
+            />
 
 
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+            {/* Protected Routes */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* Interview */}
-        <Route
-          path="/interviews"
-          element={
-            <ProtectedRoute>
-              <MyInterviews />
-            </ProtectedRoute>
-          }
-        />
 
-        <Route
-          path="/interviews/start"
-          element={
-            <ProtectedRoute>
-              <StartInterview />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/interviews/:id"
-          element={
-            <ProtectedRoute>
-              <InterviewDetails />
-            </ProtectedRoute>
-          }
-        />
+            {/* Interview */}
+            <Route
+              path="/interviews"
+              element={
+                <ProtectedRoute>
+                  <MyInterviews />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/interviews/feedback/:id"
-          element={
-            <ProtectedRoute>
-              <FeedbackScreen />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/interviews/start"
+              element={
+                <ProtectedRoute>
+                  <StartInterview />
+                </ProtectedRoute>
+              }
+            />
 
-        {/* Coding */}
-        <Route
-          path="/coding"
-          element={
-            <ProtectedRoute>
-              <CodingProblems />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/interviews/:id"
+              element={
+                <ProtectedRoute>
+                  <InterviewDetails />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/coding/:id"
-          element={
-            <ProtectedRoute>
-              <ProblemDetails />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/interviews/feedback/:id"
+              element={
+                <ProtectedRoute>
+                  <FeedbackScreen />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/coding/submissions"
-          element={
-            <ProtectedRoute>
-              <CodingMySubmissions />
-            </ProtectedRoute>
-          }
-        />
+            {/* Coding */}
+            <Route
+              path="/coding"
+              element={
+                <ProtectedRoute>
+                  <CodingProblems />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/coding/submission/:id"
-          element={
-            <ProtectedRoute>
-              <SubmissionDetails />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/coding/:id"
+              element={
+                <ProtectedRoute>
+                  <ProblemDetails />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/coding/dashboard"
-          element={
-            <ProtectedRoute>
-              <CodingDashboard />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/coding/submissions"
+              element={
+                <ProtectedRoute>
+                  <CodingMySubmissions />
+                </ProtectedRoute>
+              }
+            />
 
-        {/* Resume */}
-        <Route
-          path="/resume-analyzer"
-          element={
-            <ProtectedRoute>
-              <ResumeAnalyzer />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/coding/submission/:id"
+              element={
+                <ProtectedRoute>
+                  <SubmissionDetails />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/resume-report/:id"
-          element={
-            <ProtectedRoute>
-              <ResumeReport />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/coding/dashboard"
+              element={
+                <ProtectedRoute>
+                  <CodingDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-        {/* Profile */}
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
+            {/* Resume */}
+            <Route
+              path="/resume-analyzer"
+              element={
+                <ProtectedRoute>
+                  <ResumeAnalyzer />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/profile/create"
-          element={
-            <ProtectedRoute>
-              <CreateProfile />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/resume-report/:id"
+              element={
+                <ProtectedRoute>
+                  <ResumeReport />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/profile/edit"
-          element={
-            <ProtectedRoute>
-              <EditProfile />
-            </ProtectedRoute>
-          }
-        />
+            {/* Profile */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
 
-        {/* Mock Tests */}
-        <Route
-          path="/tests"
-          element={
-            <ProtectedRoute>
-              <TestsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/tests/:id"
-          element={
-            <ProtectedRoute>
-              <TestOverview />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/tests/:id/attempt"
-          element={
-            <ProtectedRoute>
-              <TestDetails />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/tests/submissions"
-          element={
-            <ProtectedRoute>
-              <MySubmissions />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/profile/create"
+              element={
+                <ProtectedRoute>
+                  <CreateProfile />
+                </ProtectedRoute>
+              }
+            />
 
-        {/* Question Bank */}
+            <Route
+              path="/profile/edit"
+              element={
+                <ProtectedRoute>
+                  <EditProfile />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/question-bank/topics"
-          element={
-            <ProtectedRoute>
-              <Topics />
-            </ProtectedRoute>
-          }
-        />
+            {/* Mock Tests */}
+            <Route
+              path="/tests"
+              element={
+                <ProtectedRoute>
+                  <TestsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tests/:id"
+              element={
+                <ProtectedRoute>
+                  <TestOverview />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tests/:id/attempt"
+              element={
+                <ProtectedRoute>
+                  <TestDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tests/submissions"
+              element={
+                <ProtectedRoute>
+                  <MySubmissions />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/question-bank/companies"
-          element={
-            <ProtectedRoute>
-              <Companies />
-            </ProtectedRoute>
-          }
-        />
+            {/* Question Bank */}
 
-        <Route
-          path="/question-bank/questions"
-          element={
-            <ProtectedRoute>
-              <Questions />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/question-bank/topics"
+              element={
+                <ProtectedRoute>
+                  <Topics />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/question-bank/questions/:id"
-          element={
-            <ProtectedRoute>
-              <QuestionDetails />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/question-bank/companies"
+              element={
+                <ProtectedRoute>
+                  <Companies />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/questions"
-          element={
-            <ProtectedRoute>
-              <Questions />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/question-bank/questions"
+              element={
+                <ProtectedRoute>
+                  <Questions />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/questions/:id"
-          element={
-            <ProtectedRoute>
-              <QuestionDetails />
-            </ProtectedRoute>
-          }
-        />
-        {/* ========================= COMMUNITY ========================= */}
+            <Route
+              path="/question-bank/questions/:id"
+              element={
+                <ProtectedRoute>
+                  <QuestionDetails />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          element={
-            <CommunityProvider>
-              <Outlet />
-            </CommunityProvider>
-          }
-        >
-          <Route
-            path="/community"
-            element={
-              <ProtectedRoute>
-                <CommunityHome />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/questions"
+              element={
+                <ProtectedRoute>
+                  <Questions />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/community/discussions"
-            element={
-              <ProtectedRoute>
-                <DiscussionsPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/questions/:id"
+              element={
+                <ProtectedRoute>
+                  <QuestionDetails />
+                </ProtectedRoute>
+              }
+            />
+            {/* ========================= COMMUNITY ========================= */}
 
-          <Route
-            path="/community/discussions/:id"
-            element={
-              <ProtectedRoute>
-                <DiscussionDetails />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              element={
+                <CommunityProvider>
+                  <Outlet />
+                </CommunityProvider>
+              }
+            >
+              <Route
+                path="/community"
+                element={
+                  <ProtectedRoute>
+                    <CommunityHome />
+                  </ProtectedRoute>
+                }
+              />
 
-          <Route
-            path="/community/create-discussion"
-            element={
-              <ProtectedRoute>
-                <CreateDiscussion />
-              </ProtectedRoute>
-            }
-          />
+              <Route
+                path="/community/discussions"
+                element={
+                  <ProtectedRoute>
+                    <DiscussionsPage />
+                  </ProtectedRoute>
+                }
+              />
 
-          <Route
-            path="/community/groups"
-            element={
-              <ProtectedRoute>
-                <StudyGroupsPage />
-              </ProtectedRoute>
-            }
-          />
+              <Route
+                path="/community/discussions/:id"
+                element={
+                  <ProtectedRoute>
+                    <DiscussionDetails />
+                  </ProtectedRoute>
+                }
+              />
 
-          <Route
-            path="/community/groups/:id"
-            element={
-              <ProtectedRoute>
-                <GroupDetails />
-              </ProtectedRoute>
-            }
-          />
+              <Route
+                path="/community/create-discussion"
+                element={
+                  <ProtectedRoute>
+                    <CreateDiscussion />
+                  </ProtectedRoute>
+                }
+              />
 
-          <Route
-            path="/community/create-group"
-            element={
-              <ProtectedRoute>
-                <CreateGroup />
-              </ProtectedRoute>
-            }
-          />
-        </Route>
+              <Route
+                path="/community/groups"
+                element={
+                  <ProtectedRoute>
+                    <StudyGroupsPage />
+                  </ProtectedRoute>
+                }
+              />
 
-        {/* ========================= CONTESTS ========================= */}
-        <Route
-          element={
-            <ContestProvider>
-              <Outlet />
-            </ContestProvider>
-          }
-        >
-          <Route
-            path="/contests"
-            element={
-              <ProtectedRoute>
-                <ContestList />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/contests/:id"
-            element={
-              <ProtectedRoute>
-                <ContestDetails />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/contests/join/:id"
-            element={
-              <ProtectedRoute>
-                <JoinContest />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/contests/my"
-            element={
-              <ProtectedRoute>
-                <MyContests />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/contests/:id/leaderboard"
-            element={
-              <ProtectedRoute>
-                <Leaderboard />
-              </ProtectedRoute>
-            }
-          />
-        </Route>
-        {/* ========================= ANALYTICS ========================= */}
+              <Route
+                path="/community/groups/:id"
+                element={
+                  <ProtectedRoute>
+                    <GroupDetails />
+                  </ProtectedRoute>
+                }
+              />
 
-        <Route
-          element={
-            <AnalyticsProvider>
-              <Outlet />
-            </AnalyticsProvider>
-          }
-        >
-          <Route
-            path="/analytics"
-            element={
-              <ProtectedRoute>
-                <AnalyticsDashboard />
-              </ProtectedRoute>
-            }
-          />
+              <Route
+                path="/community/create-group"
+                element={
+                  <ProtectedRoute>
+                    <CreateGroup />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
 
-          <Route
-            path="/achievements"
-            element={
-              <ProtectedRoute>
-                <Achievements />
-              </ProtectedRoute>
-            }
-          />
+            {/* ========================= CONTESTS ========================= */}
+            <Route
+              element={
+                <ContestProvider>
+                  <Outlet />
+                </ContestProvider>
+              }
+            >
+              <Route
+                path="/contests"
+                element={
+                  <ProtectedRoute>
+                    <ContestList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/contests/:id"
+                element={
+                  <ProtectedRoute>
+                    <ContestDetails />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/contests/join/:id"
+                element={
+                  <ProtectedRoute>
+                    <JoinContest />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/contests/my"
+                element={
+                  <ProtectedRoute>
+                    <MyContests />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/contests/:id/leaderboard"
+                element={
+                  <ProtectedRoute>
+                    <Leaderboard />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+            {/* ========================= ANALYTICS ========================= */}
 
-          <Route
-            path="/badges"
-            element={
-              <ProtectedRoute>
-                <Badges />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              element={
+                <AnalyticsProvider>
+                  <Outlet />
+                </AnalyticsProvider>
+              }
+            >
+              <Route
+                path="/analytics"
+                element={
+                  <ProtectedRoute>
+                    <AnalyticsDashboard />
+                  </ProtectedRoute>
+                }
+              />
 
-          <Route
-            path="/rewards"
-            element={
-              <ProtectedRoute>
-                <Rewards />
-              </ProtectedRoute>
-            }
-          />
-        </Route>
-    <Route
-      path="/admin/login"
-      element={<AdminLogin />}
-    />
-    <Route
-      path="/admin/forgot-password"
-      element={<AdminForgotPassword />}
-    />
+              <Route
+                path="/achievements"
+                element={
+                  <ProtectedRoute>
+                    <Achievements />
+                  </ProtectedRoute>
+                }
+              />
 
-    <Route
-      path="/admin"
-      element={
-        <AdminRoute>
-          <AdminLayout />
-        </AdminRoute>
-      }
-    >
-      <Route
-        index
-        element={<AdminDashboard />}
-      />
-      <Route
-        path="users"
-        element={<Users />}
-      />
-      <Route
-        path="users/:id"
-        element={<UserDetails />}
-      />
-      <Route
-        path="users/edit/:id"
-        element={<EditUser />}
-      />
-      <Route
-        path="interviews"
-        element={<Interviews />}
-      />
-      <Route
-        path="coding"
-        element={<CodingList />}
-      />
-      <Route
-        path="coding/add"
-        element={<AddCoding />}
-      />
-      <Route
-        path="coding/edit/:id"
-        element={<EditCoding />}
-      />
-      <Route
-        path="coding/:id"
-        element={<CodingDetails />}
-      />
-      <Route
-        path="questions"
-        element={<QuestionList />}
-      />
-      <Route
-        path="questions/add"
-        element={<AddQuestion />}
-      />
-      <Route
-        path="questions/edit/:id"
-        element={<EditQuestion />}
-      />
-      <Route
-        path="questions/view/:id"
-        element={<AdminQuestionDetails />}
-      />
-      <Route
-        path="questions/topics"
-        element={<TopicManagement />}
-      />
-      <Route
-        path="questions/companies"
-        element={<CompanyManagement />}
-      />
-      <Route
-        path="mock-tests"
-        element={<MockTestList />}
-      />
-      <Route
-        path="mock-tests/add"
-        element={<AddMockTest />}
-      />
-      <Route
-        path="mock-tests/edit/:id"
-        element={<EditMockTest />}
-      />
-      <Route
-        path="mock-tests/:id"
-        element={<MockTestDetails />}
-      />
-      <Route
-        path="contests"
-        element={<AdminContestList />}
-      />
-      <Route
-        path="contests/add"
-        element={<AddContest />}
-      />
-      <Route
-        path="contests/edit/:id"
-        element={<EditContest />}
-      />
-      <Route
-        path="contests/:id"
-        element={<AdminContestDetails />}
-      />
-      <Route
-        path="contests/:id/participants"
-        element={<ContestParticipants />}
-      />
-      <Route
-        path="contests/:id/leaderboard"
-        element={<ContestLeaderboard />}
-      />
+              <Route
+                path="/badges"
+                element={
+                  <ProtectedRoute>
+                    <Badges />
+                  </ProtectedRoute>
+                }
+              />
 
-      {/* Achievements Management */}
-      <Route
-        path="achievement"
-        element={<AchievementList />}
-      />
-      <Route
-        path="achievement/add"
-        element={<AddAchievement />}
-      />
-      <Route
-        path="achievement/edit/:id"
-        element={<EditAchievement />}
-      />
-      <Route
-        path="achievement/:id"
-        element={<AchievementDetails />}
-      />
+              <Route
+                path="/rewards"
+                element={
+                  <ProtectedRoute>
+                    <Rewards />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+            <Route
+              path="/admin/login"
+              element={<AdminLogin />}
+            />
+            <Route
+              path="/admin/forgot-password"
+              element={<AdminForgotPassword />}
+            />
 
-      {/* Rewards Management */}
-      <Route
-        path="rewards"
-        element={<RewardList />}
-      />
-      <Route
-        path="rewards/dashboard"
-        element={<RewardDashboard />}
-      />
-      <Route
-        path="rewards/give"
-        element={<GiveReward />}
-      />
-      <Route
-        path="rewards/:id"
-        element={<RewardDetails />}
-      />
+            <Route
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <AdminLayout />
+                </AdminRoute>
+              }
+            >
+              <Route
+                index
+                element={<AdminDashboard />}
+              />
+              <Route
+                path="users"
+                element={<Users />}
+              />
+              <Route
+                path="users/:id"
+                element={<UserDetails />}
+              />
+              <Route
+                path="users/edit/:id"
+                element={<EditUser />}
+              />
+              <Route
+                path="interviews"
+                element={<Interviews />}
+              />
+              <Route
+                path="coding"
+                element={<CodingList />}
+              />
+              <Route
+                path="coding/add"
+                element={<AddCoding />}
+              />
+              <Route
+                path="coding/edit/:id"
+                element={<EditCoding />}
+              />
+              <Route
+                path="coding/:id"
+                element={<CodingDetails />}
+              />
+              <Route
+                path="questions"
+                element={<QuestionList />}
+              />
+              <Route
+                path="questions/add"
+                element={<AddQuestion />}
+              />
+              <Route
+                path="questions/edit/:id"
+                element={<EditQuestion />}
+              />
+              <Route
+                path="questions/view/:id"
+                element={<AdminQuestionDetails />}
+              />
+              <Route
+                path="questions/topics"
+                element={<TopicManagement />}
+              />
+              <Route
+                path="questions/companies"
+                element={<CompanyManagement />}
+              />
+              <Route
+                path="mock-tests"
+                element={<MockTestList />}
+              />
+              <Route
+                path="mock-tests/add"
+                element={<AddMockTest />}
+              />
+              <Route
+                path="mock-tests/edit/:id"
+                element={<EditMockTest />}
+              />
+              <Route
+                path="mock-tests/:id"
+                element={<MockTestDetails />}
+              />
+              <Route
+                path="contests"
+                element={<AdminContestList />}
+              />
+              <Route
+                path="contests/add"
+                element={<AddContest />}
+              />
+              <Route
+                path="contests/edit/:id"
+                element={<EditContest />}
+              />
+              <Route
+                path="contests/:id"
+                element={<AdminContestDetails />}
+              />
+              <Route
+                path="contests/:id/participants"
+                element={<ContestParticipants />}
+              />
+              <Route
+                path="contests/:id/leaderboard"
+                element={<ContestLeaderboard />}
+              />
 
-      <Route
-        path="badges"
-        element={<BadgeManagement />}
-      />
+              {/* Achievements Management */}
+              <Route
+                path="achievement"
+                element={<AchievementList />}
+              />
+              <Route
+                path="achievement/add"
+                element={<AddAchievement />}
+              />
+              <Route
+                path="achievement/edit/:id"
+                element={<EditAchievement />}
+              />
+              <Route
+                path="achievement/:id"
+                element={<AchievementDetails />}
+              />
 
-      {/* Community Management */}
-      <Route
-        path="community"
-        element={<AdminCommunityDashboard />}
-      />
-      <Route
-        path="community/discussions"
-        element={<AdminDiscussionList />}
-      />
-      <Route
-        path="community/discussion/:id"
-        element={<AdminDiscussionDetails />}
-      />
-      <Route
-        path="community/comments"
-        element={<AdminCommentList />}
-      />
-      <Route
-        path="community/groups"
-        element={<AdminGroupList />}
-      />
-      <Route
-        path="community/group/:id"
-        element={<AdminGroupDetails />}
-      />
-      <Route
-        path="community/group/edit/:id"
-        element={<AdminEditGroup />}
-      />
-      <Route
-        path="community/messages"
-        element={<AdminMessageList />}
-      />
-      <Route
-        path="community/analytics"
-        element={<AdminAnalytics />}
-      />
+              {/* Rewards Management */}
+              <Route
+                path="rewards"
+                element={<RewardList />}
+              />
+              <Route
+                path="rewards/dashboard"
+                element={<RewardDashboard />}
+              />
+              <Route
+                path="rewards/give"
+                element={<GiveReward />}
+              />
+              <Route
+                path="rewards/:id"
+                element={<RewardDetails />}
+              />
 
-      {/* Admin Analytics */}
-      <Route
-        path="analytics"
-        element={<AdminAnalyticsDashboard />}
-      />
-      <Route
-        path="analytics/users"
-        element={<AdminUserAnalytics />}
-      />
-      <Route
-        path="analytics/interviews"
-        element={<AdminInterviewAnalytics />}
-      />
-      <Route
-        path="analytics/coding"
-        element={<AdminCodingAnalytics />}
-      />
-      <Route
-        path="analytics/resume"
-        element={<AdminResumeAnalytics />}
-      />
-      <Route
-        path="analytics/resumes"
-        element={<AdminResumeAnalytics />}
-      />
-    </Route>
+              <Route
+                path="badges"
+                element={<BadgeManagement />}
+              />
 
-      </Routes>
+              {/* Community Management */}
+              <Route
+                path="community"
+                element={<AdminCommunityDashboard />}
+              />
+              <Route
+                path="community/discussions"
+                element={<AdminDiscussionList />}
+              />
+              <Route
+                path="community/discussion/:id"
+                element={<AdminDiscussionDetails />}
+              />
+              <Route
+                path="community/comments"
+                element={<AdminCommentList />}
+              />
+              <Route
+                path="community/groups"
+                element={<AdminGroupList />}
+              />
+              <Route
+                path="community/group/:id"
+                element={<AdminGroupDetails />}
+              />
+              <Route
+                path="community/group/edit/:id"
+                element={<AdminEditGroup />}
+              />
+              <Route
+                path="community/messages"
+                element={<AdminMessageList />}
+              />
+              <Route
+                path="community/analytics"
+                element={<AdminAnalytics />}
+              />
+
+              {/* Admin Analytics */}
+              <Route
+                path="analytics"
+                element={<AdminAnalyticsDashboard />}
+              />
+              <Route
+                path="analytics/users"
+                element={<AdminUserAnalytics />}
+              />
+              <Route
+                path="analytics/interviews"
+                element={<AdminInterviewAnalytics />}
+              />
+              <Route
+                path="analytics/coding"
+                element={<AdminCodingAnalytics />}
+              />
+              <Route
+                path="analytics/resume"
+                element={<AdminResumeAnalytics />}
+              />
+              <Route
+                path="analytics/resumes"
+                element={<AdminResumeAnalytics />}
+              />
+            </Route>
+
+          </Routes>
         </Suspense>
-    </BrowserRouter>
-  </AdminAuthProvider>
+      </BrowserRouter>
+    </AdminAuthProvider>
   );
 }
 

@@ -43,6 +43,15 @@ const MockTestService = {
     return response.data;
   },
 
+  // Toggle mock test active status
+  toggleMockTestStatus: async (id) => {
+    const response = await api.patch(
+      `/tests/${id}/status`
+    );
+
+    return response.data;
+  },
+
   // Get all questions for Question Selector
   getQuestions: async () => {
     const response = await api.get(

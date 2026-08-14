@@ -171,8 +171,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               </span>
 
               <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg border shadow-xs shrink-0 ${isProfessional
-                  ? "bg-slate-900 border-cyan-500/50 text-cyan-300 ring-1 ring-cyan-500/30"
-                  : "bg-slate-900 border-indigo-500/50 text-indigo-200 ring-1 ring-indigo-500/30"
+                ? "bg-slate-900 border-cyan-500/50 text-cyan-300 ring-1 ring-cyan-500/30"
+                : "bg-slate-900 border-indigo-500/50 text-indigo-200 ring-1 ring-indigo-500/30"
                 }`}>
                 {isProfessional ? (
                   <>
@@ -206,7 +206,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       </div>
 
       {/* NAVIGATION SECTION */}
-      <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-5 scrollbar-thin scrollbar-thumb-slate-800">
+      <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {menuSections.map((section) => (
           <div key={section.title} className="space-y-1.5">
             <div className="px-3 text-[10px] font-black tracking-widest text-slate-500 uppercase flex items-center gap-2">

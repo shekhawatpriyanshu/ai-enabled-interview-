@@ -39,184 +39,114 @@ process.on("uncaughtException", (err) => {
 
 });
 
-process.on("unhandledRejection", (err) => {
-
-    logger.error(err);
-
-    process.exit(1);
-
-});
-
 const startServer = async () => {
-
   try {
-
-    // Connect MongoDB first
-
-    await connectDB();
-
-    const mongoose = require("mongoose");
-    console.log("Database:", mongoose.connection.name);
-    console.log("Users:", await User.countDocuments({}));
-    console.log("Admins:", await Admin.countDocuments({}));
-
-    // Reset users after DB connection
-
-    await User.updateMany(
-      {},
-      {
-        isOnline: false,
-        socketId: null,
+    // Handle port in use gracefully without crashing nodemon
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.error(`\n⚠️  Port ${PORT} is already in use by another process.`);
+        console.error(`👉 Waiting for port ${PORT} to free up... (Nodemon will retry automatically)\n`);
+        setTimeout(() => {
+          server.close();
+          server.listen(PORT);
+        }, 5000);
+      } else {
+        console.error('Server error:', err);
       }
-    );
+    });
 
+    // Start HTTP server immediately on PORT 3000
+    server.listen(PORT, () => {
+      console.log(`🚀 Server Running On Port ${PORT}`);
+    });
 
-    console.log(
-      "Reset all online users to offline on startup."
-    );
+    // Connect MongoDB asynchronously (non-blocking)
+    connectDB().then(async () => {
+      try {
+        const mongoose = require("mongoose");
+        if (mongoose.connection.readyState === 1) {
+          console.log("Database:", mongoose.connection.name);
+          console.log("Users:", await User.countDocuments({}));
+          console.log("Admins:", await Admin.countDocuments({}));
 
-
-
-    // Start socket only after DB
-
-    io.on("connection", (socket) => {
-
-      console.log(
-        "User connected:",
-        socket.id
-      );
-
-
-      socket.on(
-        "user_online",
-        async(userId)=>{
-
-
-          socket.userId = userId;
-
-
-          if(!onlineUsers.has(userId)){
-            onlineUsers.set(
-              userId,
-              new Set()
-            );
-          }
-
-
-          onlineUsers
-          .get(userId)
-          .add(socket.id);
-
-
-
-          await User.findByIdAndUpdate(
-            userId,
+          await User.updateMany(
+            {},
             {
-              isOnline:true,
-              socketId:socket.id,
-              lastSeen:new Date()
+              isOnline: false,
+              socketId: null,
             }
           );
-
-
-          io.emit(
-            "active_users_count",
-            onlineUsers.size
-          );
-
-
+          console.log("Reset all online users to offline on startup.");
         }
-      );
+      } catch (dbErr) {
+        console.warn("DB initial query warning:", dbErr.message);
+      }
+    }).catch((err) => {
+      console.warn("Initial DB connection warning:", err.message);
+    });
 
+    // Start socket handlers
+    io.on("connection", (socket) => {
+      console.log("User connected:", socket.id);
 
+      socket.on("user_online", async (userId) => {
+        socket.userId = userId;
+        if (!onlineUsers.has(userId)) {
+          onlineUsers.set(userId, new Set());
+        }
+        onlineUsers.get(userId).add(socket.id);
+
+        try {
+          await User.findByIdAndUpdate(userId, {
+            isOnline: true,
+            socketId: socket.id,
+            lastSeen: new Date()
+          });
+        } catch (e) {}
+
+        io.emit("active_users_count", onlineUsers.size);
+      });
 
       socket.on("logout", async () => {
         if (!socket.userId) return;
-
         const sockets = onlineUsers.get(socket.userId);
-
         if (sockets) {
           sockets.delete(socket.id);
-
           if (sockets.size === 0) {
             onlineUsers.delete(socket.userId);
-
-            await User.findByIdAndUpdate(socket.userId, {
-              isOnline: false,
-              socketId: null,
-              lastSeen: new Date(),
-            });
+            try {
+              await User.findByIdAndUpdate(socket.userId, {
+                isOnline: false,
+                socketId: null,
+                lastSeen: new Date(),
+              });
+            } catch (e) {}
           }
         }
-
         io.emit("active_users_count", onlineUsers.size);
         socket.disconnect(true);
       });
 
-      socket.on(
-        "disconnect",
-        async()=>{
-
-
-          if(socket.userId){
-
-            const sockets =
-              onlineUsers.get(
-                socket.userId
-              );
-
-
-            if(sockets){
-
-              sockets.delete(
-                socket.id
-              );
-
-
-              if(sockets.size===0){
-
-                onlineUsers.delete(
-                  socket.userId
-                );
-
-
-                await User.findByIdAndUpdate(
-                  socket.userId,
-                  {
-                    isOnline:false,
-                    socketId:null,
-                    lastSeen:new Date()
-                  }
-                );
-
-              }
-
+      socket.on("disconnect", async () => {
+        if (socket.userId) {
+          const sockets = onlineUsers.get(socket.userId);
+          if (sockets) {
+            sockets.delete(socket.id);
+            if (sockets.size === 0) {
+              onlineUsers.delete(socket.userId);
+              try {
+                await User.findByIdAndUpdate(socket.userId, {
+                  isOnline: false,
+                  socketId: null,
+                  lastSeen: new Date()
+                });
+              } catch (e) {}
             }
-
-
-            io.emit(
-              "active_users_count",
-              onlineUsers.size
-            );
-
           }
-
+          io.emit("active_users_count", onlineUsers.size);
         }
-      );
-
-
+      });
     });
-
-
-
-    server.listen(
-      PORT,
-      ()=>{
-        console.log(
-          `Server Running On Port ${PORT}`
-        );
-      }
-    );
 
     // Graceful shutdown handlers to fix Windows EADDRINUSE
     const shutdown = () => {
@@ -234,20 +164,9 @@ const startServer = async () => {
       });
     });
 
-
+  } catch (error) {
+    console.log("Server startup failed:", error.stack);
   }
-  catch(error){
-
-    console.log(
-      "Server startup failed:",
-      error.stack
-    );
-
-    process.exit(1);
-
-  }
-
 };
-
 
 startServer(); 

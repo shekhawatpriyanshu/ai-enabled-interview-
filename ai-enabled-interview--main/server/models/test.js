@@ -36,6 +36,11 @@ const testSchema = new mongoose.Schema(
       default: "Easy",
     },
 
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

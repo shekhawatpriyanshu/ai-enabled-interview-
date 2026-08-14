@@ -4,12 +4,15 @@ import {
   FaEdit,
   FaTrash,
   FaClock,
+  FaCheckCircle,
+  FaTimesCircle,
 } from "react-icons/fa";
 
 const MockTestTable = ({
   tests = [],
   loading = false,
   onDelete,
+  onToggleStatus,
 }) => {
   if (loading) {
     return (
@@ -33,6 +36,7 @@ const MockTestTable = ({
         <thead className="bg-slate-50 border-b border-slate-200">
           <tr>
             <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-left">Title</th>
+            <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Status</th>
             <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Questions</th>
             <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Duration</th>
             <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Difficulty</th>
@@ -50,6 +54,29 @@ const MockTestTable = ({
             >
               <td className="px-6 py-4 font-semibold text-sm text-slate-900 text-left">
                 {test.title}
+              </td>
+
+              <td className="px-6 py-4 text-center">
+                <button
+                  type="button"
+                  onClick={() => onToggleStatus && onToggleStatus(test._id)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-all cursor-pointer active:scale-95 ${
+                    test.isActive !== false
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                      : "bg-slate-100 text-slate-600 border-slate-300 hover:bg-slate-200"
+                  }`}
+                  title="Click to toggle Active / Inactive status"
+                >
+                  {test.isActive !== false ? (
+                    <>
+                      <FaCheckCircle className="text-emerald-500 w-3 h-3" /> Active
+                    </>
+                  ) : (
+                    <>
+                      <FaTimesCircle className="text-slate-400 w-3 h-3" /> Inactive
+                    </>
+                  )}
+                </button>
               </td>
 
               <td className="px-6 py-4 text-center text-sm text-slate-600">

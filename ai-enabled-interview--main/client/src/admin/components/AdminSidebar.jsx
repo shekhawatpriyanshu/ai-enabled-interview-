@@ -117,7 +117,7 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
       </div>
 
       {/* NAVIGATION SECTION */}
-      <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-5 scrollbar-thin scrollbar-thumb-slate-800">
+      <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {menuSections.map((section) => (
           <div key={section.title} className="space-y-1.5">
             <div className="px-3 text-[10px] font-black tracking-widest text-slate-500 uppercase flex items-center gap-2">

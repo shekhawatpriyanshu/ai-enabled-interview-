@@ -52,6 +52,14 @@ const categoryStyles = {
   },
 };
 
+const categoryLabels = {
+  coding: "Coding Challenges",
+  questions: "Quiz Questions",
+  tests: "Mock Tests",
+  interviews: "AI Interviews",
+  contests: "Contests",
+};
+
 const AchievementCard = ({
   achievement,
   progress = 0,
@@ -63,7 +71,9 @@ const AchievementCard = ({
   );
 
   const unlocked = progress >= achievement.target;
+  const displayProgress = Math.min(progress, achievement.target);
   const style = categoryStyles[achievement.category] || categoryStyles.default;
+  const categoryLabel = categoryLabels[achievement.category] || achievement.category;
 
   return (
     <motion.div
@@ -87,8 +97,8 @@ const AchievementCard = ({
 
           {unlocked ? (
             <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
-              <FaUnlock className="text-emerald-600 text-xs" />
-              Unlocked
+              <FaCheckCircle className="text-emerald-600 text-xs" />
+              Completed
             </span>
           ) : (
             <span className="bg-slate-100 text-slate-500 border border-slate-200 text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
@@ -109,7 +119,7 @@ const AchievementCard = ({
 
         {/* Category Tag */}
         <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md border mt-3 inline-block shadow-2xs ${style.badge}`}>
-          {achievement.category}
+          {categoryLabel}
         </span>
       </div>
 
@@ -118,7 +128,7 @@ const AchievementCard = ({
         <div className="flex justify-between items-center text-xs font-semibold text-slate-600 mb-2">
           <span>Progress</span>
           <span className="font-black text-slate-900">
-            {progress} / {achievement.target}
+            {displayProgress} / {achievement.target}
           </span>
         </div>
 

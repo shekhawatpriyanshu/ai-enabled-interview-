@@ -83,10 +83,9 @@ const CommunitySidebar = () => {
                 to={item.path}
                 end={item.path === "/community"}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-2xl font-extrabold text-xs uppercase tracking-wider transition-all duration-200 hover:scale-[1.02] ${
-                    isActive
-                      ? "bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 text-white shadow-md shadow-indigo-500/25"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-indigo-600 border border-transparent hover:border-slate-200/80"
+                  `flex items-center gap-3 px-4 py-3 rounded-2xl font-extrabold text-xs uppercase tracking-wider transition-all duration-200 hover:scale-[1.02] ${isActive
+                    ? "bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 text-white shadow-md shadow-indigo-500/25"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-indigo-600 border border-transparent hover:border-slate-200/80"
                   }`
                 }
               >

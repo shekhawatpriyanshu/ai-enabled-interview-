@@ -17,10 +17,12 @@ const MockTestList = () => {
     loading,
     loadMockTests,
     removeMockTest,
+    toggleMockTestStatus,
   } = useMockTest();
 
   const [search, setSearch] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState("ALL");
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [viewMode, setViewMode] = useState("grid"); // "grid" or "table"
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedTest, setSelectedTest] = useState(null);
@@ -40,9 +42,16 @@ const MockTestList = () => {
       const matchesDifficulty =
         difficultyFilter === "ALL" || test.difficulty === difficultyFilter;
 
-      return matchesSearch && matchesDifficulty;
+      const matchesStatus =
+        statusFilter === "ALL"
+          ? true
+          : statusFilter === "ACTIVE"
+          ? test.isActive !== false
+          : test.isActive === false;
+
+      return matchesSearch && matchesDifficulty && matchesStatus;
     });
-  }, [tests, search, difficultyFilter]);
+  }, [tests, search, difficultyFilter, statusFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filteredTests.length / ITEMS_PER_PAGE) || 1;
@@ -114,7 +123,23 @@ const MockTestList = () => {
         </div>
 
         {/* Filters & View Controls */}
-        <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+          {/* Status Filter */}
+          <div className="relative flex items-center">
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition cursor-pointer appearance-none"
+            >
+              <option value="ALL">All Status</option>
+              <option value="ACTIVE">Active Only</option>
+              <option value="INACTIVE">Inactive Only</option>
+            </select>
+          </div>
+
           {/* Difficulty Filter */}
           <div className="relative flex items-center">
             <FaFilter className="absolute left-3.5 text-slate-400 text-xs pointer-events-none" />
@@ -198,6 +223,7 @@ const MockTestList = () => {
               key={test._id}
               test={test}
               onDelete={handleDeleteClick}
+              onToggleStatus={toggleMockTestStatus}
             />
           ))}
         </div>
@@ -208,6 +234,7 @@ const MockTestList = () => {
             tests={paginatedTests}
             loading={loading}
             onDelete={handleDeleteClick}
+            onToggleStatus={toggleMockTestStatus}
           />
         </div>
       )}

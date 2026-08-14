@@ -9,6 +9,7 @@ const MockTestForm = ({ initialData = {}, onSubmit, loading = false }) => {
     description: "",
     duration: 30,
     difficulty: "Easy",
+    isActive: true,
     questions: [],
   });
 
@@ -21,6 +22,7 @@ const MockTestForm = ({ initialData = {}, onSubmit, loading = false }) => {
         description: initialData.description || "",
         duration: initialData.duration || 30,
         difficulty: initialData.difficulty || "Easy",
+        isActive: initialData.isActive !== undefined ? initialData.isActive : true,
         questions:
           initialData.questions?.map((q) =>
             typeof q === "object" ? q._id : q
@@ -30,10 +32,10 @@ const MockTestForm = ({ initialData = {}, onSubmit, loading = false }) => {
   }, [initialData]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "duration" ? Number(value) : value,
+      [name]: type === "checkbox" ? checked : name === "duration" ? Number(value) : value,
     }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
@@ -144,6 +146,32 @@ const MockTestForm = ({ initialData = {}, onSubmit, loading = false }) => {
             <option value="Medium" className="bg-white font-normal text-slate-800 py-1">Medium Level</option>
             <option value="Hard" className="bg-white font-normal text-slate-800 py-1">Hard Level</option>
           </select>
+        </div>
+
+        {/* Test Active / Inactive Status */}
+        <div className="space-y-2 md:col-span-2">
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+            <CheckCircle size={15} className="text-indigo-600" /> Test Publication Status
+          </label>
+          <div className="flex items-center gap-4 bg-slate-50 border border-slate-200 p-3.5 rounded-2xl">
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                name="isActive"
+                checked={formData.isActive}
+                onChange={handleChange}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+            </label>
+            <span className="text-sm font-bold text-slate-800">
+              {formData.isActive ? (
+                <span className="text-emerald-700 font-bold">Active (Visible to Students)</span>
+              ) : (
+                <span className="text-slate-500 font-bold">Inactive (Hidden from Students)</span>
+              )}
+            </span>
+          </div>
         </div>
       </div>
 

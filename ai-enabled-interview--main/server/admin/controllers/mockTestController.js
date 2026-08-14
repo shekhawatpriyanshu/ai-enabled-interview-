@@ -12,6 +12,7 @@ const createTest = async (req, res) => {
       questions,
       duration,
       difficulty,
+      isActive,
     } = req.body;
 
     const test = await Test.create({
@@ -20,7 +21,8 @@ const createTest = async (req, res) => {
       questions,
       duration,
       difficulty,
-      totalMarks: questions.length,
+      isActive: isActive !== undefined ? isActive : true,
+      totalMarks: questions ? questions.length : 0,
       createdBy: req.user._id,
     });
 
@@ -41,7 +43,8 @@ const getTests = async (req, res) => {
       .populate(
         "createdBy",
         "name email"
-      );
+      )
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -114,6 +117,33 @@ const updateTest = async (
   }
 };
 
+// TOGGLE TEST ACTIVE STATUS
+const toggleTestStatus = async (req, res) => {
+  try {
+    const test = await Test.findById(req.params.id);
+
+    if (!test) {
+      return res.status(404).json({
+        success: false,
+        message: "Test not found",
+      });
+    }
+
+    test.isActive = !test.isActive;
+    await test.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Mock test ${test.isActive ? "activated" : "deactivated"} successfully`,
+      test,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 // DELETE TEST
 const deleteTest = async (
@@ -136,10 +166,12 @@ const deleteTest = async (
     });
   }
 };
-module.exports={
-    createTest,
-    getTestById,
-    getTests,
-    deleteTest,
-    updateTest
-}
+
+module.exports = {
+  createTest,
+  getTestById,
+  getTests,
+  deleteTest,
+  updateTest,
+  toggleTestStatus,
+};

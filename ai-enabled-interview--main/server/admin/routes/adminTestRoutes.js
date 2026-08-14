@@ -7,7 +7,8 @@ const {
     getTests,
     getTestById,
     deleteTest,
-    updateTest
+    updateTest,
+    toggleTestStatus
 } = require("../controllers/mockTestController");
 
 // Protect all admin routes
@@ -18,6 +19,7 @@ router.post('/',createTest)
 router.get('/',getTests)
 router.get('/:id',getTestById)
 router.put('/:id',updateTest)
+router.patch('/:id/status',toggleTestStatus)
 router.delete('/:id',deleteTest)
 
 module.exports=router

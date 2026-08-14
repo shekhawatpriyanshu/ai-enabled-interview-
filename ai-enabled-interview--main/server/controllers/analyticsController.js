@@ -95,8 +95,6 @@ const getMyAnalytics = async (req, res) => {
       questionsSolved += submission.totalQuestions || 0;
     });
 
-    questionsSolved += codingSolved;
-
     analytics.interviewsCompleted =
       interviewsCompleted;
 
@@ -255,14 +253,20 @@ const getBadges = async (req, res) => {
 const getAchievements = async (req, res) => {
   try {
     const achievements =
-      await Achievement.find().sort({
+      await Achievement.find({ isActive: true }).sort({
         target: 1,
       });
+
+    let unlockedAchievements = [];
+    if (req.user && req.user._id) {
+      unlockedAchievements = await checkAchievements(req.user._id);
+    }
 
     res.status(200).json({
       success: true,
       count: achievements.length,
       achievements,
+      unlockedAchievements,
     });
   } catch (error) {
     res.status(500).json({

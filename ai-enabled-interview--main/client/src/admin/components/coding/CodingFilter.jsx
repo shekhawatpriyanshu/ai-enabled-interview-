@@ -27,9 +27,7 @@ const CodingFilters = ({
 
         {/* Difficulty Selector */}
         <div className="relative flex items-center">
-          <div className="absolute left-3.5 text-slate-400 flex items-center justify-center pointer-events-none">
-            <FaFilter className="w-3.5 h-3.5 text-cyan-600" />
-          </div>
+
           <select
             className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 hover:border-purple-300 rounded-xl text-slate-800 font-normal focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-sm text-xs sm:text-sm cursor-pointer"
             value={difficulty}
@@ -52,9 +50,7 @@ const CodingFilters = ({
 
         {/* Status Selector */}
         <div className="relative flex items-center">
-          <div className="absolute left-3.5 text-slate-400 flex items-center justify-center pointer-events-none">
-            <FaToggleOn className="w-3.5 h-3.5 text-indigo-600" />
-          </div>
+
           <select
             className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 hover:border-purple-300 rounded-xl text-slate-800 font-normal focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-sm text-xs sm:text-sm cursor-pointer"
             value={status}

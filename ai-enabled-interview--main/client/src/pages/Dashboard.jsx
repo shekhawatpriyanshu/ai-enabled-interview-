@@ -62,7 +62,7 @@ const Dashboard = () => {
   }
 
   const totalInterviews = analytics?.interviewsCompleted || 0;
-  const questionsSolved = analytics?.codingSolved !== undefined ? analytics.codingSolved : (analytics?.questionsSolved || 0);
+  const codingProblemsSolved = analytics?.codingSolved || 0;
   const achievementsCount = rewards.filter((r) => r.achievement).length;
   const totalScore = analytics?.totalScore || 0;
 
@@ -79,7 +79,7 @@ const Dashboard = () => {
     },
     {
       title: "CODING PROBLEMS SOLVED",
-      value: questionsSolved,
+      value: codingProblemsSolved,
       subtitle: "Questions completed",
       icon: <FaCode className="text-xl text-white" />,
       topBorder: "border-t-4 border-purple-500",

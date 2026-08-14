@@ -130,6 +130,33 @@ const useMockTest = () => {
   };
 
   // ==========================
+  // Toggle Mock Test Status
+  // ==========================
+  const toggleMockTestStatus = async (id) => {
+    try {
+      setLoading(true);
+      const res = await MockTestService.toggleMockTestStatus(id);
+      toast.success(res.message || "Test status updated successfully.");
+      setTests((prev) =>
+        prev.map((item) =>
+          item._id === id
+            ? { ...item, isActive: res.test?.isActive ?? !item.isActive }
+            : item
+        )
+      );
+      return res;
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          "Failed to toggle test status."
+      );
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ==========================
   // Load Questions
   // ==========================
   const loadQuestions = async () => {
@@ -161,6 +188,7 @@ const useMockTest = () => {
     addMockTest,
     editMockTest,
     removeMockTest,
+    toggleMockTestStatus,
     loadQuestions,
   };
 };

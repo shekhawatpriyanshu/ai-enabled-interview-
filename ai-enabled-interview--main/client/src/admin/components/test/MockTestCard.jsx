@@ -12,7 +12,7 @@ import {
   FaBookOpen,
 } from "react-icons/fa";
 
-const MockTestCard = ({ test, onDelete }) => {
+const MockTestCard = ({ test, onDelete, onToggleStatus }) => {
   const getDifficultyBadge = (difficulty) => {
     switch (difficulty) {
       case "Easy":
@@ -43,11 +43,14 @@ const MockTestCard = ({ test, onDelete }) => {
               {test.difficulty || "Easy"}
             </span>
 
-            <span
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${test.isActive !== false
-                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                  : "bg-slate-100 text-slate-600 border-slate-200"
+            <button
+              type="button"
+              onClick={() => onToggleStatus && onToggleStatus(test._id)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-all cursor-pointer active:scale-95 ${test.isActive !== false
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                  : "bg-slate-100 text-slate-600 border-slate-300 hover:bg-slate-200"
                 }`}
+              title="Click to toggle Active / Inactive status"
             >
               {test.isActive !== false ? (
                 <>
@@ -58,7 +61,7 @@ const MockTestCard = ({ test, onDelete }) => {
                   <FaTimesCircle className="text-slate-400 w-3 h-3" /> Inactive
                 </>
               )}
-            </span>
+            </button>
           </div>
 
           <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-bold shadow-inner group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
