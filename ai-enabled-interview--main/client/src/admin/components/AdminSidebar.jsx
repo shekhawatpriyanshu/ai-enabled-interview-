@@ -54,6 +54,7 @@ const AdminSidebar = ({ isOpen, setIsOpen }) => {
     {
       title: "Content & Assessments",
       items: [
+        { name: "Live Interviews ⭐", icon: <FaUserTie />, path: "/admin/live-interviews", color: "text-sky-400", bg: "bg-sky-500/10 border-sky-500/20" },
         { name: "Interviews", icon: <FaUserTie />, path: "/admin/interviews", color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
         { name: "Coding", icon: <FaCode />, path: "/admin/coding", color: "text-violet-400", bg: "bg-violet-500/10 border-violet-500/20" },
         { name: "Mock Tests", icon: <FaClipboardList />, path: "/admin/mock-tests", color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20" },

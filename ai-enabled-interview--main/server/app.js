@@ -32,6 +32,8 @@ const adminAnalyticsRoutes =
 const adminContestRoutes = require("./admin/routes/contestAdminRoutes");
 const interviewRoutes =
   require("./routes/interviewRoutes");
+const liveInterviewRoutes =
+  require("./routes/liveInterviewRoutes");
 const analyticsRoutes =
   require("./routes/analyticsRoutes");
 
@@ -153,6 +155,10 @@ app.use(
 app.use(
   "/api/interviews",
   interviewRoutes
+);
+app.use(
+  "/api/live-interviews",
+  liveInterviewRoutes
 );
 app.use(
   "/api/portfolio",

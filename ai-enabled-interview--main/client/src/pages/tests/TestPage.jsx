@@ -118,20 +118,31 @@ const TestsPage = () => {
   return (
     <MainLayout showNavbar={false}>
       <div className="p-4 sm:p-6 lg:p-8 space-y-8 animate-[fadeIn_0.4s_ease-out]">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-purple-500/30 animate-bounce">
-                <FaCrown />
+        {/* Header Hero Card */}
+        <div className="relative overflow-hidden bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-3xl p-8 md:p-12 shadow-xl hover:shadow-2xl hover:border-purple-300 transition-all duration-500 group">
+          <div className="absolute -top-32 -right-32 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all duration-700 pointer-events-none" />
+          <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-all duration-700 pointer-events-none" />
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500" />
+
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+            <div className="space-y-3 text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 border border-purple-200 text-purple-700 text-xs font-extrabold uppercase tracking-widest shadow-xs">
+                <FaCrown className="text-purple-600 text-sm animate-pulse" />
+                <span>Mock Assessments & Testing Studio</span>
               </div>
-              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
-                Mock Test Assessment Hub
-              </span>
-            </h1>
-            <p className="text-sm font-semibold text-slate-500 mt-2">
-              Practice comprehensive interview assessments and sharpen your technical problem-solving skills.
-            </p>
+
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                Mock Test <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">Assessment Hub</span>
+              </h1>
+
+              <p className="text-slate-600 text-sm md:text-base font-semibold max-w-2xl leading-relaxed">
+                Practice comprehensive interview assessments and sharpen your technical problem-solving skills with timed mock tests.
+              </p>
+            </div>
+
+            <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 text-white flex items-center justify-center text-3xl shadow-xl shadow-purple-500/25 shrink-0 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 border border-purple-300/30">
+              <FaCrown />
+            </div>
           </div>
         </div>
 

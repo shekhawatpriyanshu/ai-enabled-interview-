@@ -95,13 +95,13 @@ const ContestList = () => {
               </div>
             </div>
 
-            <div className="group bg-gradient-to-br from-cyan-50/80 via-white to-blue-50/40 rounded-2xl p-4 flex items-center gap-3 border border-cyan-200/80 shadow-2xs hover:shadow-md transition-all duration-300">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center text-lg shadow-md shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-transform">
-                <Sparkles size={20} />
+            <div className="group bg-gradient-to-br from-cyan-50/80 via-white to-blue-50/40 rounded-2xl p-3.5 sm:p-4 flex items-center gap-2.5 border border-cyan-200/80 shadow-2xs hover:shadow-md transition-all duration-300">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center text-lg shadow-md shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-transform">
+                <Sparkles size={18} />
               </div>
-              <div className="min-w-0">
-                <span className="text-xl font-black text-slate-900 leading-none block">Automated</span>
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mt-0.5 truncate">AI Judge</span>
+              <div className="min-w-0 flex-1">
+                <span className="text-sm font-black text-slate-900 leading-tight block whitespace-nowrap">Automated</span>
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mt-0.5 whitespace-nowrap">AI Judge</span>
               </div>
             </div>
           </div>

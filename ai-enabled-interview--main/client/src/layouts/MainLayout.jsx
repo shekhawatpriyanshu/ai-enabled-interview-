@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+import LiveInterviewInvitationModal from "../components/LiveInterviewInvitationModal";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
@@ -11,6 +12,9 @@ const MainLayout = ({
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex relative">
+      {/* GLOBAL 30-SECOND REAL-TIME INTERVIEW INVITATION MODAL */}
+      <LiveInterviewInvitationModal />
+
       {/* Mobile Sidebar Backdrop Overlay */}
       {isSidebarOpen && (
         <div

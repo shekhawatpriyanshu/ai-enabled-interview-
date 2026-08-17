@@ -1,8 +1,40 @@
 const Groq = require("groq-sdk");
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: process.env.GROQ_API_KEY || "dummy",
 });
+
+const candidateModels = [
+  "groq/compound",
+  "groq/compound-mini",
+  "qwen/qwen3.6-27b",
+  "openai/gpt-oss-120b",
+  "openai/gpt-oss-20b",
+];
+
+const callGroqCompletions = async (params) => {
+  if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === "dummy") {
+    throw new Error("Groq API key missing");
+  }
+
+  let lastError = null;
+  for (const modelName of candidateModels) {
+    try {
+      const completion = await groq.chat.completions.create({
+        ...params,
+        model: modelName,
+      });
+      if (completion && completion.choices && completion.choices[0]) {
+        console.log(`✅ Groq completion succeeded with model: ${modelName}`);
+        return completion;
+      }
+    } catch (err) {
+      lastError = err;
+      console.warn(`Groq model ${modelName} failed: ${err.message}. Trying next model...`);
+    }
+  }
+  throw lastError || new Error("All Groq candidate models failed.");
+};
 
 const cleanJSON = (text) => {
   let cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();

@@ -55,34 +55,34 @@ const MyInterviews = () => {
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="bg-gradient-to-br from-indigo-100/90 via-white to-purple-50/80 border border-indigo-200/90 rounded-3xl p-6 sm:p-8 shadow-lg shadow-indigo-500/10 relative overflow-hidden z-10"
+          className="bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-3xl p-8 md:p-12 shadow-xl hover:shadow-2xl hover:border-indigo-300 transition-all duration-500 relative overflow-hidden z-10 group"
         >
-          {/* Top Multi-tone Accent Bar */}
+          {/* Ambient Glow Orbs */}
+          <div className="absolute -top-32 -right-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-all duration-700 pointer-events-none" />
+          <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all duration-700 pointer-events-none" />
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-400" />
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-1.5 text-center sm:text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 border border-indigo-200 text-indigo-800 text-xs font-black uppercase tracking-wider shadow-xs">
-                <FaRobot className="text-indigo-600 text-xs" />
-                <span>AI Interview History & Submissions</span>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+            <div className="space-y-3 text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-extrabold uppercase tracking-widest shadow-xs">
+                <FaRobot className="text-indigo-600 text-sm animate-pulse" />
+                <span>AI Interview History & Submissions Hub</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
-                <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
-                  My Interview Submissions
-                </span>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                My Interview <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">Submissions</span>
               </h1>
 
-              <p className="text-slate-600 text-sm font-semibold max-w-xl">
-                Track your AI mock interview sessions, view coding evaluation scores, and review detailed feedback.
+              <p className="text-slate-600 text-sm md:text-base font-semibold max-w-2xl leading-relaxed">
+                Track your AI mock interview sessions, view real-time coding evaluation scores, and review detailed per-question feedback.
               </p>
             </div>
 
             <Link
               to="/interviews/start"
-              className="group px-6 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-700 hover:to-cyan-600 text-white font-extrabold text-xs shadow-lg shadow-indigo-500/25 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2.5 shrink-0"
+              className="group px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-black text-xs uppercase tracking-wider shadow-xl shadow-indigo-500/25 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 shrink-0 border border-indigo-400/20"
             >
-              <FaRocket className="text-xs group-hover:rotate-12 transition-transform duration-300" />
+              <FaRocket className="text-sm group-hover:rotate-12 transition-transform duration-300 text-amber-300" />
               <span>Start New Interview</span>
             </Link>
           </div>

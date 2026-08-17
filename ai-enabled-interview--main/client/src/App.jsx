@@ -55,6 +55,10 @@ const StartInterview = lazy(() => import("./pages/interviews/StartInterview"));
 const MyInterviews = lazy(() => import("./pages/interviews/MyInterviews"));
 const InterviewDetails = lazy(() => import("./pages/interviews/InterviewDetails"));
 const FeedbackScreen = lazy(() => import("./pages/interviews/FeedbackScreen"));
+const LiveInterviewLobby = lazy(() => import("./pages/interviews/LiveInterviewLobby"));
+const RealtimeInterviewRoom = lazy(() => import("./pages/interviews/RealtimeInterviewRoom"));
+const CandidateInterviewRoom = lazy(() => import("./pages/interviews/CandidateInterviewRoom"));
+const CandidateInterviewRoomPage = lazy(() => import("./pages/interviews/CandidateInterviewRoomPage"));
 
 // Resume Pages
 const ResumeAnalyzer = lazy(() => import("./pages/resume/ResumeAnalyzer"));
@@ -87,6 +91,9 @@ const Users = lazy(() => import("./admin/pages/users/Users"));
 const UserDetails = lazy(() => import("./admin/pages/users/UserDetails"));
 const EditUser = lazy(() => import("./admin/pages/users/EditUser"));
 const Interviews = lazy(() => import("./admin/pages/interview/Interviews"));
+const AdminLiveInterviews = lazy(() => import("./admin/pages/interview/AdminLiveInterviews"));
+const AdminInterviewRoom = lazy(() => import("./admin/pages/interview/AdminInterviewRoom"));
+const AdminInterviewRoomPage = lazy(() => import("./admin/pages/interview/AdminInterviewRoomPage"));
 const CodingList = lazy(() => import("./admin/pages/coding/codingList"));
 const AddCoding = lazy(() => import("./admin/pages/coding/AddCoding"));
 const EditCoding = lazy(() => import("./admin/pages/coding/EditCoding"));
@@ -265,6 +272,33 @@ function App() {
               element={
                 <ProtectedRoute>
                   <FeedbackScreen />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/interviews/live"
+              element={
+                <ProtectedRoute>
+                  <LiveInterviewLobby />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/interviews/room/:roomId"
+              element={
+                <ProtectedRoute>
+                  <CandidateInterviewRoomPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/interview-room/:roomId"
+              element={
+                <ProtectedRoute>
+                  <CandidateInterviewRoomPage />
                 </ProtectedRoute>
               }
             />
@@ -654,6 +688,18 @@ function App() {
               <Route
                 path="interviews"
                 element={<Interviews />}
+              />
+              <Route
+                path="live-interviews"
+                element={<AdminLiveInterviews />}
+              />
+              <Route
+                path="live-interviews/room/:roomId"
+                element={<AdminInterviewRoomPage />}
+              />
+              <Route
+                path="interview-room/:roomId"
+                element={<AdminInterviewRoomPage />}
               />
               <Route
                 path="coding"

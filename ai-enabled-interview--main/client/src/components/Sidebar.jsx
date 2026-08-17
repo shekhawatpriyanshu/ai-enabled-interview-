@@ -94,6 +94,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     {
       title: "AI & Interview Prep",
       items: [
+        { name: "Live Interview Room ⭐", icon: <FaMicrophone />, path: "/interviews/live", color: "text-sky-400", bg: "bg-sky-500/10 border-sky-500/20" },
         { name: "Start Interview", icon: <FaMicrophone />, path: "/interviews/start", color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
         { name: "My Interviews", icon: <FaUserTie />, path: "/interviews", color: "text-teal-400", bg: "bg-teal-500/10 border-teal-500/20" },
         { name: " Resume & Portfolio Hub", icon: <FaFileAlt />, path: "/resume-analyzer", color: "text-cyan-400", bg: "bg-cyan-500/10 border-cyan-500/20" },
@@ -130,10 +131,19 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     if (path === "/resume-analyzer" && location.pathname.startsWith("/resume-report")) {
       return true;
     }
+    if (path === "/interviews/live") {
+      return (
+        location.pathname === "/interviews/live" ||
+        location.pathname.startsWith("/interview-room/")
+      );
+    }
     if (path === "/interviews") {
       return (
         location.pathname === "/interviews" ||
-        (location.pathname.startsWith("/interviews/") && !location.pathname.startsWith("/interviews/start"))
+        (location.pathname.startsWith("/interviews/") &&
+          !location.pathname.startsWith("/interviews/start") &&
+          !location.pathname.startsWith("/interviews/live") &&
+          !location.pathname.startsWith("/interviews/feedback"))
       );
     }
     if (path === "/coding") {

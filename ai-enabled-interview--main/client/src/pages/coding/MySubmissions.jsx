@@ -74,29 +74,29 @@ const MySubmissions = () => {
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="bg-gradient-to-br from-indigo-100/90 via-white to-purple-50/80 border border-indigo-200/90 rounded-3xl p-6 sm:p-8 shadow-lg shadow-indigo-500/10 relative overflow-hidden z-10"
+          className="bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-3xl p-8 md:p-12 shadow-xl hover:shadow-2xl hover:border-purple-300 transition-all duration-500 relative overflow-hidden z-10 group"
         >
+          <div className="absolute -top-32 -right-32 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all duration-700 pointer-events-none" />
+          <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all duration-700 pointer-events-none" />
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-violet-500 via-purple-600 via-pink-500 to-amber-500" />
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-1.5 text-center sm:text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-100 border border-purple-200 text-purple-800 text-xs font-black uppercase tracking-wider shadow-xs">
-                <FaFileCode className="text-purple-600 text-xs" />
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+            <div className="space-y-3 text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-50 border border-purple-200 text-purple-700 text-xs font-extrabold uppercase tracking-widest shadow-xs">
+                <FaFileCode className="text-purple-600 text-sm animate-pulse" />
                 <span>Coding Submissions & Code History</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
-                <span className="bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">
-                  My Coding Submissions
-                </span>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                My Coding <span className="bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Submissions</span>
               </h1>
 
-              <p className="text-slate-600 text-sm font-semibold max-w-xl">
+              <p className="text-slate-600 text-sm md:text-base font-semibold max-w-2xl leading-relaxed">
                 Review your problem-solving progress, view test cases passed, runtime execution benchmarks, and full source code.
               </p>
             </div>
 
-            <div className="w-16 h-16 rounded-3xl bg-purple-50 border border-purple-200 text-purple-600 flex items-center justify-center text-3xl shadow-xs shrink-0">
+            <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center text-3xl shadow-xl shadow-purple-500/25 shrink-0 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 border border-purple-300/30">
               <FaCode />
             </div>
           </div>

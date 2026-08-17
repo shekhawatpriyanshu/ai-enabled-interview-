@@ -96,12 +96,12 @@ const InterviewCard = ({ interview }) => {
 
         {/* Overall Score Badge if completed */}
         {isCompleted && interview.overallScore !== undefined && (
-          <div className="mt-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-            <span className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+          <div className="mt-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2">
+            <span className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5 shrink-0">
               <FaStar className="text-amber-500 text-xs" />
               <span>Overall Score</span>
             </span>
-            <span className="text-sm font-black text-slate-900 bg-white border border-slate-200 px-3 py-1 rounded-xl shadow-2xs">
+            <span className="text-sm font-black text-slate-900 bg-white border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-2xs whitespace-nowrap shrink-0">
               {interview.overallScore} / 100
             </span>
           </div>
