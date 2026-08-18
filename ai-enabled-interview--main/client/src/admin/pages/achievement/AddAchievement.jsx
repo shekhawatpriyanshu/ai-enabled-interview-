@@ -32,7 +32,7 @@ const AddAchievement = () => {
               <Trophy />
             </div>
             <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
-              Create Achievement
+              Add Achievement
             </span>
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-2">

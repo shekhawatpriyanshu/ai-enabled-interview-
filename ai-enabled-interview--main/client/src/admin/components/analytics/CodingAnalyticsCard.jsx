@@ -55,7 +55,7 @@ const CodingAnalyticsCard = ({ analytics }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1">
         {/* Left Side: Stats Grid */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 my-3">
           <div className="border border-cyan-200/80 bg-gradient-to-br from-cyan-50/80 to-blue-50/40 rounded-2xl p-4 flex flex-col justify-center hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
             <p className="text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
               <FaCode className="text-cyan-500" /> Total Problems

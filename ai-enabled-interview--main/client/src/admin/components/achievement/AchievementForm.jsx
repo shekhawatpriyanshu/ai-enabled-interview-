@@ -155,11 +155,10 @@ const AchievementForm = ({
               value={formData.title}
               onChange={handleChange}
               placeholder="e.g. Code Master 100, Problem Solving Guru"
-              className={`w-full bg-slate-50 border ${
-                errors.title
-                  ? "border-rose-400 focus:ring-rose-500/20"
-                  : "border-slate-300 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/15"
-              } rounded-2xl px-4 py-3.5 outline-none font-semibold text-slate-900 text-sm transition-all shadow-sm`}
+              className={`w-full bg-slate-50 border ${errors.title
+                ? "border-rose-400 focus:ring-rose-500/20"
+                : "border-slate-300 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/15"
+                } rounded-2xl px-4 py-3.5 outline-none font-semibold text-slate-900 text-sm transition-all shadow-sm`}
             />
             {errors.title && (
               <motion.p
@@ -186,11 +185,10 @@ const AchievementForm = ({
               value={formData.description}
               onChange={handleChange}
               placeholder="Describe how users unlock this milestone..."
-              className={`w-full bg-slate-50 border ${
-                errors.description
-                  ? "border-rose-400 focus:ring-rose-500/20"
-                  : "border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15"
-              } rounded-2xl px-4 py-3.5 outline-none font-medium text-slate-900 text-sm transition-all resize-none shadow-sm`}
+              className={`w-full bg-slate-50 border ${errors.description
+                ? "border-rose-400 focus:ring-rose-500/20"
+                : "border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15"
+                } rounded-2xl px-4 py-3.5 outline-none font-medium text-slate-900 text-sm transition-all resize-none shadow-sm`}
             />
             {errors.description && (
               <motion.p
@@ -215,11 +213,10 @@ const AchievementForm = ({
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className={`w-full bg-white text-slate-800 font-medium border ${
-                errors.category
-                  ? "border-rose-400 focus:ring-rose-500/20"
-                  : "border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15"
-              } rounded-2xl px-4 py-3.5 outline-none text-sm transition-all cursor-pointer shadow-sm`}
+              className={`w-full bg-white text-slate-800 font-medium border ${errors.category
+                ? "border-rose-400 focus:ring-rose-500/20"
+                : "border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15"
+                } rounded-2xl px-4 py-3.5 outline-none text-sm transition-all cursor-pointer shadow-sm`}
             >
               <option value="" className="text-slate-400 font-normal bg-white">Select Category...</option>
               <option value="questions" className="text-slate-700 font-normal bg-white py-2">🎯 Questions Solved</option>
@@ -254,11 +251,10 @@ const AchievementForm = ({
               value={formData.target}
               onChange={handleChange}
               placeholder="e.g. 50"
-              className={`w-full bg-slate-50 border ${
-                errors.target
-                  ? "border-rose-400 focus:ring-rose-500/20"
-                  : "border-slate-300 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/15"
-              } rounded-2xl px-4 py-3.5 outline-none font-extrabold text-slate-900 text-sm transition-all shadow-sm`}
+              className={`w-full bg-slate-50 border ${errors.target
+                ? "border-rose-400 focus:ring-rose-500/20"
+                : "border-slate-300 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/15"
+                } rounded-2xl px-4 py-3.5 outline-none font-extrabold text-slate-900 text-sm transition-all shadow-sm`}
             />
             {errors.target && (
               <motion.p
@@ -286,11 +282,10 @@ const AchievementForm = ({
               value={formData.rewardPoints}
               onChange={handleChange}
               placeholder="e.g. 100"
-              className={`w-full bg-slate-50 border ${
-                errors.rewardPoints
-                  ? "border-rose-400 focus:ring-rose-500/20"
-                  : "border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
-              } rounded-2xl px-4 py-3.5 outline-none font-extrabold text-slate-900 text-sm transition-all shadow-sm`}
+              className={`w-full bg-slate-50 border ${errors.rewardPoints
+                ? "border-rose-400 focus:ring-rose-500/20"
+                : "border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/15"
+                } rounded-2xl px-4 py-3.5 outline-none font-extrabold text-slate-900 text-sm transition-all shadow-sm`}
             />
             {errors.rewardPoints && (
               <motion.p
@@ -379,7 +374,7 @@ const AchievementForm = ({
               </>
             ) : (
               <>
-                <Save size={16} /> Create Achievement
+                <Save size={16} /> Add Achievement
               </>
             )}
           </button>

@@ -100,7 +100,7 @@ const EditUser = () => {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
@@ -108,7 +108,7 @@ const EditUser = () => {
     >
       {/* Header section */}
       <div className="flex items-center gap-4 border-b border-slate-200/80 pb-6">
-        <button 
+        <button
           onClick={() => navigate("/admin/users")}
           className="group p-2.5 bg-white rounded-2xl shadow-sm hover:shadow-md border border-slate-200 transition-all text-slate-500 hover:text-indigo-600 cursor-pointer"
         >
@@ -126,12 +126,12 @@ const EditUser = () => {
 
       <div className="bg-white rounded-3xl shadow-xl border border-slate-200/90 overflow-hidden relative">
         <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500" />
-        
+
         <div className="p-6 sm:p-8">
           {error && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }} 
-              animate={{ opacity: 1, scale: 1 }} 
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
               className="mb-6 p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-2xl flex items-center gap-3 text-rose-700 font-semibold text-xs"
             >
               <AlertCircle size={18} />
@@ -140,9 +140,9 @@ const EditUser = () => {
           )}
 
           {success && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }} 
-              animate={{ opacity: 1, scale: 1 }} 
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
               className="mb-6 p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-2xl flex items-center gap-3 text-emerald-700 font-semibold text-xs"
             >
               <CheckCircle size={18} />
@@ -207,11 +207,10 @@ const EditUser = () => {
                 <button
                   type="button"
                   onClick={toggleVerify}
-                  className={`px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-sm hover:scale-105 active:scale-95 cursor-pointer ${
-                    user.isVerified 
-                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100" 
-                      : "bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100"
-                  }`}
+                  className={`px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-sm hover:scale-105 active:scale-95 cursor-pointer ${user.isVerified
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
+                    : "bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100"
+                    }`}
                 >
                   <span className="flex items-center gap-2">
                     {user.isVerified ? (
@@ -233,7 +232,7 @@ const EditUser = () => {
               >
                 Cancel
               </button>
-              
+
               <button
                 type="submit"
                 disabled={saving}
@@ -242,7 +241,7 @@ const EditUser = () => {
                 {saving ? (
                   <><Loader2 className="animate-spin" size={16} /> Saving Profile...</>
                 ) : (
-                  <><Save size={16} /> Save User Profile</>
+                  <><Save size={16} /> Edit User Profile</>
                 )}
               </button>
             </div>

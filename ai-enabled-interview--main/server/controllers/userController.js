@@ -1,4 +1,5 @@
 const Profile = require("../models/profile");
+const User = require("../models/user");
 
 // Helper to extract fields from request
 const parseProfileFields = (req) => {
@@ -45,6 +46,13 @@ const createProfile = async (req, res) => {
     });
 
     const updateData = parseProfileFields(req);
+
+    // Automatically set User role based on profile userType selection
+    if (updateData.userType === "Working Professional") {
+      await User.findByIdAndUpdate(req.user._id, { role: "interviewer" });
+    } else if (updateData.userType === "Student") {
+      await User.findByIdAndUpdate(req.user._id, { role: "candidate" });
+    }
 
     if (profileExists) {
       console.log("Profile already exists, redirecting to update logic internally...");
@@ -114,6 +122,13 @@ const updateProfile = async (req, res) => {
     console.log("Update Profile - FILE:", req.file);
 
     const updateData = parseProfileFields(req);
+
+    // Automatically set User role based on profile userType selection
+    if (updateData.userType === "Working Professional") {
+      await User.findByIdAndUpdate(req.user._id, { role: "interviewer" });
+    } else if (updateData.userType === "Student") {
+      await User.findByIdAndUpdate(req.user._id, { role: "candidate" });
+    }
 
     const profile = await Profile.findOneAndUpdate(
       {

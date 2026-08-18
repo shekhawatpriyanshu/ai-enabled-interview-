@@ -189,7 +189,7 @@ const Navbar = ({ toggleSidebar }) => {
                         <button
                           onClick={() => {
                             setShowNotifDropdown(false);
-                            navigate(`/interview-room/${notif.roomId}`);
+                            navigate(`/interviews/room/${notif.roomId}`);
                           }}
                           className="px-3 py-1 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold text-[10px] uppercase tracking-wider rounded-lg shadow-sm flex items-center space-x-1 cursor-pointer transition"
                         >

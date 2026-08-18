@@ -66,7 +66,7 @@ const InterviewAnalyticsCard = ({ analytics }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1">
         {/* Left Side: Stats Grid */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 my-3">
           <Card
             title="Total Interviews"
             value={analytics.totalInterviews || 0}

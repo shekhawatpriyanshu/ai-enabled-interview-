@@ -213,6 +213,21 @@ const ProfileForm = ({ initialData, onSubmit }) => {
             </div>
           </div>
         </div>
+
+        {/* Creation Rights Reminder Note */}
+        <div className="mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-200/90 text-amber-900 flex items-start gap-3 shadow-xs">
+          <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center shrink-0 text-sm font-black mt-0.5">
+            ℹ️
+          </div>
+          <div className="text-xs space-y-1">
+            <p className="font-extrabold text-amber-950 uppercase tracking-wider">
+              Role Privilege Notice
+            </p>
+            <p className="font-semibold leading-relaxed text-amber-800">
+              Only profiles configured as <strong className="text-amber-950 font-black">"Working Professional"</strong> are granted Host privileges to <strong className="text-amber-950 font-black font-mono">Create Live Interview Rooms</strong>. Student profiles operate as Candidates.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Image Upload Box */}

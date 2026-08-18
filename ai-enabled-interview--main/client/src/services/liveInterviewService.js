@@ -30,3 +30,23 @@ export const endLiveInterviewRoom = async (roomId) => {
   const response = await API.post(`/live-interviews/${roomId}/submit`, {});
   return response.data;
 };
+
+export const cancelLiveInterviewRoom = async (roomId, reason) => {
+  const response = await API.post(`/live-interviews/${roomId}/cancel`, { reason });
+  return response.data;
+};
+
+export const deleteLiveInterviewRoom = async (roomId) => {
+  const response = await API.delete(`/live-interviews/${roomId}`);
+  return response.data;
+};
+
+export const getAllUsers = async () => {
+  try {
+    const response = await API.get("/live-interviews/users/all");
+    return response.data;
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    return { success: false, users: [] };
+  }
+};

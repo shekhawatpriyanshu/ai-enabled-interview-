@@ -1,9 +1,11 @@
 const LiveInterviewRoom = require("../models/liveInterviewRoom");
 const User = require("../models/user");
 const Groq = require("groq-sdk");
+const { executeCode } = require("../services/judge0Services");
+const sendEmail = require("../utils/sendEmail");
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || "dummy",
+  apiKey: process.env.GROQ_API_KEY || "gsk_placeholder_key_for_server_boot",
 });
 
 const generateRoomId = () => {
@@ -177,7 +179,7 @@ Return ONLY a valid JSON object matching this exact schema:
 // Create Room (Targeted to Candidate Email with Typed Technical & Coding Questions)
 exports.createRoom = async (req, res, next) => {
   try {
-    const { candidateEmail, candidateName, role, duration, questions } = req.body;
+    const { candidateEmail, candidateName, interviewerName, role, duration, scheduledDate, scheduledTime, interviewType, questions } = req.body;
     const roomId = generateRoomId();
 
     if (!candidateEmail) {
@@ -197,26 +199,54 @@ exports.createRoom = async (req, res, next) => {
         }))
       : defaultQuestions;
 
+    const cleanHostEmail = (req.body.hostEmail || req.body.creatorEmail || (req.user ? req.user.email : "") || interviewerName || "shreee@gmail.com").trim().toLowerCase();
+
     const room = await LiveInterviewRoom.create({
       roomId,
       candidateEmail: cleanEmail,
       candidateId: targetUser ? targetUser._id.toString() : "user456",
-      candidateName: targetUser ? targetUser.name : (candidateName || "Candidate"),
-      interviewerName: "Admin",
+      candidateName: candidateName || (targetUser ? targetUser.name : "Candidate"),
+      interviewerName: interviewerName || "Shree Singh (Host)",
+      hostEmail: cleanHostEmail,
+      creatorEmail: cleanHostEmail,
       role: role || "MERN Developer",
+      interviewType: interviewType || "Technical",
+      scheduledDate: scheduledDate || new Date().toISOString().split("T")[0],
+      scheduledTime: scheduledTime || "03:00 PM",
       duration: duration || 30,
       timerRemaining: (duration || 30) * 60,
-      status: "waiting",
+      status: "scheduled",
       questions: roomQuestions,
     });
 
+    const creatorInfo = req.body.creatorEmail || interviewerName || (req.user ? (req.user.name || req.user.email) : "Interviewer Host");
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+    const roomJoinUrl = `${clientUrl}/interviews/live`;
+
+    // 1. Send Email Notification to Selected User Email ONLY
+    sendEmail({
+      email: cleanEmail,
+      subject: `🚨 Live Interview Room Invitation from ${creatorInfo} (${roomId})`,
+      message: `Hello ${room.candidateName || "Candidate"},\n\n${creatorInfo} has created a Live Technical Interview session for you!\n\nDetails:\n- Job Position: ${room.role}\n- Room ID: ${roomId}\n- Date: ${room.scheduledDate}\n- Time: ${room.scheduledTime}\n- Host / Interviewer: ${creatorInfo}\n\nClick here to join your interview session:\n${roomJoinUrl}\n\nBest regards,\nAI Enabled Interview Platform`,
+    }).catch((err) => console.error("Failed to send email notification to selected candidate:", err.message));
+
+    // 2. Emit Real-Time Socket Notification to Selected User Email
     if (global.socketIo) {
-      global.socketIo.to(`user:${cleanEmail}`).emit("live_interview_invitation", {
+      const payload = {
         roomId,
+        targetEmail: cleanEmail,
+        candidateName: room.candidateName,
+        creatorName: creatorInfo,
         role: room.role,
         interviewerName: room.interviewerName,
-        message: `Admin has created a Live Interview room (${roomId}) for your account!`,
-      });
+        scheduledDate: room.scheduledDate,
+        scheduledTime: room.scheduledTime,
+        message: `${creatorInfo} has created a Live Interview room (${roomId}) for you!`,
+        expiresIn: 30,
+      };
+
+      global.socketIo.emit("live_interview_invitation", payload);
+      global.socketIo.to(`user:${cleanEmail}`).emit("live_interview_invitation", payload);
     }
 
     res.status(201).json({
@@ -229,19 +259,54 @@ exports.createRoom = async (req, res, next) => {
   }
 };
 
-// Get Rooms
+// Get Rooms (Matches both Candidate Email and Host/Creator Email)
 exports.getRooms = async (req, res, next) => {
   try {
-    const { email } = req.query;
+    const { email, status } = req.query;
     let query = {};
 
     if (email) {
       const cleanEmail = email.trim().toLowerCase();
-      query = { candidateEmail: cleanEmail };
+      query.$or = [
+        { candidateEmail: cleanEmail },
+        { hostEmail: cleanEmail },
+        { creatorEmail: cleanEmail },
+        { interviewerName: new RegExp(cleanEmail, "i") },
+      ];
     }
 
-    const rooms = await LiveInterviewRoom.find(query).sort({ createdAt: -1 }).limit(50);
+    if (status) {
+      query.status = status;
+    }
+
+    const rooms = await LiveInterviewRoom.find(query).sort({ createdAt: -1 }).limit(100);
     res.status(200).json({ success: true, rooms });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Cancel Interview
+exports.cancelInterview = async (req, res, next) => {
+  try {
+    const { roomId } = req.params;
+    const { reason } = req.body || {};
+
+    const room = await LiveInterviewRoom.findOneAndUpdate(
+      { roomId },
+      { status: "cancelled", cancelReason: reason || "Cancelled by admin" },
+      { new: true }
+    );
+
+    if (!room) {
+      return res.status(404).json({ success: false, message: "Interview room not found" });
+    }
+
+    if (global.socketIo) {
+      global.socketIo.to(roomId).emit("interview_cancelled", { roomId, reason: room.cancelReason });
+    }
+
+    res.status(200).json({ success: true, message: "Interview cancelled successfully", room });
   } catch (error) {
     next(error);
   }
@@ -349,4 +414,108 @@ exports.endInterviewAndEvaluate = async (req, res, next) => {
   }
 };
 
+// Run Code in Live Interview Room using Judge0
+exports.runCodeInRoom = async (req, res, next) => {
+  try {
+    const { code, language = "javascript", input = "" } = req.body;
+    if (!code) {
+      return res.status(400).json({ success: false, message: "Code is required" });
+    }
+
+    const execRes = await executeCode({ code, language, input });
+    const output = execRes.stdout || execRes.compileOutput || (execRes.statusId === 3 ? "Program executed successfully." : "");
+    const error = execRes.stderr || (execRes.statusId > 3 && execRes.statusId !== 6 ? execRes.status : "");
+
+    return res.status(200).json({
+      success: true,
+      result: {
+        output: output || "",
+        error: error || "",
+        status: execRes.status || "Completed",
+        runtime: execRes.runtime,
+        memory: execRes.memory,
+      },
+    });
+  } catch (error) {
+    console.error("Error running code in live interview room:", error.message);
+    return res.status(200).json({
+      success: true,
+      result: {
+        output: "",
+        error: error.message || "Code execution failed",
+        status: "Error",
+      },
+    });
+  }
+};
+
+// Submit and End Interview
+exports.submitAndEndInterview = async (req, res, next) => {
+  try {
+    const { roomId } = req.params;
+    const { textAnswer, code, answer } = req.body || {};
+    const room = await LiveInterviewRoom.findOne({ roomId });
+    if (!room) return res.status(404).json({ success: false, message: "Room not found" });
+
+    if (textAnswer || answer || code) {
+      const qText = "Submitted Answer";
+      const qId = "sub_" + Date.now();
+      room.responses.push({
+        questionId: qId,
+        questionText: qText,
+        answer: textAnswer || answer || "",
+        code: code || "",
+        answeredAt: new Date(),
+      });
+    }
+
+    const finalResult = await generateInterviewEvaluation(room);
+
+    room.status = "completed";
+    room.endedAt = new Date();
+    room.finalResult = finalResult;
+    await room.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Interview submitted and ended successfully",
+      room,
+      finalResult,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.generateInterviewEvaluation = generateInterviewEvaluation;
+
+exports.getAllRegisteredUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({}, "name email role avatar").sort({ name: 1 }).lean();
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete Interview Room
+exports.deleteRoom = async (req, res, next) => {
+  try {
+    const { roomId } = req.params;
+    const room = await LiveInterviewRoom.findOneAndDelete({ roomId });
+    if (!room) {
+      return res.status(404).json({ success: false, message: "Interview room not found" });
+    }
+
+    if (global.socketIo) {
+      global.socketIo.to(roomId).emit("interview_deleted", { roomId });
+    }
+
+    res.status(200).json({ success: true, message: "Interview room deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};

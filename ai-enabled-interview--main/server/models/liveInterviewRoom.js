@@ -31,9 +31,31 @@ const liveInterviewRoomSchema = new mongoose.Schema(
       type: String,
       default: "Admin",
     },
+    hostEmail: {
+      type: String,
+      lowercase: true,
+      trim: true,
+    },
+    creatorEmail: {
+      type: String,
+      lowercase: true,
+      trim: true,
+    },
     role: {
       type: String,
       default: "MERN Developer",
+    },
+    interviewType: {
+      type: String,
+      default: "Technical",
+    },
+    scheduledDate: {
+      type: String,
+      default: () => new Date().toISOString().split("T")[0],
+    },
+    scheduledTime: {
+      type: String,
+      default: "03:00 PM",
     },
     duration: {
       type: Number, // in minutes
@@ -45,9 +67,10 @@ const liveInterviewRoomSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["waiting", "active", "completed", "Waiting", "In-Progress", "Completed"],
-      default: "waiting",
+      enum: ["scheduled", "waiting", "active", "completed", "cancelled", "Scheduled", "Waiting", "In-Progress", "Completed", "Cancelled"],
+      default: "scheduled",
     },
+    cancelReason: String,
     startedAt: Date,
     endedAt: Date,
     currentQuestionIndex: {
@@ -58,15 +81,41 @@ const liveInterviewRoomSchema = new mongoose.Schema(
       {
         questionId: String,
         question: String,
+        difficulty: {
+          type: String,
+          enum: ["Easy", "Medium", "Hard"],
+          default: "Medium",
+        },
+        problemDescription: String,
         type: {
           type: String,
           enum: ["Technical", "Coding"],
-          default: "Technical",
+          default: "Coding",
         },
         initialCode: {
           type: String,
           default: "",
         },
+        starterTemplates: {
+          javascript: String,
+          python: String,
+          cpp: String,
+          java: String,
+        },
+        examples: [
+          {
+            input: String,
+            output: String,
+            explanation: String,
+          },
+        ],
+        constraints: [String],
+        testCases: [
+          {
+            input: String,
+            expectedOutput: String,
+          },
+        ],
         order: Number,
       },
     ],
@@ -85,15 +134,8 @@ const liveInterviewRoomSchema = new mongoose.Schema(
       },
     ],
     finalResult: {
-      overallScore: { type: Number, default: 81 },
-      technicalKnowledge: { type: Number, default: 82 },
-      problemSolving: { type: Number, default: 78 },
-      communication: { type: Number, default: 85 },
-      recommendation: { type: String, default: "Strong Candidate" },
-      feedbackSummary: { type: String, default: "Candidate demonstrated strong MERN stack fundamentals and good problem-solving ability." },
-      strengths: [String],
-      improvements: [String],
-      generatedAt: Date,
+      type: mongoose.Schema.Types.Mixed,
+      default: null,
     },
   },
   { timestamps: true }

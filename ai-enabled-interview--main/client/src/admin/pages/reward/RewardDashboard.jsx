@@ -48,7 +48,7 @@ const RewardDashboard = () => {
           className="group flex items-center gap-2.5 px-6 py-3.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:from-indigo-700 hover:via-purple-700 hover:to-cyan-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 cursor-pointer text-sm self-start sm:self-auto"
         >
           <FaPlus className="text-xs group-hover:rotate-90 transition-transform duration-300" />
-          Give Manual Reward
+          Give  Reward
         </button>
       </div>
 

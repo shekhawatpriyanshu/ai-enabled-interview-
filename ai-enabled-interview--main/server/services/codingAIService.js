@@ -1,7 +1,7 @@
 const Groq = require("groq-sdk");
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: process.env.GROQ_API_KEY || "gsk_placeholder_key_for_server_boot",
 });
 
 // Extract only the first complete JSON object

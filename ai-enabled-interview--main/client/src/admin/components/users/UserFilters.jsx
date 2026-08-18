@@ -68,10 +68,10 @@ const UserFilters = ({
                             Account Status
                         </option>
                         <option value="false" className="bg-white font-normal text-slate-800 py-1">
-                            Active Only
+                            🟢 Active
                         </option>
                         <option value="true" className="bg-white font-normal text-slate-800 py-1">
-                            Blocked Only
+                            🔴 Blocked
                         </option>
                     </select>
                 </div>

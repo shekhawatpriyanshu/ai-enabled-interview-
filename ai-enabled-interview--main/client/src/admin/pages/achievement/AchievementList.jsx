@@ -25,7 +25,7 @@ const AchievementList = () => {
 
   const [category, setCategory] =
     useState("");
-const [deleteItem, setDeleteItem] = useState(null);
+  const [deleteItem, setDeleteItem] = useState(null);
   const [status, setStatus] =
     useState("");
 
@@ -131,12 +131,12 @@ const [deleteItem, setDeleteItem] = useState(null);
             }}
             className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition shadow-sm text-sm cursor-pointer"
           >
-            <option value="">All Categories</option>
-            <option value="coding">Coding</option>
-            <option value="questions">Questions</option>
-            <option value="tests">Tests</option>
-            <option value="contests">Contests</option>
-            <option value="interviews">Interviews</option>
+            <option value="">📚  All Categories</option>
+            <option value="coding">💻 Coding</option>
+            <option value="questions">❓ Questions</option>
+            <option value="tests">📝 Tests</option>
+            <option value="contests">🏆 Contests</option>
+            <option value="interviews">🎤 Interviews</option>
           </select>
 
           {/* Status */}
@@ -148,9 +148,9 @@ const [deleteItem, setDeleteItem] = useState(null);
             }}
             className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition shadow-sm text-sm cursor-pointer"
           >
-            <option value="">All Status</option>
-            <option value="true">Active</option>
-            <option value="false">Inactive</option>
+            <option value=""> 📋 All Status</option>
+            <option value="true">🟢 Active</option>
+            <option value="false">⚪ Inactive</option>
           </select>
         </div>
       </div>
@@ -221,9 +221,8 @@ const [deleteItem, setDeleteItem] = useState(null);
         onConfirm={confirmDelete}
         loading={loading}
       />
-    </div>
+    </div >
   );
 };
 
 export default AchievementList;
-      

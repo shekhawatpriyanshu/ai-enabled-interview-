@@ -18,6 +18,13 @@ export default function LiveInterviewInvitationModal() {
     }
 
     const handleInvitation = (data) => {
+      if (!data) return;
+      const target = (data.targetEmail || "").trim().toLowerCase();
+      const current = (userEmail || "").trim().toLowerCase();
+
+      // Only display live toast if current logged-in user is the selected candidate target
+      if (!target || target !== current) return;
+
       setInvitation(data);
       setTimerRemaining(30);
 
@@ -73,7 +80,7 @@ export default function LiveInterviewInvitationModal() {
   const handleJoin = () => {
     const targetRoomId = invitation.roomId;
     setInvitation(null);
-    navigate(`/interview-room/${targetRoomId}`);
+    navigate(`/interviews/room/${targetRoomId}`);
   };
 
   const handleDecline = () => {

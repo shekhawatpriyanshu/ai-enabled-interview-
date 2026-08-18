@@ -286,7 +286,34 @@ function App() {
             />
 
             <Route
+              path="/interview/live"
+              element={
+                <ProtectedRoute>
+                  <LiveInterviewLobby />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
               path="/interviews/room/:roomId"
+              element={
+                <ProtectedRoute>
+                  <CandidateInterviewRoomPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/interviews/live/:roomId"
+              element={
+                <ProtectedRoute>
+                  <CandidateInterviewRoomPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/interview/live/:roomId"
               element={
                 <ProtectedRoute>
                   <CandidateInterviewRoomPage />
