@@ -15,52 +15,41 @@ export const AuthProvider = ({
   children,
 }) => {
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
+    const savedUser = sessionStorage.getItem("user") || localStorage.getItem("user");
     try {
       return savedUser ? JSON.parse(savedUser) : null;
-    } catch (e) {
+    } catch {
       return null;
     }
   });
 
-  const login = async (
-    email,
-    password
-  ) => {
-    const res = await API.post(
-      "/auth/login",
-      {
-        email,
-        password,
-      }
-    );
+  const login = async (email, password) => {
+    const res = await API.post("/auth/login", {
+      email,
+      password,
+    });
 
-    localStorage.setItem(
-      "token",
-      res.data.token
-    );
-    
-    localStorage.setItem(
-      "user",
-      JSON.stringify(res.data.user)
-    );
+    sessionStorage.setItem("token", res.data.token);
+    sessionStorage.setItem("user", JSON.stringify(res.data.user));
+
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
 
     setUser(res.data.user);
   };
 
-  const register = async (
-    data
-  ) => {
-     const res= await API.post(
-      "/auth/register",
-      data
-     );
-     if (res.data && res.data.token) {
-       localStorage.setItem("token", res.data.token);
-       localStorage.setItem("user", JSON.stringify(res.data.user));
-       setUser(res.data.user);
-     }
-     return res.data;
+  const register = async (data) => {
+    const res = await API.post("/auth/register", data);
+    if (res.data && res.data.token) {
+      sessionStorage.setItem("token", res.data.token);
+      sessionStorage.setItem("user", JSON.stringify(res.data.user));
+
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      setUser(res.data.user);
+    }
+    return res.data;
   };
 
   const forgotPassword = async (email) => {
@@ -89,12 +78,10 @@ export const AuthProvider = ({
       socket.disconnect();
     }
 
-    localStorage.removeItem(
-      "token"
-    );
-    localStorage.removeItem(
-      "user"
-    );
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
   };
 
@@ -123,5 +110,6 @@ export const AuthProvider = ({
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () =>
   useContext(AuthContext);

@@ -7,7 +7,7 @@ const API = axios.create({
 });
 
 API.interceptors.request.use((req) => {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
 
   if (token) {
     req.headers.Authorization = `Bearer ${token}`;
@@ -26,6 +26,8 @@ API.interceptors.response.use(
       error.response.status === 403 &&
       error.response.data?.isBlocked
     ) {
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("user");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/login?blocked=true";
@@ -49,11 +51,14 @@ API.interceptors.response.use(
         );
 
         if (res.data?.token) {
+          sessionStorage.setItem("token", res.data.token);
           localStorage.setItem("token", res.data.token);
           originalRequest.headers.Authorization = `Bearer ${res.data.token}`;
           return API(originalRequest);
         }
       } catch (err) {
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         window.location.href = "/login";

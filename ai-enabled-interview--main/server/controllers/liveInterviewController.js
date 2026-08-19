@@ -177,6 +177,35 @@ Return ONLY a valid JSON object matching this exact schema:
 };
 
 // Create Room (Targeted to Candidate Email with Typed Technical & Coding Questions)
+const checkIsTimeReached = (scheduledDate, scheduledTime) => {
+  if (!scheduledDate || !scheduledTime) return true;
+  try {
+    let dateStr = scheduledDate;
+    if (typeof dateStr === "string" && dateStr.includes("T")) {
+      dateStr = dateStr.split("T")[0];
+    }
+    let timeStr = String(scheduledTime).trim();
+    let isPM = /pm/i.test(timeStr);
+    let isAM = /am/i.test(timeStr);
+    let cleanTime = timeStr.replace(/(am|pm)/i, "").trim();
+    let [hoursStr, minutesStr] = cleanTime.split(":");
+    let hours = parseInt(hoursStr, 10);
+    let minutes = parseInt(minutesStr, 10) || 0;
+
+    if (isNaN(hours)) return true;
+    if (isPM && hours < 12) hours += 12;
+    if (isAM && hours === 12) hours = 0;
+
+    const pad = (n) => String(n).padStart(2, "0");
+    const scheduledMoment = new Date(`${dateStr}T${pad(hours)}:${pad(minutes)}:00`);
+    if (isNaN(scheduledMoment.getTime())) return true;
+
+    return new Date() >= scheduledMoment;
+  } catch {
+    return true;
+  }
+};
+
 exports.createRoom = async (req, res, next) => {
   try {
     const { candidateEmail, candidateName, interviewerName, role, duration, scheduledDate, scheduledTime, interviewType, questions } = req.body;
@@ -200,6 +229,8 @@ exports.createRoom = async (req, res, next) => {
       : defaultQuestions;
 
     const cleanHostEmail = (req.body.hostEmail || req.body.creatorEmail || (req.user ? req.user.email : "") || interviewerName || "shreee@gmail.com").trim().toLowerCase();
+    const isTimeReached = checkIsTimeReached(scheduledDate, scheduledTime);
+    const initialStatus = isTimeReached ? "active" : "scheduled";
 
     const room = await LiveInterviewRoom.create({
       roomId,
@@ -210,12 +241,13 @@ exports.createRoom = async (req, res, next) => {
       hostEmail: cleanHostEmail,
       creatorEmail: cleanHostEmail,
       role: role || "MERN Developer",
-      interviewType: interviewType || "Technical",
+      interviewType: isTimeReached ? "Live" : (interviewType || "Scheduled"),
       scheduledDate: scheduledDate || new Date().toISOString().split("T")[0],
       scheduledTime: scheduledTime || "03:00 PM",
       duration: duration || 30,
       timerRemaining: (duration || 30) * 60,
-      status: "scheduled",
+      status: initialStatus,
+      startedAt: isTimeReached ? new Date() : null,
       questions: roomQuestions,
     });
 
@@ -241,7 +273,11 @@ exports.createRoom = async (req, res, next) => {
         interviewerName: room.interviewerName,
         scheduledDate: room.scheduledDate,
         scheduledTime: room.scheduledTime,
-        message: `${creatorInfo} has created a Live Interview room (${roomId}) for you!`,
+        interviewType: room.interviewType,
+        isImmediate: isTimeReached,
+        message: isTimeReached
+          ? `${creatorInfo} has created an immediate Live Interview room (${roomId}) for you!`
+          : `${creatorInfo} has scheduled an Interview for ${room.scheduledDate || "upcoming date"} (${roomId})!`,
         expiresIn: 30,
       };
 

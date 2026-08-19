@@ -126,15 +126,48 @@ module.exports = function initLiveInterviewSocket(io) {
         }
       }
 
-      // Activate room status and start live timer countdown
-      if (room.status !== "completed") {
-        if (room.status !== "active" && room.status !== "In-Progress") {
+function checkIsTimeReached(scheduledDate, scheduledTime) {
+  if (!scheduledDate || !scheduledTime) return true;
+  try {
+    let dateStr = scheduledDate;
+    if (typeof dateStr === "string" && dateStr.includes("T")) {
+      dateStr = dateStr.split("T")[0];
+    }
+    let timeStr = String(scheduledTime).trim();
+    let isPM = /pm/i.test(timeStr);
+    let isAM = /am/i.test(timeStr);
+    let cleanTime = timeStr.replace(/(am|pm)/i, "").trim();
+    let [hoursStr, minutesStr] = cleanTime.split(":");
+    let hours = parseInt(hoursStr, 10);
+    let minutes = parseInt(minutesStr, 10) || 0;
+
+    if (isNaN(hours)) return true;
+    if (isPM && hours < 12) hours += 12;
+    if (isAM && hours === 12) hours = 0;
+
+    const pad = (n) => String(n).padStart(2, "0");
+    const scheduledMoment = new Date(`${dateStr}T${pad(hours)}:${pad(minutes)}:00`);
+    if (isNaN(scheduledMoment.getTime())) return true;
+
+    return new Date() >= scheduledMoment;
+  } catch {
+    return true;
+  }
+}
+
+      // Activate room status only if scheduled time has arrived or interview started
+      const isTimeReached = checkIsTimeReached(room.scheduledDate, room.scheduledTime);
+
+      if (room.status !== "completed" && room.status !== "cancelled") {
+        if (isTimeReached && room.status !== "active") {
           room.status = "active";
           room.startedAt = room.startedAt || new Date();
           await room.save();
           io.to(roomId).emit("interview_started", { room, roomId });
         }
-        startServerTimer(io, roomId);
+        if (room.status === "active") {
+          startServerTimer(io, roomId);
+        }
       }
 
       // Broadcast candidate_joined event to room
@@ -182,7 +215,7 @@ module.exports = function initLiveInterviewSocket(io) {
         const room = await LiveInterviewRoom.findOne({ roomId: targetRoom });
         if (!room) return;
 
-        if (action === "pause") {
+        if (action === "pause" || action === "stop") {
           stopServerTimer(targetRoom);
           room.status = "waiting";
           await room.save();
@@ -200,6 +233,31 @@ module.exports = function initLiveInterviewSocket(io) {
         }
       } catch (err) {
         console.error("Timer control error:", err.message);
+      }
+    });
+
+    // Candidate accepts live room invitation
+    socket.on("candidate_accepted_invite", async ({ roomId, candidateName, candidateEmail }) => {
+      const targetRoom = roomId || currentRoomId;
+      if (!targetRoom) return;
+
+      try {
+        const room = await LiveInterviewRoom.findOne({ roomId: targetRoom });
+        if (room) {
+          room.status = "active";
+          await room.save();
+        }
+
+        const payload = {
+          roomId: targetRoom,
+          candidateName: candidateName || room?.candidateName || "Candidate",
+          candidateEmail: candidateEmail || room?.candidateEmail,
+        };
+
+        io.to(targetRoom).emit("candidate_accepted_invite", payload);
+        io.emit("candidate_accepted_invite", payload);
+      } catch (err) {
+        console.error("Candidate accept invite error:", err.message);
       }
     });
 

@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import socket from "../../socket";
 import { useAuth } from "../../context/AuthContext";
-import { getLiveInterviewRoomById, runCodeInRoom, submitAndEndInterview } from "../../services/liveInterviewService";
+import { getLiveInterviewRoomById, runCodeInRoom, submitAndEndInterview, cancelLiveInterviewRoom } from "../../services/liveInterviewService";
+import { isInterviewTimeReached, isInterviewWindowExceeded } from "../../utils/interviewTimeUtils";
 import {
-  FaUserTie,
   FaClock,
   FaPaperPlane,
   FaCode,
@@ -13,21 +13,17 @@ import {
   FaSpinner,
   FaTrophy,
   FaPlay,
+  FaPause,
+  FaRedo,
   FaTerminal,
-  FaBell,
   FaCommentAlt,
   FaFileAlt,
-  FaFlask,
-  FaVideo,
-  FaVideoSlash,
-  FaMicrophone,
-  FaMicrophoneSlash,
   FaSignOutAlt,
   FaCheck,
   FaTimes,
-  FaCaretRight,
   FaExclamationTriangle,
   FaCog,
+  FaLock,
 } from "react-icons/fa";
 
 const STARTER_TEMPLATES = {
@@ -97,7 +93,9 @@ export default function CandidateInterviewRoomPage() {
   const [answerInput, setAnswerInput] = useState("");
 
   // Media Controls
+  // eslint-disable-next-line no-unused-vars
   const [micActive, setMicActive] = useState(true);
+  // eslint-disable-next-line no-unused-vars
   const [camActive, setCamActive] = useState(true);
 
   // Chat Feed
@@ -107,6 +105,8 @@ export default function CandidateInterviewRoomPage() {
   // Timer & Status
   const [responses, setResponses] = useState([]);
   const [timerRemaining, setTimerRemaining] = useState(1800);
+  const [isTimerPaused, setIsTimerPaused] = useState(false);
+  const [earlyEntryBlocked, setEarlyEntryBlocked] = useState(false);
   const [submittedCurrent, setSubmittedCurrent] = useState(false);
   const [finalResult, setFinalResult] = useState(null);
   const [showReportView, setShowReportView] = useState(false);
@@ -135,6 +135,27 @@ export default function CandidateInterviewRoomPage() {
           setRoom(res.room);
           setInterviewState(res.room.status || "waiting");
           setTimerRemaining(res.room.timerRemaining || 1800);
+
+          const uEmail = (user?.email || "").trim().toLowerCase();
+          const cEmail = (res.room.candidateEmail || "").trim().toLowerCase();
+          const hEmail = (res.room.hostEmail || res.room.creatorEmail || "").trim().toLowerCase();
+          const uType = (user?.userType || user?.profile?.userType || "").trim().toLowerCase();
+
+          let isHostUser = false;
+          if (cEmail && uEmail && uEmail === cEmail) {
+            isHostUser = false;
+          } else if (hEmail && uEmail && uEmail === hEmail) {
+            isHostUser = true;
+          } else if (uType === "working professional" || user?.role === "admin" || user?.role === "interviewer") {
+            isHostUser = true;
+          }
+
+          if (!isHostUser) {
+            const timeReached = isInterviewTimeReached(res.room.scheduledDate, res.room.scheduledTime);
+            if (!timeReached) {
+              setEarlyEntryBlocked(true);
+            }
+          }
 
           if (res.room.responses) {
             setResponses(res.room.responses);
@@ -170,26 +191,31 @@ export default function CandidateInterviewRoomPage() {
       }
     }
     loadRoom();
-  }, [roomId]);
+  }, [roomId, user?.email, user?.name, user?.role, user?.userType, user?.profile?.userType]);
 
-  // Local fallback timer tick (guarantees smooth 1-sec countdown display)
+  // Local fallback timer tick (guarantees smooth 1-sec countdown display, freezes when paused)
   useEffect(() => {
-    if (interviewState === "completed" || showReportView) return;
+    if (isTimerPaused || interviewState === "completed" || showReportView) return;
     const interval = setInterval(() => {
       setTimerRemaining((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [interviewState, showReportView]);
+  }, [isTimerPaused, interviewState, showReportView]);
 
   // Auto-terminate when timer hits 0
   useEffect(() => {
-    if (timerRemaining === 0 && interviewState !== "completed" && !showReportView) {
-      setInterviewState("completed");
-      setShowReportView(true);
-      handleEndInterview();
+    if (timerRemaining === 0 && interviewState === "active" && !showReportView) {
+      socket.emit("end_interview", { roomId, code, responses });
+      submitAndEndInterview(roomId, { code, responses })
+        .then((res) => {
+          setInterviewState("completed");
+          if (res?.finalResult) setFinalResult(res.finalResult);
+          setShowReportView(true);
+        })
+        .catch(console.error);
     }
-  }, [timerRemaining]);
+  }, [timerRemaining, interviewState, showReportView, roomId, code, responses]);
 
   // Socket Connection & Listeners
   useEffect(() => {
@@ -210,6 +236,20 @@ export default function CandidateInterviewRoomPage() {
     });
 
     socket.on("timer_tick", ({ timerRemaining: newTime }) => {
+      if (newTime !== undefined && newTime !== null) {
+        setTimerRemaining(Number(newTime));
+      }
+    });
+
+    socket.on("timer_paused", ({ timerRemaining: newTime }) => {
+      setIsTimerPaused(true);
+      if (newTime !== undefined && newTime !== null) {
+        setTimerRemaining(Number(newTime));
+      }
+    });
+
+    socket.on("timer_resumed", ({ timerRemaining: newTime }) => {
+      setIsTimerPaused(false);
       if (newTime !== undefined && newTime !== null) {
         setTimerRemaining(Number(newTime));
       }
@@ -283,6 +323,8 @@ export default function CandidateInterviewRoomPage() {
       socket.off("interview_started");
       socket.off("new_question");
       socket.off("timer_tick");
+      socket.off("timer_paused");
+      socket.off("timer_resumed");
       socket.off("receive_message");
       socket.off("language_updated");
       socket.off("answer_typing");
@@ -293,6 +335,17 @@ export default function CandidateInterviewRoomPage() {
       socket.off("interview_ended");
     };
   }, [roomId, candidateName, user?.email]);
+
+  const handleTimerControl = (action) => {
+    if (action === "pause" || action === "stop") {
+      setIsTimerPaused(true);
+    } else if (action === "start" || action === "resume") {
+      setIsTimerPaused(false);
+    } else if (action === "reset") {
+      setIsTimerPaused(false);
+    }
+    socket.emit("timer_control", { roomId, action });
+  };
 
   // Handle Code Change with Socket Emit
   const handleCodeChange = (newVal) => {
@@ -329,7 +382,6 @@ export default function CandidateInterviewRoomPage() {
       });
 
       if (res.success) {
-        setOutputResult(res);
         setConsoleOutput({
           status: res.status || "Accepted",
           output: res.output || res.stdout || "Program executed successfully with exit code 0.",
@@ -351,7 +403,7 @@ export default function CandidateInterviewRoomPage() {
     }
   };
 
-  // End & Terminate Interview
+  // End & Terminate Interview (Evaluated & Submitted)
   const handleEndInterview = async () => {
     try {
       socket.emit("end_interview", { roomId, code, responses });
@@ -363,6 +415,20 @@ export default function CandidateInterviewRoomPage() {
       }
     } catch (err) {
       console.error("End interview error:", err);
+    }
+  };
+
+  // Leave Session Prematurely (Marks room as Closed/Cancelled)
+  const handleLeaveSession = async () => {
+    try {
+      if (interviewState !== "completed" && room?.status !== "completed") {
+        await cancelLiveInterviewRoom(roomId, "Participant left session prematurely");
+        socket.emit("cancel_interview", { roomId, reason: "Participant left session" });
+      }
+    } catch (err) {
+      console.error("Leave session error:", err);
+    } finally {
+      navigate("/interviews/live");
     }
   };
 
@@ -449,6 +515,51 @@ export default function CandidateInterviewRoomPage() {
       <div className="min-h-screen bg-[#1a1a1a] text-slate-100 flex flex-col items-center justify-center font-sans">
         <div className="w-12 h-12 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin mb-4" />
         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Loading LeetCode Workspace...</p>
+      </div>
+    );
+  }
+
+  // 1.5 EARLY ENTRY PROTECTION FOR CANDIDATE
+  if (earlyEntryBlocked) {
+    return (
+      <div className="min-h-screen bg-[#0d1117] text-white flex flex-col items-center justify-center p-6 font-sans selection:bg-amber-500">
+        <div className="bg-[#161b22] border border-amber-500/30 rounded-3xl p-8 max-w-md w-full shadow-2xl text-center space-y-6 relative overflow-hidden">
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 mx-auto flex items-center justify-center text-2xl animate-pulse">
+            <FaLock />
+          </div>
+
+          <div className="space-y-2">
+            <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-black uppercase rounded-full tracking-widest">
+              Early Entry Restricted
+            </span>
+            <h2 className="text-xl font-black text-white">Interview Room Locked</h2>
+            <p className="text-xs text-slate-400">
+              Candidate early entry is restricted until the scheduled start time.
+            </p>
+          </div>
+
+          <div className="bg-[#0d1117] p-4 rounded-2xl border border-slate-800 space-y-2 text-xs text-left">
+            <div className="flex justify-between">
+              <span className="text-slate-400">Scheduled Date:</span>
+              <span className="font-bold text-white">{room?.scheduledDate || "Today"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">Scheduled Time:</span>
+              <span className="font-bold text-amber-400">{room?.scheduledTime || "03:00 PM"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-400">Host / Interviewer:</span>
+              <span className="font-bold text-white">{room?.interviewerName || "Technical Lead"}</span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => navigate("/interviews")}
+            className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-black font-extrabold text-xs uppercase tracking-wider rounded-2xl shadow-lg hover:from-amber-400 hover:to-orange-400 transition cursor-pointer"
+          >
+            Return to Interview Lobby
+          </button>
+        </div>
       </div>
     );
   }
@@ -787,6 +898,53 @@ export default function CandidateInterviewRoomPage() {
           <div className="flex items-center space-x-2 bg-[#1f1f1f] px-3 py-1.5 rounded-xl border border-[#383838]">
             <FaClock className="text-amber-400 text-xs animate-pulse" />
             <span className="font-mono text-xs font-bold text-white">{formatTime(timerRemaining)}</span>
+
+            {/* HOST / WORKING PROFESSIONAL TIMER CONTROLS (START / STOP / RESTART) */}
+            {(() => {
+              const uEmail = (user?.email || "").trim().toLowerCase();
+              const cEmail = (room?.candidateEmail || "").trim().toLowerCase();
+              const hEmail = (room?.hostEmail || room?.creatorEmail || "").trim().toLowerCase();
+
+              const userType = (user?.userType || user?.profile?.userType || "").trim().toLowerCase();
+              let isHostUser = false;
+              if (cEmail && uEmail && uEmail === cEmail) {
+                isHostUser = false;
+              } else if (hEmail && uEmail && uEmail === hEmail) {
+                isHostUser = true;
+              } else if (userType === "working professional" || user?.role === "admin" || user?.role === "interviewer") {
+                isHostUser = true;
+              } else if (room?.interviewerName && user?.name && room.interviewerName.toLowerCase().includes(user.name.toLowerCase())) {
+                isHostUser = true;
+              }
+
+              if (!isHostUser) return null;
+
+              return (
+                <div className="flex items-center space-x-1 pl-2 border-l border-[#333]">
+                  <button
+                    onClick={() => handleTimerControl("start")}
+                    className="p-1 bg-[#282828] hover:bg-emerald-500/20 text-emerald-400 rounded-md border border-[#383838] transition cursor-pointer"
+                    title="Start / Resume Timer"
+                  >
+                    <FaPlay className="text-[9px]" />
+                  </button>
+                  <button
+                    onClick={() => handleTimerControl("pause")}
+                    className="p-1 bg-[#282828] hover:bg-amber-500/20 text-amber-400 rounded-md border border-[#383838] transition cursor-pointer"
+                    title="Stop / Pause Timer"
+                  >
+                    <FaPause className="text-[9px]" />
+                  </button>
+                  <button
+                    onClick={() => handleTimerControl("reset")}
+                    className="p-1 bg-[#282828] hover:bg-indigo-500/20 text-indigo-400 rounded-md border border-[#383838] transition cursor-pointer"
+                    title="Restart / Reset Timer"
+                  >
+                    <FaRedo className="text-[9px]" />
+                  </button>
+                </div>
+              );
+            })()}
           </div>
 
           <select
@@ -844,7 +1002,7 @@ export default function CandidateInterviewRoomPage() {
           })()}
 
           <button
-            onClick={() => navigate("/interviews/live")}
+            onClick={handleLeaveSession}
             className="px-3.5 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 font-bold text-xs rounded-xl transition flex items-center gap-1.5 cursor-pointer"
           >
             <FaSignOutAlt className="text-xs" />

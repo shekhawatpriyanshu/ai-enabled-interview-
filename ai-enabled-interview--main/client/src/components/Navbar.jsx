@@ -12,25 +12,31 @@ const Navbar = ({ toggleSidebar }) => {
     try {
       const cached = localStorage.getItem("cached_profile");
       return cached ? JSON.parse(cached) : null;
-    } catch (e) {
+    } catch {
       return null;
     }
   });
 
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState(() => {
+    try {
+      const cached = localStorage.getItem("user_interview_notifications");
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
 
   const loadNotifications = () => {
     try {
       const cached = localStorage.getItem("user_interview_notifications");
       setNotifications(cached ? JSON.parse(cached) : []);
-    } catch (e) {
+    } catch {
       setNotifications([]);
     }
   };
 
   useEffect(() => {
-    loadNotifications();
     window.addEventListener("new_interview_notification", loadNotifications);
     return () => {
       window.removeEventListener("new_interview_notification", loadNotifications);
@@ -172,8 +178,8 @@ const Navbar = ({ toggleSidebar }) => {
                       className="bg-slate-950/80 hover:bg-slate-900 p-3.5 rounded-2xl border border-slate-800/90 transition-all space-y-2 text-xs"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-black uppercase text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/20">
-                          {notif.role || "Live Interview"}
+                        <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${notif.interviewType === "Live" ? "text-rose-400 bg-rose-500/10 border-rose-500/20" : "text-amber-400 bg-amber-500/10 border-amber-500/20"}`}>
+                          {notif.interviewType === "Live" ? "🔴 Live Session" : `📅 Scheduled: ${notif.scheduledDate || "Upcoming"}`}
                         </span>
                         <span className="text-[9px] font-mono text-slate-400">
                           {new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -189,12 +195,12 @@ const Navbar = ({ toggleSidebar }) => {
                         <button
                           onClick={() => {
                             setShowNotifDropdown(false);
-                            navigate(`/interviews/room/${notif.roomId}`);
+                            navigate(`/interview-room/${notif.roomId}`);
                           }}
                           className="px-3 py-1 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold text-[10px] uppercase tracking-wider rounded-lg shadow-sm flex items-center space-x-1 cursor-pointer transition"
                         >
                           <FaVideo className="text-[9px]" />
-                          <span>Join Room</span>
+                          <span>View Room</span>
                         </button>
                       </div>
                     </div>

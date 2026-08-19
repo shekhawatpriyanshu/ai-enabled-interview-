@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import socket from "../socket";
 import { useAuth } from "../context/AuthContext";
@@ -22,13 +22,13 @@ export default function LiveInterviewInvitationModal() {
       const target = (data.targetEmail || "").trim().toLowerCase();
       const current = (userEmail || "").trim().toLowerCase();
 
-      // Only display live toast if current logged-in user is the selected candidate target
+      // Only process if current logged-in user is the selected candidate target
       if (!target || target !== current) return;
 
-      setInvitation(data);
-      setTimerRemaining(30);
+      const isToday = data.scheduledDate === new Date().toISOString().split("T")[0];
+      const isImmediate = data.isImmediate || data.interviewType === "Live" || data.interviewType === "Immediate" || isToday;
 
-      // Save notification to persistent localStorage
+      // Save notification to persistent localStorage for Navbar Bell icon
       try {
         const cached = localStorage.getItem("user_interview_notifications");
         const notifications = cached ? JSON.parse(cached) : [];
@@ -37,7 +37,12 @@ export default function LiveInterviewInvitationModal() {
           roomId: data.roomId,
           role: data.role || "MERN Developer",
           interviewerName: data.interviewerName || "Admin",
-          message: data.message || `Admin created Live Interview (${data.roomId})`,
+          scheduledDate: data.scheduledDate || "Today",
+          scheduledTime: data.scheduledTime || "03:00 PM",
+          interviewType: isImmediate ? "Live" : "Scheduled",
+          message: data.message || (isImmediate
+            ? `Immediate Live Interview room created (${data.roomId})!`
+            : `Scheduled Interview for ${data.scheduledDate || "upcoming date"} (${data.roomId})`),
           createdAt: new Date().toISOString(),
           read: false,
         };
@@ -48,6 +53,12 @@ export default function LiveInterviewInvitationModal() {
         window.dispatchEvent(new Event("new_interview_notification"));
       } catch (err) {
         console.error("Save notification error:", err);
+      }
+
+      // ONLY display 30s emergency toast popup modal if it is an immediate live interview!
+      if (isImmediate) {
+        setInvitation(data);
+        setTimerRemaining(30);
       }
     };
 
@@ -80,7 +91,12 @@ export default function LiveInterviewInvitationModal() {
   const handleJoin = () => {
     const targetRoomId = invitation.roomId;
     setInvitation(null);
-    navigate(`/interviews/room/${targetRoomId}`);
+    socket.emit("candidate_accepted_invite", {
+      roomId: targetRoomId,
+      candidateName: user?.name || invitation.candidateName || "Candidate",
+      candidateEmail: userEmail,
+    });
+    navigate(`/interview-room/${targetRoomId}`);
   };
 
   const handleDecline = () => {

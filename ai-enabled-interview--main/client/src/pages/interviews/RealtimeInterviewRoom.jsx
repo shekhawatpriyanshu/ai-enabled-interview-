@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import socket from "../../socket";
 import { getLiveInterviewRoomById, endLiveInterviewRoom } from "../../services/liveInterviewService";
@@ -8,26 +8,23 @@ import {
   Play,
   Pause,
   RotateCcw,
-  MessageSquare,
-  UserCheck,
   Clock,
   Code2,
-  CheckCircle2,
-  AlertCircle,
-  Sparkles,
   Send,
   User,
   ShieldAlert,
-  ChevronRight,
   Copy,
   Check,
   Radio,
+  Sparkles,
+  MessageSquare,
 } from "lucide-react";
 
 export default function RealtimeInterviewRoom() {
   const { roomId: urlRoomId } = useParams();
   const roomId = urlRoomId || "demo";
   const [searchParams] = useSearchParams();
+  // eslint-disable-next-line no-unused-vars
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -180,17 +177,20 @@ export default function RealtimeInterviewRoom() {
   // Timer Controls
   const handleStartTimer = () => {
     setIsTimerRunning(true);
+    socket.emit("timer_control", { roomId, action: "start" });
     socket.emit("interview_timer_control", { roomId, action: "start", remainingSeconds: timerSeconds });
   };
 
   const handlePauseTimer = () => {
     setIsTimerRunning(false);
+    socket.emit("timer_control", { roomId, action: "pause" });
     socket.emit("interview_timer_control", { roomId, action: "pause", remainingSeconds: timerSeconds });
   };
 
   const handleResetTimer = () => {
     setIsTimerRunning(false);
     setTimerSeconds(600);
+    socket.emit("timer_control", { roomId, action: "reset" });
     socket.emit("interview_timer_control", { roomId, action: "reset", remainingSeconds: 600 });
   };
 
@@ -277,6 +277,7 @@ export default function RealtimeInterviewRoom() {
 
   // Check Presence of candidate / interviewer
   const candidateOnline = participants.some((p) => p.role === "Candidate") || userRole === "Candidate";
+  // eslint-disable-next-line no-unused-vars
   const interviewerOnline = participants.some((p) => p.role === "Interviewer") || userRole === "Interviewer";
 
   if (loading) {

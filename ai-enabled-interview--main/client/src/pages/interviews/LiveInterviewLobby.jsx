@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import { getLiveInterviewRooms, createLiveInterviewRoom, getAllUsers } from "../../services/liveInterviewService";
+import { isInterviewTimeReached, isInterviewWindowExceeded } from "../../utils/interviewTimeUtils";
 import { useAuth } from "../../context/AuthContext";
 import socket from "../../socket";
 import {
@@ -87,8 +88,19 @@ export default function LiveInterviewLobby() {
   const [createHostEmail, setCreateHostEmail] = useState(() => user?.email || "shreee@gmail.com");
   const [createInterviewerName, setCreateInterviewerName] = useState("Rahul (Technical Lead)");
   const [createParticipantRole, setCreateParticipantRole] = useState("Candidate");
+  const getCurrentFormattedTime = () => {
+    const now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${pad(hours)}:${pad(minutes)} ${ampm}`;
+  };
+
   const [createScheduledDate, setCreateScheduledDate] = useState(() => new Date().toISOString().split("T")[0]);
-  const [createScheduledTime, setCreateScheduledTime] = useState("03:00 PM");
+  const [createScheduledTime, setCreateScheduledTime] = useState(() => getCurrentFormattedTime());
   const [createRole, setCreateRole] = useState("MERN Stack Developer");
   const [createDuration, setCreateDuration] = useState(30);
   const [creating, setCreating] = useState(false);
@@ -197,13 +209,23 @@ export default function LiveInterviewLobby() {
       }
     };
 
+    const handleCandidateAccepted = (data) => {
+      if (!data?.roomId) return;
+      const roomPath = `/interview-room/${data.roomId}`;
+      if (!window.location.pathname.includes(data.roomId)) {
+        navigate(roomPath);
+      }
+    };
+
     socket.on("live_interview_invitation", handleInvitation);
+    socket.on("candidate_accepted_invite", handleCandidateAccepted);
 
     return () => {
       socket.off("connect", registerSocket);
       socket.off("live_interview_invitation", handleInvitation);
+      socket.off("candidate_accepted_invite", handleCandidateAccepted);
     };
-  }, [userEmail]);
+  }, [userEmail, navigate]);
 
   const handleJoinById = (e) => {
     e.preventDefault();
@@ -258,15 +280,40 @@ export default function LiveInterviewLobby() {
   };
 
   const filteredRooms = rooms.filter((r) => {
+    const windowExceeded = isInterviewWindowExceeded(r.scheduledDate, r.scheduledTime, r.duration);
+    const isTimeReached = isInterviewTimeReached(r.scheduledDate, r.scheduledTime);
     const st = (r.status || "").toLowerCase();
-    if (activeTab === "upcoming") return st === "scheduled" || st === "waiting";
-    if (activeTab === "live") return st === "active" || st === "in-progress";
+
+    if (activeTab === "upcoming") return !isTimeReached || st === "scheduled" || st === "waiting";
+    if (activeTab === "live") return isTimeReached && !windowExceeded && (st === "active" || st === "in-progress" || st === "waiting");
     if (activeTab === "completed") return st === "completed";
     return true;
   });
 
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status, roomItem) => {
+    const windowExceeded = isInterviewWindowExceeded(roomItem?.scheduledDate, roomItem?.scheduledTime, roomItem?.duration);
+    if (status === "cancelled" || status === "Cancelled" || windowExceeded) {
+      return (
+        <span className="text-[11px] px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 font-extrabold border border-rose-500/30 inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
+          <X className="w-3.5 h-3.5" />
+          Closed ❌
+        </span>
+      );
+    }
+
     const st = (status || "").toLowerCase();
+    const isTimeReached = isInterviewTimeReached(roomItem?.scheduledDate, roomItem?.scheduledTime);
+
+    // If scheduled start time has NOT arrived yet, show "Scheduled" badge regardless!
+    if (!isTimeReached && st !== "completed") {
+      return (
+        <span className="text-[11px] px-3 py-1 rounded-full bg-sky-500/10 text-sky-600 font-bold border border-sky-500/30 inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
+          <Calendar className="w-3.5 h-3.5" />
+          Scheduled 📅
+        </span>
+      );
+    }
+
     if (st === "active" || st === "in-progress") {
       return (
         <span className="text-[11px] px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 font-extrabold border border-rose-500/30 inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 animate-pulse">
@@ -283,18 +330,10 @@ export default function LiveInterviewLobby() {
         </span>
       );
     }
-    if (st === "waiting") {
-      return (
-        <span className="text-[11px] px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 font-bold border border-amber-500/30 inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
-          <Clock className="w-3.5 h-3.5" />
-          Waiting ⏳
-        </span>
-      );
-    }
     return (
-      <span className="text-[11px] px-3 py-1 rounded-full bg-sky-500/10 text-sky-600 font-bold border border-sky-500/30 inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
-        <Calendar className="w-3.5 h-3.5" />
-        Scheduled 🟡
+      <span className="text-[11px] px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 font-bold border border-amber-500/30 inline-flex items-center gap-1.5 whitespace-nowrap shrink-0">
+        <Clock className="w-3.5 h-3.5" />
+        Waiting ⏳
       </span>
     );
   };
@@ -489,7 +528,7 @@ export default function LiveInterviewLobby() {
                       <span className="text-[11px] font-mono bg-indigo-50 text-indigo-700 border border-indigo-200/80 px-3 py-1 rounded-full font-bold whitespace-nowrap shrink-0 inline-flex items-center">
                         ID: {rm.roomId}
                       </span>
-                      {getStatusBadge(rm.status)}
+                      {getStatusBadge(rm.status, rm)}
                     </div>
 
                     <h3 className="text-lg font-black text-slate-800 group-hover:text-indigo-600 transition-colors duration-200 mb-2 leading-snug">
@@ -643,11 +682,54 @@ export default function LiveInterviewLobby() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-400">Status:</span>
-                  <span className="text-amber-400 font-bold">🟡 Waiting for Host...</span>
+                  {(() => {
+                    const uEmail = (user?.email || "").trim().toLowerCase();
+                    const uName = (user?.name || "").trim().toLowerCase();
+                    const uType = (user?.userType || user?.profile?.userType || "").trim().toLowerCase();
+
+                    const hEmail = (waitingRoomModal.hostEmail || waitingRoomModal.creatorEmail || "").trim().toLowerCase();
+                    const cEmail = (waitingRoomModal.candidateEmail || "").trim().toLowerCase();
+                    const iName = (waitingRoomModal.interviewerName || "").trim().toLowerCase();
+
+                    let isUserHost = false;
+                    if (cEmail && uEmail && uEmail === cEmail) {
+                      isUserHost = false;
+                    } else if (hEmail && uEmail && uEmail === hEmail) {
+                      isUserHost = true;
+                    } else if (uType === "working professional" || user?.role === "admin" || user?.role === "interviewer") {
+                      isUserHost = true;
+                    } else if (iName && uName && iName.includes(uName)) {
+                      isUserHost = true;
+                    }
+
+                    const isCancelled = waitingRoomModal.status === "cancelled" || waitingRoomModal.status === "Cancelled";
+
+                    if (isCancelled) {
+                      return (
+                        <span className="text-rose-400 font-bold flex items-center gap-1">
+                          <span>Closed ❌</span>
+                        </span>
+                      );
+                    }
+
+                    const timeReached = isInterviewTimeReached(waitingRoomModal.scheduledDate, waitingRoomModal.scheduledTime);
+
+                    if (!isUserHost && !timeReached) {
+                      return (
+                        <span className="text-amber-400 font-bold flex items-center gap-1">
+                          <span>🔒 Scheduled for {waitingRoomModal.scheduledTime || "03:00 PM"}</span>
+                        </span>
+                      );
+                    }
+
+                    return (
+                      <span className="text-amber-400 font-bold">
+                        {isUserHost ? "🟡 Waiting for Candidate..." : "🟡 Waiting for Host..."}
+                      </span>
+                    );
+                  })()}
                 </div>
               </div>
-
-
 
               <div className="flex justify-between gap-3 pt-2">
                 <button
@@ -659,6 +741,38 @@ export default function LiveInterviewLobby() {
                 <button
                   onClick={() => {
                     const id = waitingRoomModal.roomId;
+                    const uEmail = (user?.email || "").trim().toLowerCase();
+                    const uName = (user?.name || "").trim().toLowerCase();
+                    const uType = (user?.userType || user?.profile?.userType || "").trim().toLowerCase();
+
+                    const hEmail = (waitingRoomModal.hostEmail || waitingRoomModal.creatorEmail || "").trim().toLowerCase();
+                    const cEmail = (waitingRoomModal.candidateEmail || "").trim().toLowerCase();
+                    const iName = (waitingRoomModal.interviewerName || "").trim().toLowerCase();
+
+                    let isUserHost = false;
+                    if (cEmail && uEmail && uEmail === cEmail) {
+                      isUserHost = false;
+                    } else if (hEmail && uEmail && uEmail === hEmail) {
+                      isUserHost = true;
+                    } else if (uType === "working professional" || user?.role === "admin" || user?.role === "interviewer") {
+                      isUserHost = true;
+                    } else if (iName && uName && iName.includes(uName)) {
+                      isUserHost = true;
+                    }
+
+                    const isCancelled = waitingRoomModal.status === "cancelled" || waitingRoomModal.status === "Cancelled";
+
+                    if (isCancelled) {
+                      alert("❌ Session Closed:\n\nThis interview session has been closed.");
+                      return;
+                    }
+
+                    const timeReached = isInterviewTimeReached(waitingRoomModal.scheduledDate, waitingRoomModal.scheduledTime);
+                    if (!isUserHost && !timeReached) {
+                      alert(`⏰ Early Entry Restricted:\n\nThis interview is scheduled for ${waitingRoomModal.scheduledTime || "03:00 PM"}.\nCandidates can only join on time. Please return at ${waitingRoomModal.scheduledTime || "03:00 PM"}.`);
+                      return;
+                    }
+
                     setWaitingRoomModal(null);
                     navigate(`/interview-room/${id}`);
                   }}
