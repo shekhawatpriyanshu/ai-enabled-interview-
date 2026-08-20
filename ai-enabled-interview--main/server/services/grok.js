@@ -23,18 +23,33 @@ Example:
 ]
 `;
 
-    const completion =
-      await groq.chat.completions.create({
-        model:
-          "llama-3.3-70b-versatile",
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        temperature: 0.7,
-      });
+    const candidateModels = [
+      "groq/compound",
+      "openai/gpt-oss-120b",
+      "qwen/qwen3.6-27b",
+      "openai/gpt-oss-20b",
+      "groq/compound-mini",
+    ];
+
+    let completion = null;
+    for (const modelName of candidateModels) {
+      try {
+        completion = await groq.chat.completions.create({
+          model: modelName,
+          messages: [
+            {
+              role: "user",
+              content: prompt,
+            },
+          ],
+          temperature: 0.7,
+        });
+        if (completion) break;
+      } catch (err) {
+        console.warn(`Grok model ${modelName} failed: ${err.message}`);
+      }
+    }
+    if (!completion) throw new Error("All Grok candidate models failed");
 
     const response =
       completion.choices[0]

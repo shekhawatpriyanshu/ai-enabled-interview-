@@ -1,21 +1,21 @@
 const Groq = require("groq-sdk");
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || "gsk_placeholder_key_for_server_boot",
-});
-
 const candidateModels = [
-  "groq/compound",
+  "openai/gpt-oss-20b",
   "groq/compound-mini",
   "qwen/qwen3.6-27b",
+  "groq/compound",
   "openai/gpt-oss-120b",
-  "openai/gpt-oss-20b",
 ];
 
 const callGroqCompletions = async (params) => {
   if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === "dummy") {
     throw new Error("Groq API key missing");
   }
+
+  const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY,
+  });
 
   let lastError = null;
   for (const modelName of candidateModels) {
@@ -120,17 +120,15 @@ Example:
 `;
 
     const completion =
-      await groq.chat.completions.create({
-        model:
-          "llama-3.3-70b-versatile",
+      await callGroqCompletions({
         messages: [
           {
             role: "user",
             content: prompt,
           },
         ],
-        temperature: 0.85,
-        max_tokens: 8000,
+        temperature: 0.7,
+        max_tokens: 3000,
         response_format: { type: "json_object" },
       });
 
@@ -272,8 +270,7 @@ Example JSON:
   ]
 }
 `;
-    const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+    const completion = await callGroqCompletions({
       messages: [{ role: "user", content: prompt }],
       temperature: 0.4,
       response_format: { type: "json_object" },
@@ -305,8 +302,7 @@ Return JSON ONLY:
   "hrQuestions": ["HR 1...", "HR 2..."]
 }
 `;
-    const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+    const completion = await callGroqCompletions({
       messages: [{ role: "user", content: prompt }],
       temperature: 0.5,
       response_format: { type: "json_object" },
@@ -344,30 +340,35 @@ Return JSON ONLY:
 const handleVoiceChat = async (role, transcript, mcqScore, codingScore) => {
   try {
     const conversationHistory = transcript.map(t => `${t.speaker}: ${t.text}`).join('\n');
-    
-    const prompt = `
-You are an expert AI Interviewer for a ${role} role. 
-The candidate has completed the first two rounds of the interview process.
-Their Round 1 (MCQ) score was ${mcqScore}%.
-Their Round 2 (Coding) score was ${codingScore}%.
+    const aiQuestionsAsked = transcript.filter(t => t.speaker === 'AI').length;
 
-Your goal is to conduct a conversational interview by asking a mix of Technical and HR questions.
-Here is the conversation so far:
+    const prompt = `
+You are an expert Principal AI Technical & HR Interviewer conducting Round 3 (Voice Round) for the target role of "${role}".
+The candidate scored ${mcqScore}% in Round 1 (MCQ) and ${codingScore}% in Round 2 (Coding).
+
+INTERVIEW STRUCTURE:
+This Round 3 interview consists of EXPLICITLY 15 QUESTIONS IN TOTAL:
+- Questions 1 to 8: Role-specific Deep Technical, Architecture & Problem-Solving Questions for ${role}.
+- Questions 9 to 15: HR, Behavioral, Situational, Team Collaboration, Conflict Resolution & Leadership Questions.
+
+Current Status:
+You have asked ${aiQuestionsAsked} out of 15 questions so far.
+
+Conversation History so far:
 ${conversationHistory}
 
-Based on the conversation above, provide your next statement or question.
-Rules:
-1. Speak directly to the candidate as a professional interviewer.
-2. If the conversation is just starting, introduce yourself and ask the first question.
-3. Keep your responses concise and conversational (1-3 sentences max).
-4. Acknowledge their previous answer before asking the next question.
-5. Do NOT include prefixes like "AI: " or quotes. Just output the raw text you want spoken.
-6. ALWAYS respond exclusively in the English language.
+Instructions:
+1. Speak directly to the candidate as a warm, highly professional lead interviewer.
+2. If this is the start (0 questions asked), greet the candidate, mention that you will ask 15 questions in total (8 Technical & 7 HR/Behavioral), and ask Question 1 (Technical).
+3. If questions asked < 15: Brief acknowledgement of their previous response (1 sentence), then clearly ask Question #${aiQuestionsAsked + 1} (Focus on Technical for Q1-Q8, and HR/Behavioral/Situational for Q9-Q15).
+4. If questions asked >= 15: Congratulate the candidate, thank them for their answers, and state that the Voice AI Round is complete and they may click "Finish Interview".
+5. Keep your response clear, concise, and direct (2-3 sentences max).
+6. Do NOT include prefixes like "AI: " or "Interviewer: ". Output raw text only.
+7. ALWAYS respond exclusively in the English language.
 `;
 
-    const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      messages: [{ role: "system", content: "You are an AI Interviewer." }, { role: "user", content: prompt }],
+    const completion = await callGroqCompletions({
+      messages: [{ role: "system", content: "You are an AI Technical & HR Interviewer." }, { role: "user", content: prompt }],
       temperature: 0.6,
     });
     
@@ -378,7 +379,7 @@ Rules:
     return text;
   } catch (error) {
     console.error("Voice Chat Gen Error:", error);
-    return "Could you please elaborate on that?";
+    return "Could you please elaborate on your experience with this role and how you handle challenging team scenarios?";
   }
 };
 
@@ -420,8 +421,7 @@ Generate a detailed evaluation. Return ONLY JSON:
   "probabilityOfSelection": 75
 }
 `;
-    const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+    const completion = await callGroqCompletions({
       messages: [{ role: "user", content: prompt }],
       temperature: 0.4,
       response_format: { type: "json_object" },

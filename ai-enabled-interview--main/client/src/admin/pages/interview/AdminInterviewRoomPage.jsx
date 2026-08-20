@@ -85,6 +85,7 @@ export default function AdminInterviewRoomPage() {
   const [currentQuestion, setCurrentQuestion] = useState(null);
 
   const [leftTab, setLeftTab] = useState("description"); // 'description' | 'rubric'
+  const [mobileTab, setMobileTab] = useState("editor"); // 'problem' | 'editor' | 'chat' for screens < lg
 
   // Live Mirroring State
   const [candidateCode, setCandidateCode] = useState("// Candidate code stream will appear here in real-time...");
@@ -319,47 +320,47 @@ export default function AdminInterviewRoomPage() {
   return (
     <div className="min-h-screen bg-[#1a1a1a] text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
       {/* HEADER TOOLBAR */}
-      <header className="h-14 bg-[#262626] border-b border-[#333] px-5 flex items-center justify-between shrink-0 z-50">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-black text-sm shadow-md">
+      <header className="min-h-[3.25rem] bg-[#262626] border-b border-[#333] px-3 sm:px-5 py-2 flex flex-wrap lg:flex-nowrap items-center justify-between gap-2 shrink-0 z-50">
+        <div className="flex items-center space-x-2 sm:space-x-4 min-w-0">
+          <div className="flex items-center space-x-2 min-w-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-black text-xs sm:text-sm shadow-md shrink-0">
               <FaUserTie />
             </div>
-            <span className="text-sm font-black tracking-tight text-white">
+            <span className="text-xs sm:text-sm font-black tracking-tight text-white whitespace-nowrap">
               LeetCode Admin <span className="text-indigo-400">Live Control</span>
             </span>
           </div>
 
-          <span className="text-xs font-mono font-bold text-indigo-400 bg-[#1f1f1f] px-3 py-1 rounded-lg border border-[#383838]">
+          <span className="text-[11px] sm:text-xs font-mono font-bold text-indigo-400 bg-[#1f1f1f] px-2.5 py-1 rounded-lg border border-[#383838] whitespace-nowrap">
             {roomId}
           </span>
         </div>
 
         {/* TIMER & SESSION CONTROLS */}
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2 bg-[#1f1f1f] px-3 py-1.5 rounded-xl border border-[#383838]">
+        <div className="flex items-center flex-wrap gap-2 sm:gap-3 ml-auto">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 bg-[#1f1f1f] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-[#383838] shrink-0">
             <FaClock className="text-amber-400 text-xs animate-pulse" />
-            <span className="font-mono text-xs font-bold text-white">{formatTime(timerRemaining)}</span>
+            <span className="font-mono text-xs font-bold text-white whitespace-nowrap">{formatTime(timerRemaining)}</span>
           </div>
 
-          <div className="flex items-center space-x-1.5">
+          <div className="flex items-center space-x-1.5 shrink-0">
             <button
               onClick={() => handleTimerControl("start")}
-              className="p-2 bg-[#1f1f1f] hover:bg-emerald-500/20 text-emerald-400 rounded-xl border border-[#383838] transition cursor-pointer"
+              className="p-1.5 sm:p-2 bg-[#1f1f1f] hover:bg-emerald-500/20 text-emerald-400 rounded-xl border border-[#383838] transition cursor-pointer"
               title="Start / Resume Timer"
             >
               <FaPlay className="text-xs" />
             </button>
             <button
               onClick={() => handleTimerControl("pause")}
-              className="p-2 bg-[#1f1f1f] hover:bg-amber-500/20 text-amber-400 rounded-xl border border-[#383838] transition cursor-pointer"
+              className="p-1.5 sm:p-2 bg-[#1f1f1f] hover:bg-amber-500/20 text-amber-400 rounded-xl border border-[#383838] transition cursor-pointer"
               title="Pause Timer"
             >
               <FaPause className="text-xs" />
             </button>
             <button
               onClick={() => handleTimerControl("reset")}
-              className="p-2 bg-[#1f1f1f] hover:bg-indigo-500/20 text-indigo-400 rounded-xl border border-[#383838] transition cursor-pointer"
+              className="p-1.5 sm:p-2 bg-[#1f1f1f] hover:bg-indigo-500/20 text-indigo-400 rounded-xl border border-[#383838] transition cursor-pointer"
               title="Reset Timer"
             >
               <FaRedo className="text-xs" />
@@ -368,16 +369,16 @@ export default function AdminInterviewRoomPage() {
 
           <button
             onClick={() => setShowSettingsModal(true)}
-            className="px-3.5 py-1.5 bg-[#1f1f1f] hover:bg-[#2d2d2d] text-slate-200 hover:text-white font-bold text-xs rounded-xl border border-[#383838] hover:border-indigo-500/50 transition flex items-center gap-1.5 cursor-pointer shadow-sm"
+            className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-[#1f1f1f] hover:bg-[#2d2d2d] text-slate-200 hover:text-white font-bold text-xs rounded-xl border border-[#383838] hover:border-indigo-500/50 transition flex items-center gap-1.5 cursor-pointer shadow-sm shrink-0 whitespace-nowrap"
             title="Editor Settings (Theme, Font Size, Tab Size)"
           >
             <FaCog className="text-indigo-400 text-xs" />
-            <span>Settings</span>
+            <span className="hidden sm:inline">Settings</span>
           </button>
 
           <button
             onClick={handleEndInterview}
-            className="px-4 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg cursor-pointer"
+            className="px-3 sm:px-4 py-1 sm:py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg cursor-pointer shrink-0 whitespace-nowrap"
           >
             END SESSION
           </button>
@@ -385,14 +386,14 @@ export default function AdminInterviewRoomPage() {
       </header>
 
       {/* PROBLEM SWAPPER & STEPPER STRIP */}
-      <div className="bg-[#1f1f1f] border-b border-[#333] px-5 py-2 flex items-center justify-between overflow-x-auto scrollbar-hide">
-        <div className="flex items-center space-x-2">
-          <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider mr-2">LeetCode Bank:</span>
+      <div className="bg-[#1f1f1f] border-b border-[#333] px-3 sm:px-5 py-2 flex items-center justify-between gap-2 overflow-x-auto scrollbar-hide shrink-0">
+        <div className="flex items-center space-x-2 shrink-0">
+          <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider mr-1 sm:mr-2 whitespace-nowrap">Bank:</span>
           {LEETCODE_BANK.map((pb) => (
             <button
               key={pb.questionId}
               onClick={() => handleSwapProblem(pb)}
-              className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${qObj.questionId === pb.questionId ? "bg-indigo-600 text-white shadow-md" : "bg-[#262626] text-slate-400 hover:text-white border border-[#383838]"}`}
+              className={`px-2.5 sm:px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${qObj.questionId === pb.questionId ? "bg-indigo-600 text-white shadow-md" : "bg-[#262626] text-slate-400 hover:text-white border border-[#383838]"}`}
             >
               <FaCode className="text-[10px] text-indigo-400" />
               <span>{pb.question}</span>
@@ -402,17 +403,42 @@ export default function AdminInterviewRoomPage() {
 
         <button
           onClick={copyRoomId}
-          className="px-3.5 py-1 bg-[#262626] hover:bg-[#333] text-slate-300 font-bold text-xs rounded-xl border border-[#383838] transition flex items-center gap-1.5 cursor-pointer"
+          className="px-3 py-1 bg-[#262626] hover:bg-[#333] text-slate-300 font-bold text-xs rounded-xl border border-[#383838] transition flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
         >
           <FaCopy className="text-[10px] text-indigo-400" />
           <span>{copied ? "Copied Link ✓" : "Copy Link"}</span>
         </button>
       </div>
 
+      {/* MOBILE SECTION NAVIGATION TABS (Visible on screens < lg) */}
+      <div className="flex lg:hidden bg-[#1f1f1f] px-2 py-1.5 border-b border-[#333] items-center justify-around text-xs shrink-0 font-bold">
+        <button
+          onClick={() => setMobileTab("problem")}
+          className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${mobileTab === "problem" ? "bg-indigo-600 text-white shadow-md font-black" : "text-slate-400 hover:text-white"}`}
+        >
+          <FaFileAlt className="text-xs" />
+          <span>Problem</span>
+        </button>
+        <button
+          onClick={() => setMobileTab("editor")}
+          className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${mobileTab === "editor" ? "bg-indigo-600 text-white shadow-md font-black" : "text-slate-400 hover:text-white"}`}
+        >
+          <FaCode className="text-xs" />
+          <span>Candidate Code</span>
+        </button>
+        <button
+          onClick={() => setMobileTab("chat")}
+          className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${mobileTab === "chat" ? "bg-indigo-600 text-white shadow-md font-black" : "text-slate-400 hover:text-white"}`}
+        >
+          <FaUserGraduate className="text-xs" />
+          <span>Feeds & Chat</span>
+        </button>
+      </div>
+
       {/* MAIN ADMIN WORKSPACE SPLIT */}
-      <div className="flex-1 flex overflow-hidden p-2 gap-2">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden p-1.5 sm:p-2 gap-2 min-h-0">
         {/* LEFT COLUMN: PROBLEM STATEMENT & INTERVIEWER RUBRIC */}
-        <div className="w-[35%] bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden">
+        <div className={`lg:w-[32%] xl:w-[35%] w-full bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden ${mobileTab === "problem" ? "flex flex-1" : "hidden lg:flex"}`}>
           <div className="flex items-center space-x-1 bg-[#1f1f1f] px-3 py-2 border-b border-[#333]">
             <button
               onClick={() => setLeftTab("description")}
@@ -489,42 +515,42 @@ export default function AdminInterviewRoomPage() {
         </div>
 
         {/* CENTER COLUMN: LIVE CANDIDATE MONACO MIRROR */}
-        <div className="flex-1 bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden">
-          <div className="h-10 bg-[#1f1f1f] px-4 flex items-center justify-between border-b border-[#333] text-xs font-bold text-slate-300 shrink-0">
-            <span className="flex items-center gap-2">
-              <FaCode className="text-indigo-400" />
-              Live Candidate Code Stream ({candidateLang})
+        <div className={`flex-1 min-w-0 bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden ${mobileTab === "editor" ? "flex flex-1" : "hidden lg:flex"}`}>
+          <div className="min-h-[2.5rem] bg-[#1f1f1f] px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2 border-b border-[#333] text-xs font-bold text-slate-300 shrink-0">
+            <span className="flex items-center gap-2 truncate">
+              <FaCode className="text-indigo-400 shrink-0" />
+              <span className="truncate">Live Candidate Code Stream ({candidateLang})</span>
             </span>
 
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center flex-wrap gap-2 ml-auto">
               <button
                 onClick={() => setShowConsole(!showConsole)}
-                className={`px-3 py-1 rounded-lg border text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                className={`px-2.5 sm:px-3 py-1 rounded-lg border text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   showConsole ? "bg-sky-500/20 text-sky-300 border-sky-500/40" : "bg-[#282828] text-slate-400 border-[#383838]"
                 }`}
                 title="Toggle Console Side Panel"
               >
                 <FaTerminal className="text-indigo-400 text-xs" />
-                <span>Console Output {showConsole ? "▶" : "◀"}</span>
+                <span>Console {showConsole ? "▶" : "◀"}</span>
               </button>
 
               <button
                 onClick={handleRunCandidateCode}
                 disabled={executing}
-                className="px-4 py-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                className="px-3 sm:px-4 py-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition cursor-pointer disabled:opacity-50 flex items-center gap-1.5 whitespace-nowrap"
               >
                 {executing ? <FaSpinner className="animate-spin text-amber-400" /> : <FaPlay className="text-xs" />}
-                <span>{executing ? "Running..." : "Run Candidate Code"}</span>
+                <span>{executing ? "Running..." : "Run Code"}</span>
               </button>
 
-              <span className="text-[11px] text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+              <span className="text-[11px] text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1 shrink-0 whitespace-nowrap">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> Live Mirroring
               </span>
             </div>
           </div>
 
           {/* EDITOR & CONSOLE FLEX CONTAINER */}
-          <div className="flex-1 flex overflow-hidden relative">
+          <div className="flex-1 flex overflow-hidden relative min-h-[250px]">
             <div className="flex-1 bg-[#1e1e1e] h-full min-w-0">
               <Editor
                 height="100%"
@@ -609,34 +635,34 @@ export default function AdminInterviewRoomPage() {
         </div>
 
         {/* RIGHT COLUMN: VIDEO TILES & INTERVIEWER CHAT */}
-        <div className="w-[26%] bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden">
-          <div className="p-3 border-b border-[#333] space-y-2.5">
+        <div className={`lg:w-[28%] xl:w-[25%] w-full bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden ${mobileTab === "chat" ? "flex flex-1" : "hidden lg:flex"}`}>
+          <div className="p-2.5 sm:p-3 border-b border-[#333] space-y-2">
             <span className="text-[11px] font-bold uppercase text-slate-400 tracking-wider block">Participant Streams</span>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-[#141414] p-3 rounded-2xl border border-[#333] flex flex-col items-center justify-between text-center gap-1.5 min-w-0 shadow-sm">
-                <div className="w-9 h-9 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center font-black text-xs">
+            <div className="grid grid-cols-2 gap-2 min-w-0">
+              <div className="bg-[#141414] p-2 sm:p-2.5 rounded-2xl border border-[#333] flex flex-col items-center justify-between text-center gap-1 min-w-0 overflow-hidden shadow-sm">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center font-black text-xs shrink-0">
                   <FaUserGraduate />
                 </div>
                 <div className="w-full min-w-0">
-                  <span className="text-[11px] font-bold text-white block truncate px-1" title={room?.candidateName || "Candidate"}>
+                  <span className="text-[10px] sm:text-[11px] font-bold text-white block truncate px-0.5" title={room?.candidateName || "Candidate"}>
                     {room?.candidateName || "Candidate"}
                   </span>
                 </div>
-                <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${candidateStatus === "Connected" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"}`}>
+                <span className={`text-[8px] sm:text-[9px] font-black uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full border max-w-full truncate block whitespace-nowrap ${candidateStatus === "Connected" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"}`}>
                   {candidateStatus}
                 </span>
               </div>
 
-              <div className="bg-[#141414] p-3 rounded-2xl border border-[#333] flex flex-col items-center justify-between text-center gap-1.5 min-w-0 shadow-sm">
-                <div className="w-9 h-9 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-black text-xs">
+              <div className="bg-[#141414] p-2 sm:p-2.5 rounded-2xl border border-[#333] flex flex-col items-center justify-between text-center gap-1 min-w-0 overflow-hidden shadow-sm">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-black text-xs shrink-0">
                   <FaUserTie />
                 </div>
                 <div className="w-full min-w-0">
-                  <span className="text-[11px] font-bold text-white block truncate px-1" title="Rahul (Admin)">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-white block truncate px-0.5" title="Rahul (Admin)">
                     Rahul (Admin)
                   </span>
                 </div>
-                <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
+                <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 max-w-full truncate block whitespace-nowrap">
                   Host
                 </span>
               </div>

@@ -1,6 +1,7 @@
 // =============================================
 // Get All Active Coding Problems
 // =============================================
+const { executeCode } = require("../services/judge0Services");
 const {
   createSubmission,
   waitForResult
@@ -395,33 +396,19 @@ const runCode = async (req, res) => {
 // =============================================
 
 const submitCode = async (req, res) => {
-
   try {
-
     const {
       problemId,
       language,
       code
     } = req.body;
 
-    //--------------------------------
-    // Validate
-    //--------------------------------
-
-    if (
-      !problemId ||
-      !language ||
-      !code
-    ) {
+    if (!problemId || !language || !code) {
       return res.status(400).json({
         success: false,
         message: "Missing required fields"
       });
     }
-
-    //--------------------------------
-    // Fetch Problem
-    //--------------------------------
 
     const problem = await CodingProblem.findById(problemId);
 
@@ -432,12 +419,13 @@ const submitCode = async (req, res) => {
       });
     }
 
-    //--------------------------------
-    // Generate Wrapper
-    //--------------------------------
+    let normLang = (language || "javascript").toLowerCase();
+    if (normLang === "js") normLang = "javascript";
+    if (normLang === "py" || normLang === "python3") normLang = "python";
+    if (normLang === "c++") normLang = "cpp";
 
     const wrappedCode = generateWrapper(
-      language,
+      normLang,
       code,
       problem
     );
@@ -453,12 +441,20 @@ const submitCode = async (req, res) => {
     const hiddenCases = cases.filter(tc => tc.isHidden);
     const allCases = [...visibleCases, ...hiddenCases];
 
+    const normalizeOutput = (str) => {
+      return String(str || "").trim()
+        .replace(/\r\n/g, "\n")
+        .replace(/\s+/g, '')        // remove all whitespace
+        .replace(/'/g, '"');        // Python uses single quotes
+    };
+
+    let allPassed = true;
+    let finalStatus = "Accepted";
+
     for (const testCase of allCases) {
-      // Convert input to line-by-line format the wrapper expects
       let stdinStr = "";
       const inp = testCase.input;
       if (typeof inp === "object" && inp !== null && !Array.isArray(inp)) {
-        // Object input: each value on a separate line
         stdinStr = Object.values(inp).map(v =>
           typeof v === "object" ? JSON.stringify(v) : String(v)
         ).join("\n");
@@ -468,111 +464,115 @@ const submitCode = async (req, res) => {
         stdinStr = String(inp);
       }
 
-      const token = await createSubmission(
-        wrappedCode,
-        languageMap[language],
-        stdinStr,
-        problem.limits
-      );
+      let execResult;
+      try {
+        execResult = await executeCode({
+          code: wrappedCode,
+          language: normLang,
+          input: stdinStr,
+        });
+      } catch (judgeErr) {
+        console.error("Judge0 Execution error:", judgeErr.message);
+        execResult = {
+          statusId: 6,
+          status: "Execution Error",
+          stdout: "",
+          stderr: judgeErr.message,
+          compileOutput: judgeErr.message,
+          runtime: "--",
+          memory: "--"
+        };
+      }
 
-      const result = await waitForResult(token);
-      const execution = processJudgeResult(result);
+      const actualRaw = (execResult.stdout || "").trim();
+      const actualNorm = normalizeOutput(actualRaw);
 
+      const expectedRaw = (typeof testCase.output === "object" && testCase.output !== null)
+        ? JSON.stringify(testCase.output)
+        : String(testCase.output || "");
+      const expectedNorm = normalizeOutput(expectedRaw);
 
-      console.log("========== JUDGE0 RESULT ==========");
-      console.log("Status:", result.status);
-      console.log("Time:", result.time);
-      console.log("Memory:", result.memory);
-      console.log("Stdout:", result.stdout);
-      console.log("Stderr:", result.stderr);
-      console.log("==================================");
+      let caseStatus = "SUCCESS";
+      let caseMessage = "";
 
+      if (execResult.statusId === 6 || execResult.compileOutput) {
+        caseStatus = "COMPILATION_ERROR";
+        caseMessage = execResult.compileOutput || execResult.stderr || "Compilation failed";
+        allPassed = false;
+        finalStatus = "COMPILATION_ERROR";
+      } else if (execResult.stderr || (execResult.statusId > 3 && execResult.statusId !== 6)) {
+        caseStatus = "RUNTIME_ERROR";
+        caseMessage = execResult.stderr || execResult.stdout || "Runtime Exception";
+        allPassed = false;
+        finalStatus = "RUNTIME_ERROR";
+      } else if (actualNorm !== expectedNorm) {
+        caseStatus = "WRONG_ANSWER";
+        caseMessage = `Expected: ${expectedRaw}\nGot: ${actualRaw}`;
+        allPassed = false;
+        if (finalStatus === "Accepted") finalStatus = "Wrong Answer";
+      }
 
       testResults.push({
         input: testCase.input,
         expected: testCase.output,
-        actual: execution.output || "",
-        status: execution.type,
-        message: execution.message || "",
-        time: execution.time || 0,
-        memory: execution.memory || 0
+        actual: actualRaw,
+        status: caseStatus,
+        message: caseMessage,
+        time: parseFloat(execResult.runtime) || 0,
+        memory: parseFloat(execResult.memory) || 0
       });
-    }
 
-    let passed = true;
-    let finalStatus = "Accepted";
-
-    // Normalize output for comparison:
-    // - Remove all whitespace (Python prints "[1, 2, 3]" vs JSON "[1,2,3]")
-    // - Normalize single quotes to double quotes (Python uses ' for strings)
-    const normalizeOutput = (str) => {
-      return String(str).trim()
-        .replace(/\s+/g, '')        // remove all whitespace
-        .replace(/'/g, '"');        // Python uses single quotes
-    };
-
-    for (const test of testResults) {
-      if (test.status !== "SUCCESS") {
-        passed = false;
-        finalStatus = test.status;
-        break;
-      }
-
-      const actual = normalizeOutput(test.actual);
-      // Normalize expected: if it's an object/array, stringify it; otherwise use as string
-      const expectedRaw = (typeof test.expected === "object" && test.expected !== null)
-        ? JSON.stringify(test.expected)
-        : String(test.expected);
-      const expected = normalizeOutput(expectedRaw);
-
-      if (actual !== expected) {
-        passed = false;
-        finalStatus = "Wrong Answer";
+      if (!allPassed && (caseStatus === "COMPILATION_ERROR" || caseStatus === "RUNTIME_ERROR")) {
         break;
       }
     }
 
-    //--------------------------------
-    // Save Submission
-    //--------------------------------
+    if (allPassed) {
+      finalStatus = "Accepted";
+    }
 
-    const submission = await Submission.create({
-      user: req.user._id,
-      problem: problemId,
-      language,
-      sourceCode: code,
-      status: finalStatus,
-      testCasesPassed: testResults.filter(t => t.status === "SUCCESS").length,
-      totalTestCases: testResults.length,
-      executionTime: testResults.reduce((acc, t) => acc + (t.time || 0), 0),
-      memoryUsed: testResults.reduce((acc, t) => acc + (t.memory || 0), 0)
-    });
+    const testCasesPassed = testResults.filter(t => t.status === "SUCCESS").length;
+
+    let submission = null;
+    try {
+      submission = await Submission.create({
+        user: req.user._id,
+        problem: problemId,
+        language: normLang,
+        sourceCode: code,
+        status: finalStatus,
+        testCasesPassed,
+        totalTestCases: allCases.length,
+        executionTime: Math.round(testResults.reduce((acc, t) => acc + (t.time || 0), 0) * 1000),
+        memoryUsed: Math.round(testResults.reduce((acc, t) => acc + (t.memory || 0), 0))
+      });
+    } catch (dbErr) {
+      console.warn("DB submission save warning:", dbErr.message);
+    }
 
     return res.json({
       success: true,
       status: finalStatus,
-      passed,
+      passed: allPassed,
       testCases: testResults.map((test, index) => {
         return {
           status: test.status,
-          actual: allCases[index].isHidden ? null : test.actual,
-          expected: allCases[index].isHidden ? null : test.expected
+          actual: allCases[index]?.isHidden ? null : test.actual,
+          expected: allCases[index]?.isHidden ? null : test.expected
         };
       }),
       submission,
-      runtime: `${submission.executionTime} ms`,
-      memory: `${submission.memoryUsed} KB`
+      runtime: submission ? `${submission.executionTime} ms` : "--",
+      memory: submission ? `${submission.memoryUsed} KB` : "--"
     });
 
-  }
-  catch (error) {
-    console.log("Submit Error:", error.message);
+  } catch (error) {
+    console.error("Submit Error:", error.message);
     return res.status(500).json({
       success: false,
-      message: "Execution failed"
+      message: error.message || "Execution failed"
     });
   }
-
 };
 // ==========================================
 // Generate Coding Problem using AI (User)

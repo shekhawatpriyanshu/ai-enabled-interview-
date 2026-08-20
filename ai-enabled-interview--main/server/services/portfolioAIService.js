@@ -5,11 +5,11 @@ const groq = new Groq({
 });
 
 const candidateModels = [
-  "groq/compound",
+  "openai/gpt-oss-20b",
   "groq/compound-mini",
   "qwen/qwen3.6-27b",
+  "groq/compound",
   "openai/gpt-oss-120b",
-  "openai/gpt-oss-20b",
 ];
 
 const generatePortfolioData = async (resumeText) => {

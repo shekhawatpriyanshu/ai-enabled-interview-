@@ -12,8 +12,30 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
   const [isAiVoiceEnabled, setIsAiVoiceEnabled] = useState(true);
   const [initialReadDone, setInitialReadDone] = useState(false);
   
+  const [availableVoices, setAvailableVoices] = useState([]);
   const recognitionRef = useRef(null);
   const scrollRef = useRef(null);
+
+  // Pre-load and sync browser voices asynchronously (Chrome/Edge/Safari requirement)
+  useEffect(() => {
+    const updateVoices = () => {
+      if ('speechSynthesis' in window) {
+        const voices = window.speechSynthesis.getVoices();
+        setAvailableVoices(voices);
+      }
+    };
+
+    updateVoices();
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = updateVoices;
+    }
+
+    return () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     // Initialize Speech Recognition
@@ -72,31 +94,45 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
   }, [transcript, isAiThinking]);
 
   const speakText = (text) => {
-    if ('speechSynthesis' in window) {
+    if (!text || !('speechSynthesis' in window)) return;
+
+    try {
       window.speechSynthesis.cancel();
+      window.speechSynthesis.resume(); // Unpause Chrome TTS audio engine
+
       if (!isAiVoiceEnabled) return;
-      
-      const utterance = new SpeechSynthesisUtterance(text);
+
+      const cleanText = text.replace(/[*_#`~]/g, "").trim();
+      const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.lang = 'en-US';
-      
-      // Try to find a good English voice
-      const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = voices.find(voice => voice.name.includes("Google") || voice.name.includes("Natural") || voice.lang === 'en-US') || voices[0];
+
+      const voicesList = availableVoices.length > 0 ? availableVoices : window.speechSynthesis.getVoices();
+      const preferredVoice =
+        voicesList.find((v) => v.lang.startsWith("en") && (v.name.includes("Google") || v.name.includes("Natural") || v.name.includes("Samantha") || v.name.includes("David"))) ||
+        voicesList.find((v) => v.lang.startsWith("en")) ||
+        voicesList[0];
+
       if (preferredVoice) {
         utterance.voice = preferredVoice;
       }
-      
+
       utterance.rate = 1.0;
       utterance.pitch = 1.0;
-      
+      utterance.volume = 1.0;
+
       utterance.onstart = () => setIsAiSpeaking(true);
       utterance.onend = () => setIsAiSpeaking(false);
       utterance.onerror = (e) => {
         console.error("SpeechSynthesis error:", e);
         setIsAiSpeaking(false);
       };
-      
-      window.speechSynthesis.speak(utterance);
+
+      setTimeout(() => {
+        window.speechSynthesis.speak(utterance);
+      }, 100);
+    } catch (err) {
+      console.error("SpeechSynthesis speak exception:", err);
+      setIsAiSpeaking(false);
     }
   };
 
@@ -104,12 +140,11 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
     if (!initialReadDone && transcript.length > 0) {
       const lastMsg = transcript[transcript.length - 1];
       if (lastMsg.speaker === 'AI' && !isAiSpeaking) {
-        // Attempt to auto-play (may be blocked by browser autoplay policy if no interaction occurred)
         setTimeout(() => speakText(lastMsg.text), 500); 
       }
       setInitialReadDone(true);
     }
-  }, [transcript, initialReadDone, isAiVoiceEnabled]);
+  }, [transcript, initialReadDone, isAiVoiceEnabled, availableVoices]);
 
   const toggleListen = () => {
     if (isListening) {
@@ -200,6 +235,9 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
     onSubmit(transcript);
   };
 
+  const aiQuestionsCount = transcript.filter((m) => m.speaker === "AI").length;
+  let aiMsgCounter = 0;
+
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 h-screen flex flex-col">
       {/* Header */}
@@ -213,6 +251,19 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
         <p className="text-slate-400 text-sm">
           Have a live conversation with our AI interviewer.
         </p>
+
+        {/* TOTAL QUESTIONS COUNTER BADGE */}
+        <div className="flex items-center justify-center gap-3 mt-3 flex-wrap">
+          <div className="bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
+            <span>❓ AI Questions Progress:</span>
+            <span className="bg-cyan-500 text-black font-black font-mono text-xs px-2.5 py-0.5 rounded-full">
+              {aiQuestionsCount} / 15
+            </span>
+          </div>
+          <div className="bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold px-3 py-1.5 rounded-full">
+            <span>💻 8 Technical + 🤝 7 HR & Behavioral</span>
+          </div>
+        </div>
       </div>
 
       {/* Chat History */}
@@ -222,7 +273,7 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
       >
         {transcript.length === 0 && !isAiThinking && (
           <div className="flex flex-col items-center justify-center h-full text-slate-400">
-            <p className="mb-6">The AI is ready to begin your interview.</p>
+            <p className="mb-6">The AI is ready to begin your interview (15 Questions: 8 Technical & 7 HR/Behavioral).</p>
             <button
               onClick={startConversation}
               className="bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-3 rounded-full font-semibold transition-all shadow-lg shadow-cyan-500/20"
@@ -232,27 +283,48 @@ const VoiceRound = ({ interview, onSubmit, submitting }) => {
           </div>
         )}
 
-        {transcript.map((msg, idx) => (
-          <div 
-            key={idx} 
-            className={`flex ${msg.speaker === 'User' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div className={`max-w-[80%] rounded-2xl p-5 ${
-              msg.speaker === 'User' 
-                ? 'bg-purple-600/20 border border-purple-500/30 text-white rounded-br-none' 
-                : 'bg-cyan-900/20 border border-cyan-700/30 text-cyan-50 rounded-bl-none'
-            }`}>
-              <div className={`text-xs font-bold uppercase tracking-wider mb-2 ${
-                msg.speaker === 'User' ? 'text-purple-400' : 'text-cyan-400'
+        {transcript.map((msg, idx) => {
+          let currentQNum = 0;
+          if (msg.speaker === "AI") {
+            aiMsgCounter++;
+            currentQNum = aiMsgCounter;
+          }
+
+          return (
+            <div 
+              key={idx} 
+              className={`flex ${msg.speaker === 'User' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`max-w-[80%] rounded-2xl p-5 ${
+                msg.speaker === 'User' 
+                  ? 'bg-purple-600/20 border border-purple-500/30 text-white rounded-br-none' 
+                  : 'bg-cyan-900/20 border border-cyan-700/30 text-cyan-50 rounded-bl-none'
               }`}>
-                {msg.speaker === 'AI' ? '🤖 AI Interviewer' : '👤 You'}
+                <div className={`text-xs font-bold uppercase tracking-wider mb-2 flex items-center justify-between gap-2 ${
+                  msg.speaker === 'User' ? 'text-purple-400' : 'text-cyan-400'
+                }`}>
+                  <span>
+                    {msg.speaker === 'AI' 
+                      ? `🤖 AI Question #${currentQNum} (${currentQNum <= 8 ? "Technical" : "HR & Behavioral"})` 
+                      : '👤 You'}
+                  </span>
+                  {msg.speaker === 'AI' && (
+                    <button
+                      onClick={() => speakText(msg.text)}
+                      className="p-1 text-cyan-400 hover:text-cyan-200 hover:bg-cyan-500/20 rounded-lg transition cursor-pointer"
+                      title="Speak Question Aloud 🔊"
+                    >
+                      <Volume2 size={15} />
+                    </button>
+                  )}
+                </div>
+                <p className="text-lg leading-relaxed whitespace-pre-wrap">
+                  {msg.text}
+                </p>
               </div>
-              <p className="text-lg leading-relaxed whitespace-pre-wrap">
-                {msg.text}
-              </p>
             </div>
-          </div>
-        ))}
+          );
+        })}
         
         {isAiThinking && (
           <div className="flex justify-start">

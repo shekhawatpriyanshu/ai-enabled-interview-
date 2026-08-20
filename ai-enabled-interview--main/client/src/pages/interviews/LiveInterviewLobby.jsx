@@ -18,19 +18,14 @@ import {
   Clock,
   Briefcase,
   FileText,
-  Mic,
-  MicOff,
-  Video,
-  VideoOff,
   CheckCircle2,
-  AlertCircle,
   Eye,
   Plus,
   Trash2,
-  UserCheck,
 } from "lucide-react";
 
 import { getProfile } from "../../services/ProfileService";
+import { checkIsHostUser } from "../../utils/userRoleUtils";
 
 export default function LiveInterviewLobby() {
   const navigate = useNavigate();
@@ -88,10 +83,18 @@ export default function LiveInterviewLobby() {
   const [createInterviewerName, setCreateInterviewerName] = useState("Rahul (Technical Lead)");
   const [createParticipantRole, setCreateParticipantRole] = useState("Candidate");
   const [createScheduledDate, setCreateScheduledDate] = useState(() => new Date().toISOString().split("T")[0]);
-  const [createScheduledTime, setCreateScheduledTime] = useState("03:00 PM");
+  const [createScheduledTime, setCreateScheduledTime] = useState(() => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true }));
   const [createRole, setCreateRole] = useState("MERN Stack Developer");
   const [createDuration, setCreateDuration] = useState(30);
   const [creating, setCreating] = useState(false);
+
+  // Auto-refresh date & time to live current time when modal opens
+  useEffect(() => {
+    if (showCreateModal) {
+      setCreateScheduledDate(new Date().toISOString().split("T")[0]);
+      setCreateScheduledTime(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true }));
+    }
+  }, [showCreateModal]);
 
   // Pre-added Questions State (Technical vs Coding)
   const [preaddedQuestions, setPreaddedQuestions] = useState([
@@ -136,10 +139,6 @@ export default function LiveInterviewLobby() {
   const handleRemoveQuestion = (idx) => {
     setPreaddedQuestions((prev) => prev.filter((_, i) => i !== idx));
   };
-
-  // Device test state
-  const [micEnabled, setMicEnabled] = useState(true);
-  const [camEnabled, setCamEnabled] = useState(true);
 
   const userEmail = user?.email || "priyanshu@gmail.com";
 
@@ -643,7 +642,9 @@ export default function LiveInterviewLobby() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-400">Status:</span>
-                  <span className="text-amber-400 font-bold">🟡 Waiting for Host...</span>
+                  <span className="text-amber-400 font-bold">
+                    {checkIsHostUser(user, waitingRoomModal) ? "🟡 Waiting for Candidate..." : "🟡 Waiting for Host..."}
+                  </span>
                 </div>
               </div>
 
@@ -812,12 +813,23 @@ export default function LiveInterviewLobby() {
                       value={createScheduledDate}
                       onChange={(e) => setCreateScheduledDate(e.target.value)}
                       required
-                      className="w-full bg-slate-50 text-slate-800 p-3.5 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
+                      min={new Date().toISOString().split("T")[0]}
+                      className="w-full bg-slate-50 text-slate-800 p-3.5 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium cursor-pointer"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Interview Time</label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-slate-700 font-bold">Interview Time</label>
+                      <button
+                        type="button"
+                        onClick={() => setCreateScheduledTime(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true }))}
+                        className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded-md transition cursor-pointer"
+                        title="Click to fetch live current time"
+                      >
+                        ⚡ Live Time
+                      </button>
+                    </div>
                     <input
                       type="text"
                       value={createScheduledTime}

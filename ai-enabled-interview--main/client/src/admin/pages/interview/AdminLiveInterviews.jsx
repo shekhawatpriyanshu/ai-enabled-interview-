@@ -1,35 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { getLiveInterviewRooms, createLiveInterviewRoom, endLiveInterviewRoom, cancelLiveInterviewRoom, deleteLiveInterviewRoom } from "../../../services/liveInterviewService";
-import { getUsers } from "../../services/userService";
+import { useState, useEffect } from "react";
+import { getLiveInterviewRooms, cancelLiveInterviewRoom, deleteLiveInterviewRoom } from "../../../services/liveInterviewService";
 import socket from "../../../socket";
 import {
   FaUserTie,
-  FaPlus,
-  FaPlay,
   FaClock,
-  FaCheckCircle,
   FaTrash,
-  FaExternalLinkAlt,
-  FaCode,
-  FaLightbulb,
-  FaCalendarAlt,
   FaSearch,
-  FaTimes,
   FaEye,
   FaBan,
-  FaChartLine,
   FaExclamationTriangle,
-  FaWifi,
-  FaQuestionCircle,
 } from "react-icons/fa";
 
 const AdminLiveInterviews = () => {
-  const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
-  const [userOptions, setUserOptions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
   const [selectedRoomDetails, setSelectedRoomDetails] = useState(null);
   const [cancelModalRoom, setCancelModalRoom] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
@@ -37,70 +21,6 @@ const AdminLiveInterviews = () => {
   // Filters & Search
   const [activeStatusFilter, setActiveStatusFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Form State
-  const [candidateEmail, setCandidateEmail] = useState("");
-  const [candidateName, setCandidateName] = useState("");
-  const [interviewerName, setInterviewerName] = useState("Rahul (Admin)");
-  const [role, setRole] = useState("MERN Developer");
-  const [interviewType, setInterviewType] = useState("Technical");
-  const [scheduledDate, setScheduledDate] = useState(() => new Date().toISOString().split("T")[0]);
-  const [scheduledTime, setScheduledTime] = useState("03:00 PM");
-  const [durationMinutes, setDurationMinutes] = useState(30);
-  const [creating, setCreating] = useState(false);
-
-  const [questionsList, setQuestionsList] = useState([
-    {
-      id: "1",
-      type: "Technical",
-      question: "Explain the difference between JWT authentication and session authentication.",
-      initialCode: "",
-    },
-    {
-      id: "2",
-      type: "Coding",
-      question: "Write an LRU Cache implementation in JavaScript with get() and put() methods.",
-      initialCode: `class LRUCache {\n  constructor(capacity) {\n    this.capacity = capacity;\n  }\n  get(key) {\n    return -1;\n  }\n  put(key, value) {}\n}`,
-    },
-  ]);
-
-  // Load candidate users from DB for dropdown selector
-  useEffect(() => {
-    async function loadUsers() {
-      try {
-        const res = await getUsers({ limit: 1000 });
-        if (res && res.users && res.users.length > 0) {
-          setUserOptions(res.users);
-          setCandidateEmail(res.users[0].email);
-          setCandidateName(res.users[0].name || "Candidate");
-        }
-      } catch (err) {
-        console.error("Failed to load users for dropdown:", err);
-      }
-    }
-    loadUsers();
-  }, []);
-
-  const addQuestion = (type) => {
-    const newQ = {
-      id: Date.now().toString(),
-      type,
-      question: type === "Technical" ? "Explain..." : "Write a function to solve...",
-      initialCode: type === "Coding" ? "function solution() {\n  // Code here\n}\n" : "",
-    };
-    setQuestionsList((prev) => [...prev, newQ]);
-  };
-
-  const removeQuestion = (id) => {
-    if (questionsList.length === 1) return;
-    setQuestionsList((prev) => prev.filter((q) => q.id !== id));
-  };
-
-  const updateQuestion = (id, field, val) => {
-    setQuestionsList((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, [field]: val } : q))
-    );
-  };
 
   const fetchRooms = async () => {
     try {
@@ -159,40 +79,6 @@ const AdminLiveInterviews = () => {
       socket.off("room_status_updated");
     };
   }, []);
-
-  const handleSelectUser = (email) => {
-    setCandidateEmail(email);
-    const found = userOptions.find((u) => u.email === email);
-    if (found) setCandidateName(found.name);
-  };
-
-  const handleCreateRoom = async (e) => {
-    e.preventDefault();
-    setCreating(true);
-    try {
-      const res = await createLiveInterviewRoom({
-        candidateEmail,
-        candidateName,
-        interviewerName,
-        role,
-        interviewType,
-        scheduledDate,
-        scheduledTime,
-        duration: Number(durationMinutes),
-        questions: questionsList,
-      });
-
-      if (res.success && res.room) {
-        setShowModal(false);
-        fetchRooms();
-        navigate(`/admin/interview-room/${res.room.roomId}`);
-      }
-    } catch (err) {
-      console.error("Failed to create room:", err);
-    } finally {
-      setCreating(false);
-    }
-  };
 
   const handleCancelRoom = async (e) => {
     e.preventDefault();
@@ -288,37 +174,34 @@ const AdminLiveInterviews = () => {
             </span>
           </h1>
           <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-2">
-            Schedule live 1-on-1 sessions, monitor candidate code stream, control timers, and evaluate candidates.
+            Monitor live 1-on-1 candidate code streams, connection health, status tracking, and candidate evaluation management.
           </p>
         </div>
-
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center space-x-2 px-6 py-3.5 bg-gradient-to-r from-sky-600 via-indigo-600 to-purple-600 hover:from-sky-500 hover:to-purple-500 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-xl shadow-indigo-500/25 transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer border border-sky-400/20"
-        >
-          <FaPlus />
-          <span>Schedule Live Interview</span>
-        </button>
       </div>
 
-      {/* 2. DASHBOARD METRICS CARDS */}
+      {/* 2. DASHBOARD METRICS CARDS WITH HOVER EFFECTS */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
-          { label: "Total Sessions", count: totalCount, color: "from-slate-800 to-slate-900", text: "text-white" },
-          { label: "Upcoming 🟡", count: upcomingCount, color: "from-amber-500/10 to-amber-500/20 border-amber-200", text: "text-amber-700" },
-          { label: "Live 🔴", count: liveCount, color: "from-rose-500/10 to-rose-500/20 border-rose-200", text: "text-rose-700" },
-          { label: "Completed ✅", count: completedCount, color: "from-emerald-500/10 to-emerald-500/20 border-emerald-200", text: "text-emerald-700" },
-          { label: "Cancelled ❌", count: cancelledCount, color: "from-slate-200 to-slate-300", text: "text-slate-700" },
-        ].map((m, idx) => (
-          <div key={idx} className={`p-5 rounded-3xl border bg-gradient-to-br ${m.color} shadow-sm flex flex-col justify-between`}>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{m.label}</span>
-            <span className={`text-2xl sm:text-3xl font-black mt-2 ${m.text}`}>{m.count}</span>
+          { id: "all", label: "Total Sessions", count: totalCount, color: "from-slate-800 to-slate-900", text: "text-white" },
+          { id: "upcoming", label: "Upcoming 🟡", count: upcomingCount, color: "from-amber-500/10 to-amber-500/20 border-amber-200/90", text: "text-amber-700" },
+          { id: "live", label: "Live 🔴", count: liveCount, color: "from-rose-500/10 to-rose-500/20 border-rose-200/90", text: "text-rose-700" },
+          { id: "completed", label: "Completed ✅", count: completedCount, color: "from-emerald-500/10 to-emerald-500/20 border-emerald-200/90", text: "text-emerald-700" },
+          { id: "cancelled", label: "Cancelled ❌", count: cancelledCount, color: "from-slate-100 to-slate-200/80 border-slate-300/80", text: "text-slate-700" },
+        ].map((m) => (
+          <div
+            key={m.id}
+            onClick={() => setActiveStatusFilter(m.id)}
+            className={`p-5 rounded-3xl border bg-gradient-to-br ${m.color} shadow-sm flex flex-col justify-between transition-all duration-300 transform hover:-translate-y-1.5 hover:scale-[1.03] hover:shadow-xl cursor-pointer group relative overflow-hidden`}
+          >
+            <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500 pointer-events-none" />
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 group-hover:text-indigo-600 transition-colors">{m.label}</span>
+            <span className={`text-2xl sm:text-3xl font-black mt-2 transition-transform duration-300 group-hover:scale-110 ${m.text}`}>{m.count}</span>
           </div>
         ))}
       </div>
 
-      {/* 3. FILTERS & SEARCH BAR */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+      {/* 3. FILTERS & SEARCH BAR WITH HOVER STATES */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-300">
         <div className="flex items-center space-x-2 overflow-x-auto scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full md:w-auto">
           {[
             { id: "all", label: "All Sessions" },
@@ -330,10 +213,10 @@ const AdminLiveInterviews = () => {
             <button
               key={tab.id}
               onClick={() => setActiveStatusFilter(tab.id)}
-              className={`px-4 py-2 text-xs font-bold rounded-2xl transition cursor-pointer shrink-0 ${
+              className={`px-4 py-2 text-xs font-bold rounded-2xl transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer shrink-0 ${
                 activeStatusFilter === tab.id
-                  ? "bg-indigo-600 text-white shadow-md"
-                  : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                  ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/25"
+                  : "bg-slate-50 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 border border-transparent"
               }`}
             >
               {tab.label}
@@ -341,14 +224,14 @@ const AdminLiveInterviews = () => {
           ))}
         </div>
 
-        <div className="relative w-full md:w-72">
-          <FaSearch className="absolute left-4 top-3.5 text-slate-400 text-xs" />
+        <div className="relative w-full md:w-72 group">
+          <FaSearch className="absolute left-4 top-3.5 text-slate-400 text-xs group-hover:text-indigo-500 transition-colors" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search candidate, role or room ID..."
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 text-slate-800 text-xs font-semibold rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 hover:bg-white text-slate-800 text-xs font-semibold rounded-2xl border border-slate-300 hover:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 shadow-2xs hover:shadow-sm"
           />
         </div>
       </div>
@@ -362,12 +245,6 @@ const AdminLiveInterviews = () => {
       ) : filteredRooms.length === 0 ? (
         <div className="bg-white border border-slate-200/90 rounded-3xl p-14 text-center shadow-lg">
           <p className="text-slate-600 font-bold text-base">No interview sessions match the current criteria.</p>
-          <button
-            onClick={() => setShowModal(true)}
-            className="mt-4 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg transition-all transform hover:scale-105 active:scale-95 cursor-pointer"
-          >
-            Schedule New Interview
-          </button>
         </div>
       ) : (
         <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
@@ -390,19 +267,19 @@ const AdminLiveInterviews = () => {
                   const intConn = rm.interviewerConnected ?? (st === "active" || st === "in-progress" || st === "waiting");
 
                   return (
-                    <tr key={rm.roomId} className="hover:bg-slate-50/80 transition">
-                      <td className="py-4 px-5 font-mono font-bold text-indigo-600 whitespace-nowrap">{rm.roomId}</td>
+                    <tr key={rm.roomId} className="hover:bg-indigo-50/40 transition-colors duration-200 group">
+                      <td className="py-4 px-5 font-mono font-bold text-indigo-600 whitespace-nowrap group-hover:scale-105 transition-transform duration-200 inline-block">{rm.roomId}</td>
 
                       {/* CANDIDATE STATUS */}
                       <td className="py-4 px-5 whitespace-nowrap">
-                        <div className="font-bold text-slate-900">{rm.candidateName || "Candidate"}</div>
+                        <div className="font-bold text-slate-900 group-hover:text-indigo-950 transition-colors">{rm.candidateName || "Candidate"}</div>
                         <div className="flex items-center gap-1.5 mt-1">
                           {candConn ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs group-hover:scale-105 transition-transform">
                               🟢 Candidate Connected
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200 shadow-2xs group-hover:scale-105 transition-transform">
                               ⚠️ Disconnected
                             </span>
                           )}
@@ -411,14 +288,14 @@ const AdminLiveInterviews = () => {
 
                       {/* INTERVIEWER STATUS */}
                       <td className="py-4 px-5 whitespace-nowrap">
-                        <div className="font-bold text-slate-800">{rm.interviewerName || "Rahul (Admin)"}</div>
+                        <div className="font-bold text-slate-800 group-hover:text-indigo-950 transition-colors">{rm.interviewerName || "Rahul (Admin)"}</div>
                         <div className="flex items-center gap-1.5 mt-1">
                           {intConn ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs group-hover:scale-105 transition-transform">
                               🟢 Interviewer Connected
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200 shadow-2xs group-hover:scale-105 transition-transform">
                               ⚠️ Disconnected
                             </span>
                           )}
@@ -426,7 +303,7 @@ const AdminLiveInterviews = () => {
                       </td>
 
                       {/* LIVE STATUS */}
-                      <td className="py-4 px-5 whitespace-nowrap">
+                      <td className="py-4 px-5 whitespace-nowrap group-hover:scale-105 transition-transform">
                         {renderStatusBadge(rm.status)}
                       </td>
 
@@ -445,17 +322,17 @@ const AdminLiveInterviews = () => {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => setSelectedRoomDetails(rm)}
-                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition cursor-pointer inline-flex items-center gap-1"
+                            className="px-3.5 py-2 bg-slate-100 hover:bg-indigo-600 hover:text-white text-slate-800 font-bold rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shadow-2xs hover:shadow-md hover:shadow-indigo-500/25"
                             title="Monitor Room Status"
                           >
-                            <FaEye className="w-3 h-3 text-indigo-600" />
+                            <FaEye className="w-3.5 h-3.5 text-indigo-500 group-hover:text-white transition-colors" />
                             <span>Monitor</span>
                           </button>
 
                           {rm.status !== "cancelled" && rm.status !== "Cancelled" && (
                             <button
                               onClick={() => setCancelModalRoom(rm)}
-                              className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold rounded-xl transition cursor-pointer flex items-center justify-center"
+                              className="p-2 bg-rose-50 hover:bg-amber-600 hover:text-white text-rose-600 border border-rose-200 font-bold rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center shadow-2xs hover:shadow-md hover:shadow-amber-500/25"
                               title="Cancel Interview"
                             >
                               <FaBan className="w-3.5 h-3.5" />
@@ -464,7 +341,7 @@ const AdminLiveInterviews = () => {
 
                           <button
                             onClick={() => handleDeleteRoom(rm.roomId)}
-                            className="p-2 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 font-bold rounded-xl transition cursor-pointer flex items-center justify-center shadow-xs"
+                            className="p-2 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 font-bold rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center shadow-2xs hover:shadow-md hover:shadow-red-500/25"
                             title="Delete Interview Room"
                           >
                             <FaTrash className="w-3.5 h-3.5" />
@@ -476,208 +353,6 @@ const AdminLiveInterviews = () => {
                 })}
               </tbody>
             </table>
-          </div>
-        </div>
-      )}
-
-      {/* 5. SCHEDULE / CREATE INTERVIEW MODAL */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white border border-slate-200/90 rounded-3xl w-full max-w-xl max-h-[90vh] flex flex-col p-6 shadow-2xl my-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4 shrink-0">
-              <h2 className="text-xl font-black text-slate-800">Schedule Live Interview (Admin)</h2>
-              <button
-                type="button"
-                onClick={() => setShowModal(false)}
-                className="text-slate-400 hover:text-slate-700 text-sm font-bold px-2 py-1 rounded-xl hover:bg-slate-100 transition"
-              >
-                ✕
-              </button>
-            </div>
-            <form onSubmit={handleCreateRoom} className="space-y-4 text-xs font-semibold overflow-y-auto pr-2 flex-1">
-              <div>
-                <label className="text-slate-700 font-bold block mb-1">Select Candidate (User)</label>
-                <select
-                  value={candidateEmail}
-                  onChange={(e) => handleSelectUser(e.target.value)}
-                  required
-                  className="w-full bg-slate-50 text-slate-800 p-3.5 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
-                >
-                  {userOptions.map((u, i) => (
-                    <option key={i} value={u.email}>
-                      {u.name} ({u.email})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-slate-700 font-bold block mb-1">Candidate Name</label>
-                  <input
-                    type="text"
-                    value={candidateName}
-                    onChange={(e) => setCandidateName(e.target.value)}
-                    required
-                    className="w-full bg-slate-50 text-slate-800 p-3.5 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-                <div>
-                  <label className="text-slate-700 font-bold block mb-1">Interviewer Name</label>
-                  <input
-                    type="text"
-                    value={interviewerName}
-                    onChange={(e) => setInterviewerName(e.target.value)}
-                    required
-                    className="w-full bg-slate-50 text-slate-800 p-3.5 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-slate-700 font-bold block mb-1">Job Role</label>
-                  <input
-                    type="text"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    required
-                    placeholder="e.g. MERN Developer"
-                    className="w-full bg-slate-50 text-slate-800 p-3.5 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-                <div>
-                  <label className="text-slate-700 font-bold block mb-1">Interview Type</label>
-                  <select
-                    value={interviewType}
-                    onChange={(e) => setInterviewType(e.target.value)}
-                    className="w-full bg-slate-50 text-slate-800 p-3.5 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="Technical">💡 Technical Interview</option>
-                    <option value="Coding">💻 Coding Challenge</option>
-                    <option value="System Design">🏗️ System Design</option>
-                    <option value="HR">🤝 HR Interview</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="text-slate-700 font-bold block mb-1">Scheduled Date</label>
-                  <input
-                    type="date"
-                    value={scheduledDate}
-                    onChange={(e) => setScheduledDate(e.target.value)}
-                    required
-                    className="w-full bg-slate-50 text-slate-800 p-3 rounded-2xl border border-slate-300 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-slate-700 font-bold block mb-1">Scheduled Time</label>
-                  <input
-                    type="text"
-                    value={scheduledTime}
-                    onChange={(e) => setScheduledTime(e.target.value)}
-                    placeholder="03:00 PM"
-                    required
-                    className="w-full bg-slate-50 text-slate-800 p-3 rounded-2xl border border-slate-300 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-slate-700 font-bold block mb-1">Duration (Mins)</label>
-                  <input
-                    type="number"
-                    value={durationMinutes}
-                    onChange={(e) => setDurationMinutes(e.target.value)}
-                    required
-                    className="w-full bg-slate-50 text-slate-800 p-3 rounded-2xl border border-slate-300 focus:outline-none font-mono"
-                  />
-                </div>
-              </div>
-
-              {/* QUESTIONS BUILDER */}
-              <div className="space-y-3 pt-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-slate-800 font-extrabold block text-xs uppercase tracking-wider">
-                    Question Set ({questionsList.length})
-                  </label>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      type="button"
-                      onClick={() => addQuestion("Technical")}
-                      className="px-3 py-1.5 bg-amber-500/10 text-amber-700 hover:bg-amber-500/20 text-xs font-bold rounded-xl border border-amber-500/30 flex items-center space-x-1 transition cursor-pointer"
-                    >
-                      <FaLightbulb className="text-[11px]" />
-                      <span>+ Technical</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => addQuestion("Coding")}
-                      className="px-3 py-1.5 bg-sky-500/10 text-sky-700 hover:bg-sky-500/20 text-xs font-bold rounded-xl border border-sky-500/30 flex items-center space-x-1 transition cursor-pointer"
-                    >
-                      <FaCode className="text-[11px]" />
-                      <span>+ Coding</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
-                  {questionsList.map((q, idx) => (
-                    <div
-                      key={q.id}
-                      className={`p-3.5 rounded-2xl border ${
-                        q.type === "Coding" ? "bg-sky-50/60 border-sky-200" : "bg-amber-50/60 border-amber-200"
-                      } space-y-2 relative shadow-sm`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span
-                          className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-lg flex items-center gap-1 ${
-                            q.type === "Coding" ? "bg-sky-600 text-white" : "bg-amber-600 text-white"
-                          }`}
-                        >
-                          Q{idx + 1}: {q.type}
-                        </span>
-
-                        {questionsList.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeQuestion(q.id)}
-                            className="text-rose-500 hover:text-rose-700 p-1 rounded-lg transition cursor-pointer"
-                          >
-                            <FaTrash className="text-xs" />
-                          </button>
-                        )}
-                      </div>
-
-                      <textarea
-                        value={q.question}
-                        onChange={(e) => updateQuestion(q.id, "question", e.target.value)}
-                        rows={2}
-                        required
-                        className="w-full bg-white text-slate-800 text-xs p-2.5 rounded-xl border border-slate-300 focus:outline-none"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-200 mt-4 shrink-0 bg-white sticky bottom-0 z-10">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-5 py-2.5 text-slate-500 hover:text-slate-800 text-xs font-bold transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={creating}
-                  className="px-7 py-3 bg-gradient-to-r from-sky-600 via-indigo-600 to-purple-600 hover:from-sky-500 hover:to-purple-500 text-white text-xs font-black uppercase tracking-wider rounded-2xl shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:opacity-50 cursor-pointer"
-                >
-                  {creating ? "Scheduling..." : "Create & Schedule Interview"}
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}

@@ -4,6 +4,7 @@ import Editor from "@monaco-editor/react";
 import socket from "../../socket";
 import { useAuth } from "../../context/AuthContext";
 import { getLiveInterviewRoomById, runCodeInRoom, submitAndEndInterview } from "../../services/liveInterviewService";
+import { checkIsHostUser } from "../../utils/userRoleUtils";
 import {
   FaUserTie,
   FaClock,
@@ -90,6 +91,7 @@ export default function CandidateInterviewRoomPage() {
 
   // LeetCode Panel Tabs
   const [leftTab, setLeftTab] = useState("description"); // 'description' | 'testcases'
+  const [mobileTab, setMobileTab] = useState("editor"); // 'problem' | 'editor' | 'chat' for screens < lg
 
   // Code & Language State
   const [language, setLanguage] = useState("javascript");
@@ -407,22 +409,7 @@ export default function CandidateInterviewRoomPage() {
     e.preventDefault();
     if (!chatInput.trim()) return;
 
-    const uEmail = (user?.email || "").trim().toLowerCase();
-    const cEmail = (room?.candidateEmail || "").trim().toLowerCase();
-    const hEmail = (room?.hostEmail || room?.creatorEmail || "").trim().toLowerCase();
-
-    const userType = (user?.userType || user?.profile?.userType || "").trim().toLowerCase();
-    let isHostUser = false;
-    if (userType === "working professional" || user?.role === "admin" || user?.role === "interviewer") {
-      isHostUser = true;
-    } else if (hEmail && uEmail && uEmail === hEmail) {
-      isHostUser = true;
-    } else if (cEmail && uEmail && uEmail === cEmail) {
-      isHostUser = false;
-    } else if (room?.interviewerName && user?.name && room.interviewerName.toLowerCase().includes(user.name.toLowerCase())) {
-      isHostUser = true;
-    }
-
+    const isHostUser = checkIsHostUser(user, room);
     const myRoleLabel = isHostUser ? "Interviewer" : "Candidate";
     const myDisplayName = user?.name || (isHostUser ? (room?.interviewerName || "Shree singh") : (room?.candidateName || candidateName));
 
@@ -474,21 +461,7 @@ export default function CandidateInterviewRoomPage() {
         feedback: "Answer demonstrates good technical clarity."
       }))
     };
-    const uEmail = (user?.email || "").trim().toLowerCase();
-    const cEmail = (room?.candidateEmail || "").trim().toLowerCase();
-    const hEmail = (room?.hostEmail || room?.creatorEmail || "").trim().toLowerCase();
-
-    const userType = (user?.userType || user?.profile?.userType || "").trim().toLowerCase();
-    let isHostUser = false;
-    if (userType === "working professional" || user?.role === "admin" || user?.role === "interviewer") {
-      isHostUser = true;
-    } else if (hEmail && uEmail && uEmail === hEmail) {
-      isHostUser = true;
-    } else if (cEmail && uEmail && uEmail === cEmail) {
-      isHostUser = false;
-    } else if (room?.interviewerName && user?.name && room.interviewerName.toLowerCase().includes(user.name.toLowerCase())) {
-      isHostUser = true;
-    }
+    const isHostUser = checkIsHostUser(user, room);
 
     // A) HOST / INTERVIEWER EXECUTIVE DASHBOARD VIEW
     if (isHostUser) {
@@ -512,10 +485,10 @@ export default function CandidateInterviewRoomPage() {
               <div className="flex items-center space-x-3">
                 <span className="text-xs font-bold text-slate-400">Official Verdict:</span>
                 <span className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-wider shadow-lg ${resObj.recommendation === "Strong Hire" || resObj.recommendation === "Strong Candidate"
-                    ? "bg-emerald-500 text-black"
-                    : resObj.recommendation === "Do Not Hire"
-                      ? "bg-rose-500 text-white"
-                      : "bg-amber-500 text-black"
+                  ? "bg-emerald-500 text-black"
+                  : resObj.recommendation === "Do Not Hire"
+                    ? "bg-rose-500 text-white"
+                    : "bg-amber-500 text-black"
                   }`}>
                   {resObj.recommendation || "Strong Hire"}
                 </span>
@@ -766,33 +739,33 @@ export default function CandidateInterviewRoomPage() {
   return (
     <div className="h-screen max-h-screen overflow-hidden bg-[#1a1a1a] text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-black">
       {/* 3. LEETCODE HEADER BAR */}
-      <header className="h-12 bg-[#262626] border-b border-[#333] px-4 flex items-center justify-between shrink-0 z-50">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-black flex items-center justify-center font-black text-sm shadow-md">
+      <header className="min-h-[3.25rem] bg-[#262626] border-b border-[#333] px-3 sm:px-4 py-2 flex flex-wrap lg:flex-nowrap items-center justify-between gap-2 shrink-0 z-50">
+        <div className="flex items-center space-x-2 sm:space-x-4 min-w-0">
+          <div className="flex items-center space-x-2 min-w-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-black flex items-center justify-center font-black text-xs sm:text-sm shadow-md shrink-0">
               <FaCode />
             </div>
-            <span className="text-sm font-black tracking-tight text-white">
-              LeetCode <span className="text-amber-400">Live Interview</span>
+            <span className="text-xs sm:text-sm font-black tracking-tight text-white whitespace-nowrap">
+              LeetChef <span className="text-amber-400">Live Interview</span>
             </span>
           </div>
 
-          <span className="text-xs font-mono font-bold text-slate-400 bg-[#1f1f1f] px-3 py-1 rounded-lg border border-[#383838]">
+          <span className="text-[11px] sm:text-xs font-mono font-bold text-slate-400 bg-[#1f1f1f] px-2.5 py-1 rounded-lg border border-[#383838] whitespace-nowrap">
             {roomId}
           </span>
         </div>
 
         {/* TIMER & LANGUAGE SELECTOR */}
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2 bg-[#1f1f1f] px-3 py-1.5 rounded-xl border border-[#383838]">
+        <div className="flex items-center flex-wrap gap-2 sm:gap-3 ml-auto">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 bg-[#1f1f1f] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-[#383838] shrink-0">
             <FaClock className="text-amber-400 text-xs animate-pulse" />
-            <span className="font-mono text-xs font-bold text-white">{formatTime(timerRemaining)}</span>
+            <span className="font-mono text-xs font-bold text-white whitespace-nowrap">{formatTime(timerRemaining)}</span>
           </div>
 
           <select
             value={language}
             onChange={handleLanguageChange}
-            className="bg-[#1f1f1f] text-slate-200 text-xs font-bold px-3 py-1.5 rounded-xl border border-[#383838] focus:outline-none focus:border-amber-500 cursor-pointer"
+            className="bg-[#1f1f1f] text-slate-200 text-xs font-bold px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-[#383838] focus:outline-none focus:border-amber-500 cursor-pointer shrink-0"
           >
             <option value="javascript">JavaScript (ES6)</option>
             <option value="python">Python 3</option>
@@ -803,15 +776,14 @@ export default function CandidateInterviewRoomPage() {
           {/* SETTINGS BUTTON (THEME, FONT SIZE, TAB SIZE) */}
           <button
             onClick={() => setShowSettingsModal(true)}
-            className="px-3.5 py-1.5 bg-[#1f1f1f] hover:bg-[#2d2d2d] text-slate-200 hover:text-white font-bold text-xs rounded-xl border border-[#383838] hover:border-amber-500/50 transition flex items-center gap-1.5 cursor-pointer shadow-sm"
+            className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-[#1f1f1f] hover:bg-[#2d2d2d] text-slate-200 hover:text-white font-bold text-xs rounded-xl border border-[#383838] hover:border-amber-500/50 transition flex items-center gap-1.5 cursor-pointer shadow-sm shrink-0 whitespace-nowrap"
             title="Editor Settings (Theme, Font Size, Tab Size)"
           >
             <FaCog className="text-amber-400 text-xs" />
-            <span>Settings</span>
+            <span className="hidden sm:inline">Settings</span>
           </button>
 
           {/* HOST TERMINATE BUTTON */}
-
           {(() => {
             const uEmail = (user?.email || "").trim().toLowerCase();
             const cEmail = (room?.candidateEmail || "").trim().toLowerCase();
@@ -834,18 +806,19 @@ export default function CandidateInterviewRoomPage() {
             return (
               <button
                 onClick={handleEndInterview}
-                className="px-3.5 py-1.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition flex items-center gap-1.5 cursor-pointer animate-pulse"
+                className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition flex items-center gap-1.5 cursor-pointer animate-pulse shrink-0 whitespace-nowrap"
                 title="Terminate Live Interview for All Participants & Generate AI Evaluation Report"
               >
                 <FaSignOutAlt className="text-xs" />
-                <span>Terminate Session</span>
+                <span className="hidden sm:inline">Terminate Session</span>
+                <span className="sm:hidden">Terminate</span>
               </button>
             );
           })()}
 
           <button
             onClick={() => navigate("/interviews/live")}
-            className="px-3.5 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 font-bold text-xs rounded-xl transition flex items-center gap-1.5 cursor-pointer"
+            className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 font-bold text-xs rounded-xl transition flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
           >
             <FaSignOutAlt className="text-xs" />
             <span>Leave</span>
@@ -853,10 +826,35 @@ export default function CandidateInterviewRoomPage() {
         </div>
       </header>
 
+      {/* MOBILE SECTION NAVIGATION TABS (Visible on screens < lg) */}
+      <div className="flex lg:hidden bg-[#1f1f1f] px-2 py-1.5 border-b border-[#333] items-center justify-around text-xs shrink-0 font-bold">
+        <button
+          onClick={() => setMobileTab("problem")}
+          className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${mobileTab === "problem" ? "bg-amber-500 text-black shadow-md font-black" : "text-slate-400 hover:text-white"}`}
+        >
+          <FaFileAlt className="text-xs" />
+          <span>Problem</span>
+        </button>
+        <button
+          onClick={() => setMobileTab("editor")}
+          className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${mobileTab === "editor" ? "bg-amber-500 text-black shadow-md font-black" : "text-slate-400 hover:text-white"}`}
+        >
+          <FaCode className="text-xs" />
+          <span>Code Editor</span>
+        </button>
+        <button
+          onClick={() => setMobileTab("chat")}
+          className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${mobileTab === "chat" ? "bg-amber-500 text-black shadow-md font-black" : "text-slate-400 hover:text-white"}`}
+        >
+          <FaVideo className="text-xs" />
+          <span>Feeds & Chat</span>
+        </button>
+      </div>
+
       {/* 4. LEETCODE SPLIT WORKSPACE */}
-      <div className="flex-1 flex overflow-hidden p-2 gap-2">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden p-1.5 sm:p-2 gap-2 min-h-0">
         {/* LEFT COLUMN: PROBLEM STATEMENT & TEST CASES */}
-        <div className="w-[38%] bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden">
+        <div className={`lg:w-[32%] xl:w-[35%] w-full bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden ${mobileTab === "problem" ? "flex flex-1" : "hidden lg:flex"}`}>
           {/* LEFT TABS STRIP */}
           <div className="flex items-center space-x-1 bg-[#1f1f1f] px-3 py-2 border-b border-[#333]">
             <button
@@ -984,10 +982,33 @@ export default function CandidateInterviewRoomPage() {
                           : "Type your explanation, approach, or technical answer here... (Host sees your live typing in real-time)"
                       }
                       className={`w-full text-xs p-3 rounded-xl border font-sans leading-relaxed resize-y shadow-inner ${isHostUser
-                          ? "bg-[#101010] text-amber-300 border-[#2a2a2a] cursor-not-allowed selection:bg-amber-500/30"
-                          : "bg-[#141414] text-slate-100 border-[#383838] focus:outline-none focus:border-amber-500"
+                        ? "bg-[#101010] text-amber-300 border-[#2a2a2a] cursor-not-allowed selection:bg-amber-500/30"
+                        : "bg-[#141414] text-slate-100 border-[#383838] focus:outline-none focus:border-amber-500"
                         }`}
                     />
+
+                    {!isHostUser && (
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <span className="text-[10px] text-slate-400 font-semibold">
+                          {submittedCurrent ? (
+                            <span className="text-emerald-400 font-bold flex items-center gap-1">
+                              <FaCheck className="text-xs" /> Submitted Successfully
+                            </span>
+                          ) : (
+                            "Submits written explanation & code together"
+                          )}
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={handleSubmitSolution}
+                          className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                        >
+                          <FaPaperPlane className="text-xs" />
+                          <span>{submittedCurrent ? "Update & Submit Answer" : "Submit Answer & Code"}</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 );
               })()}
@@ -1060,8 +1081,8 @@ export default function CandidateInterviewRoomPage() {
                   <div className="p-4 rounded-xl border bg-[#141414] border-[#333] space-y-3">
                     <div className="flex items-center justify-between">
                       <span className={`font-black text-xs uppercase tracking-wider flex items-center gap-1.5 px-3 py-1 rounded-lg border ${consoleOutput.status === "Accepted"
-                          ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
-                          : "bg-rose-500/20 text-rose-400 border-rose-500/40 animate-pulse"
+                        ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
+                        : "bg-rose-500/20 text-rose-400 border-rose-500/40 animate-pulse"
                         }`}>
                         {consoleOutput.status === "Accepted" ? <FaCheckCircle /> : <FaExclamationTriangle />}
                         <span>{consoleOutput.status || "Execution Result"}</span>
@@ -1077,8 +1098,8 @@ export default function CandidateInterviewRoomPage() {
                   <div className="space-y-2">
                     <span className="text-[11px] font-bold uppercase text-slate-400 block">Output & Stack Trace Logs:</span>
                     <pre className={`p-4 rounded-xl border text-xs font-mono leading-relaxed whitespace-pre-wrap overflow-x-auto shadow-inner ${consoleOutput.status === "Accepted"
-                        ? "bg-[#09150d] text-emerald-300 border-emerald-500/30"
-                        : "bg-[#1f0b0b] text-rose-300 border-rose-500/40 font-semibold"
+                      ? "bg-[#09150d] text-emerald-300 border-emerald-500/30"
+                      : "bg-[#1f0b0b] text-rose-300 border-rose-500/40 font-semibold"
                       }`}>
                       {consoleOutput.output || consoleOutput.stderr || consoleOutput.compile_output || "No console output returned."}
                     </pre>
@@ -1095,22 +1116,22 @@ export default function CandidateInterviewRoomPage() {
         </div>
 
         {/* CENTER COLUMN: MONACO CODE EDITOR & CONSOLE DRAWER */}
-        <div className="flex-1 bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden">
+        <div className={`flex-1 min-w-0 bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden ${mobileTab === "editor" ? "flex flex-1" : "hidden lg:flex"}`}>
           {/* EDITOR BAR */}
           <div className="h-10 bg-[#1f1f1f] px-4 flex items-center justify-between border-b border-[#333] text-xs font-bold text-slate-300">
-            <span className="flex items-center gap-2">
-              <FaCode className="text-amber-400" />
-              Code Solution ({language})
+            <span className="flex items-center gap-2 truncate">
+              <FaCode className="text-amber-400 shrink-0" />
+              <span className="truncate">Code Solution ({language})</span>
             </span>
             {submittedCurrent && (
-              <span className="text-[11px] text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+              <span className="text-[11px] text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1 shrink-0 whitespace-nowrap">
                 <FaCheck /> Submitted
               </span>
             )}
           </div>
 
           {/* MONACO EDITOR CONTAINER */}
-          <div className="flex-1 bg-[#1e1e1e]">
+          <div className="flex-1 bg-[#1e1e1e] min-h-[250px]">
             {(() => {
               const uEmail = (user?.email || "").trim().toLowerCase();
               const cEmail = (room?.candidateEmail || "").trim().toLowerCase();
@@ -1150,23 +1171,23 @@ export default function CandidateInterviewRoomPage() {
           </div>
 
           {/* BOTTOM CONSOLE DRAWER & ACTION BAR */}
-          <div className="bg-[#1f1f1f] border-t border-[#333] p-3 flex flex-col gap-3 shrink-0">
-            <div className="flex items-center justify-between">
+          <div className="bg-[#1f1f1f] border-t border-[#333] p-2.5 sm:p-3 flex flex-col gap-2.5 shrink-0">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <button
                 onClick={() => setShowConsole(!showConsole)}
-                className="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1.5"
+                className="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1.5 shrink-0 cursor-pointer"
               >
                 <FaTerminal className="text-sky-400" />
-                Console {showConsole ? "▼" : "▲"}
+                <span>Console {showConsole ? "▼" : "▲"}</span>
               </button>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center flex-wrap gap-2 ml-auto">
                 <button
                   onClick={handleRunCode}
                   disabled={executing}
-                  className="px-4 py-2 bg-[#333] hover:bg-[#444] text-white font-bold text-xs rounded-xl border border-[#444] transition flex items-center space-x-1.5 cursor-pointer disabled:opacity-50"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 bg-[#333] hover:bg-[#444] text-white font-bold text-xs rounded-xl border border-[#444] transition flex items-center space-x-1.5 cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap"
                 >
-                  {executing ? <FaSpinner className="animate-spin text-amber-400" /> : <FaPlay className="text-emerald-400 text-[10px]" />}
+                  {executing ? <FaSpinner className="animate-spin text-amber-400 text-xs" /> : <FaPlay className="text-emerald-400 text-[10px]" />}
                   <span>{executing ? "Executing..." : "Run Code"}</span>
                 </button>
 
@@ -1188,7 +1209,7 @@ export default function CandidateInterviewRoomPage() {
                     return (
                       <button
                         onClick={handleSubmitSolution}
-                        className="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition cursor-pointer"
+                        className="px-4 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition cursor-pointer shrink-0 whitespace-nowrap"
                       >
                         Submit Solution
                       </button>
@@ -1196,15 +1217,15 @@ export default function CandidateInterviewRoomPage() {
                   }
 
                   return (
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center max-w-full">
                       {submittedCurrent ? (
-                        <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3.5 py-1.5 rounded-xl border border-emerald-500/30 flex items-center gap-1.5">
-                          <FaCheck /> Candidate Submitted Answer
+                        <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 sm:px-3 py-1.5 rounded-xl border border-emerald-500/30 flex items-center gap-1.5 whitespace-nowrap">
+                          <FaCheck /> <span className="hidden sm:inline">Candidate</span> Submitted
                         </span>
                       ) : (
-                        <span className="text-xs font-bold text-amber-400 bg-amber-500/10 px-3.5 py-1.5 rounded-xl border border-amber-500/30 flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                          Live Monitoring Candidate Answer...
+                        <span className="text-[11px] sm:text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 sm:px-3 py-1.5 rounded-xl border border-amber-500/30 flex items-center gap-1.5 max-w-full truncate">
+                          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+                          <span className="truncate">Live Monitoring Candidate...</span>
                         </span>
                       )}
                     </div>
@@ -1215,11 +1236,11 @@ export default function CandidateInterviewRoomPage() {
 
             {/* CONSOLE OUTPUT PANEL */}
             {showConsole && consoleOutput && (
-              <div className="bg-[#101010] p-4 rounded-2xl border border-[#333] space-y-3 text-xs font-mono max-h-64 overflow-y-auto shadow-2xl animate-fade-in my-1">
-                <div className="flex items-center justify-between border-b border-[#252525] pb-2.5">
+              <div className="bg-[#101010] p-3 sm:p-4 rounded-2xl border border-[#333] space-y-3 text-xs font-mono max-h-64 overflow-y-auto shadow-2xl animate-fade-in my-1">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#252525] pb-2.5">
                   <span className={`font-black text-xs uppercase tracking-wider flex items-center gap-2 px-3 py-1.5 rounded-xl border ${consoleOutput.status === "Accepted"
-                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                      : "bg-rose-500/10 text-rose-400 border-rose-500/30 animate-pulse"
+                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                    : "bg-rose-500/10 text-rose-400 border-rose-500/30 animate-pulse"
                     }`}>
                     {consoleOutput.status === "Accepted" ? <FaCheckCircle className="text-sm" /> : <FaExclamationTriangle className="text-sm" />}
                     <span>{consoleOutput.status || "Execution Output"}</span>
@@ -1232,9 +1253,9 @@ export default function CandidateInterviewRoomPage() {
                 </div>
 
                 {/* ERROR & STDOUT COMPILER OUTPUT TEXT AREA */}
-                <div className={`p-4 rounded-xl border text-xs font-mono leading-relaxed whitespace-pre-wrap overflow-x-auto shadow-inner ${consoleOutput.status === "Accepted"
-                    ? "bg-[#08120c] text-emerald-300 border-emerald-500/20"
-                    : "bg-[#180a0a] text-rose-300 border-rose-500/30 font-semibold"
+                <div className={`p-3 sm:p-4 rounded-xl border text-xs font-mono leading-relaxed whitespace-pre-wrap overflow-x-auto shadow-inner ${consoleOutput.status === "Accepted"
+                  ? "bg-[#08120c] text-emerald-300 border-emerald-500/20"
+                  : "bg-[#180a0a] text-rose-300 border-rose-500/30 font-semibold"
                   }`}>
                   {consoleOutput.output || consoleOutput.stderr || consoleOutput.compile_output || "No console output returned."}
                 </div>
@@ -1244,9 +1265,9 @@ export default function CandidateInterviewRoomPage() {
         </div>
 
         {/* RIGHT COLUMN: VIDEO TILES & REAL-TIME CHAT */}
-        <div className="w-[26%] bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden">
+        <div className={`lg:w-[28%] xl:w-[25%] w-full bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden ${mobileTab === "chat" ? "flex flex-1" : "hidden lg:flex"}`}>
           {/* VIDEO TILES */}
-          <div className="p-3 border-b border-[#333] space-y-2.5">
+          <div className="p-2.5 sm:p-3 border-b border-[#333] space-y-2">
             <span className="text-[11px] font-bold uppercase text-slate-400 tracking-wider block">Live Stream Feeds</span>
 
             {(() => {
@@ -1270,37 +1291,37 @@ export default function CandidateInterviewRoomPage() {
               const otherDisplayName = isHostUser ? (room?.candidateName || "Shivuu") : (room?.interviewerName || "Shree singh");
 
               return (
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2 min-w-0">
                   {/* TILE 1: MY FEED */}
-                  <div className="bg-[#141414] p-3 rounded-2xl border border-[#333] flex flex-col items-center justify-between text-center gap-1.5 min-w-0 shadow-sm hover:border-[#444] transition">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-xs shadow-inner ${isHostUser ? "bg-sky-500/20 text-sky-400 border border-sky-500/30" : "bg-amber-500/20 text-amber-400 border border-amber-500/30"}`}>
+                  <div className="bg-[#141414] p-2 sm:p-2.5 rounded-2xl border border-[#333] flex flex-col items-center justify-between text-center gap-1 min-w-0 overflow-hidden shadow-sm hover:border-[#444] transition">
+                    <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-black text-xs shrink-0 shadow-inner ${isHostUser ? "bg-sky-500/20 text-sky-400 border border-sky-500/30" : "bg-amber-500/20 text-amber-400 border border-amber-500/30"}`}>
                       {myDisplayName.charAt(0).toUpperCase()}
                     </div>
 
                     <div className="w-full min-w-0">
-                      <span className="text-[11px] font-bold text-white block truncate px-1" title={`${myDisplayName} (You)`}>
-                        {myDisplayName} <span className="text-slate-400 font-normal">(You)</span>
+                      <span className="text-[10px] sm:text-[11px] font-bold text-white block truncate px-0.5" title={`${myDisplayName} (You)`}>
+                        {myDisplayName}
                       </span>
                     </div>
 
-                    <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${isHostUser ? "bg-sky-500/10 text-sky-400 border-sky-500/30" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"}`}>
+                    <span className={`text-[8px] sm:text-[9px] font-black uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full border max-w-full truncate block whitespace-nowrap ${isHostUser ? "bg-sky-500/10 text-sky-400 border-sky-500/30" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"}`}>
                       {myRoleLabel}
                     </span>
                   </div>
 
                   {/* TILE 2: OTHER PARTICIPANT FEED */}
-                  <div className="bg-[#141414] p-3 rounded-2xl border border-[#333] flex flex-col items-center justify-between text-center gap-1.5 min-w-0 shadow-sm hover:border-[#444] transition">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-xs shadow-inner ${isHostUser ? "bg-amber-500/20 text-amber-400 border border-amber-500/30" : "bg-sky-500/20 text-sky-400 border border-sky-500/30"}`}>
+                  <div className="bg-[#141414] p-2 sm:p-2.5 rounded-2xl border border-[#333] flex flex-col items-center justify-between text-center gap-1 min-w-0 overflow-hidden shadow-sm hover:border-[#444] transition">
+                    <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-black text-xs shrink-0 shadow-inner ${isHostUser ? "bg-amber-500/20 text-amber-400 border border-amber-500/30" : "bg-sky-500/20 text-sky-400 border border-sky-500/30"}`}>
                       {otherDisplayName.charAt(0).toUpperCase()}
                     </div>
 
                     <div className="w-full min-w-0">
-                      <span className="text-[11px] font-bold text-white block truncate px-1" title={otherDisplayName}>
+                      <span className="text-[10px] sm:text-[11px] font-bold text-white block truncate px-0.5" title={otherDisplayName}>
                         {otherDisplayName}
                       </span>
                     </div>
 
-                    <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${interviewerStatus === "Connected" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"}`}>
+                    <span className={`text-[8px] sm:text-[9px] font-black uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full border max-w-full truncate block whitespace-nowrap ${interviewerStatus === "Connected" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"}`} title={`${otherRoleLabel} (${interviewerStatus})`}>
                       {otherRoleLabel} ({interviewerStatus})
                     </span>
                   </div>
@@ -1393,8 +1414,8 @@ export default function CandidateInterviewRoomPage() {
                         localStorage.setItem("editor_theme", thm.id);
                       }}
                       className={`p-3 rounded-2xl border text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${editorTheme === thm.id
-                          ? "border-amber-500 ring-2 ring-amber-500/30 shadow-md"
-                          : "border-[#333] hover:border-slate-500 opacity-70"
+                        ? "border-amber-500 ring-2 ring-amber-500/30 shadow-md"
+                        : "border-[#333] hover:border-slate-500 opacity-70"
                         } ${thm.bg}`}
                     >
                       <span>{thm.label}</span>
@@ -1418,8 +1439,8 @@ export default function CandidateInterviewRoomPage() {
                         localStorage.setItem("editor_font_size", String(sz));
                       }}
                       className={`flex-1 py-2.5 rounded-xl border text-xs font-mono font-black transition cursor-pointer ${editorFontSize === sz
-                          ? "bg-amber-500 text-black border-amber-400 shadow-md"
-                          : "bg-[#1f1f1f] text-slate-300 border-[#383838] hover:border-slate-500"
+                        ? "bg-amber-500 text-black border-amber-400 shadow-md"
+                        : "bg-[#1f1f1f] text-slate-300 border-[#383838] hover:border-slate-500"
                         }`}
                     >
                       {sz}px
@@ -1447,8 +1468,8 @@ export default function CandidateInterviewRoomPage() {
                         localStorage.setItem("editor_tab_size", String(tb.sz));
                       }}
                       className={`flex-1 py-2.5 rounded-xl border text-xs font-bold transition cursor-pointer ${editorTabSize === tb.sz
-                          ? "bg-indigo-600 text-white border-indigo-400 shadow-md"
-                          : "bg-[#1f1f1f] text-slate-300 border-[#383838] hover:border-slate-500"
+                        ? "bg-indigo-600 text-white border-indigo-400 shadow-md"
+                        : "bg-[#1f1f1f] text-slate-300 border-[#383838] hover:border-slate-500"
                         }`}
                     >
                       {tb.label}
