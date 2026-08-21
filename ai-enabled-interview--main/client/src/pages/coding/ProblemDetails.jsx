@@ -136,18 +136,8 @@ const ProblemDetails = () => {
       setSubmitting(true);
       setConsoleTab("result");
       const res = await submitCode({ problemId: id, code, language });
-      if (!res.success) {
-        setStatus(res.status || "Wrong Answer");
-        setOutput(res.output || res.message || "Submission failed.");
-        setExpectedOutput(res.expectedOutput || "");
-        setScore(0);
-        setRuntime("--");
-        setMemory("--");
-        toast.error(res.message || "Submission failed.");
-        return;
-      }
 
-      const submissionStatus = res.status || res.submission?.status || "Unknown";
+      const submissionStatus = res.status || (res.passed ? "Accepted" : "Wrong Answer");
       const isPassed = res.passed === true || submissionStatus === "Accepted";
 
       setStatus(submissionStatus);
@@ -160,33 +150,41 @@ const ProblemDetails = () => {
         setOutput("All test cases passed successfully!");
         setExpectedOutput("");
       } else {
-        // Show test case details for failed submissions
         const testCases = res.testCases || [];
         const passedCount = testCases.filter(t => t.status === "SUCCESS").length;
         const totalCount = testCases.length;
 
-        const failedCase = testCases.find(t => t.status !== "SUCCESS" || (t.actual !== null && t.expected !== null));
-        let outputMsg = `${passedCount}/${totalCount} test cases passed.`;
-        if (failedCase && failedCase.actual !== null) {
-          outputMsg += `\n\nYour Output: ${failedCase.actual}`;
+        const normalizeStr = (s) => String(s || "").trim().replace(/\s+/g, '').replace(/'/g, '"');
+        const failedCase = testCases.find(t => 
+          t.status !== "SUCCESS" || 
+          (t.actual !== null && t.expected !== null && normalizeStr(t.actual) !== normalizeStr(t.expected))
+        ) || testCases.find(t => t.status !== "SUCCESS") || testCases[0];
+
+        let outputMsg = totalCount > 0 ? `${passedCount}/${totalCount} test cases passed.` : (res.message || "Evaluation completed.");
+        if (failedCase && failedCase.actual !== null && failedCase.actual !== undefined) {
+          outputMsg += `\n\n[Failing Test Case Output]:\n${failedCase.actual}`;
+        } else if (res.output) {
+          outputMsg += `\n\n${res.output}`;
         }
 
         setOutput(outputMsg);
         setExpectedOutput(failedCase?.expected !== null && failedCase?.expected !== undefined
           ? (typeof failedCase.expected === "object" ? JSON.stringify(failedCase.expected) : String(failedCase.expected))
           : "");
-        setScore(0);
+        setScore(totalCount > 0 ? Math.round((passedCount / totalCount) * 100) : 0);
         toast.error(`${submissionStatus}: ${passedCount}/${totalCount} test cases passed.`);
       }
     } catch (error) {
       const errData = error.response?.data;
-      setStatus(errData?.status || "Submission Error");
-      setOutput(errData?.output || errData?.message || "Submission failed.");
+      const actualStatus = errData?.status || "Evaluation Failed";
+      const actualMessage = errData?.output || errData?.message || error.message || "Could not evaluate code. Please check your syntax.";
+      setStatus(actualStatus);
+      setOutput(actualMessage);
       setExpectedOutput(errData?.expectedOutput || "");
       setScore(0);
       setRuntime("--");
       setMemory("--");
-      toast.error(errData?.message || "Submission failed.");
+      toast.error(actualMessage);
     } finally {
       setSubmitting(false);
     }

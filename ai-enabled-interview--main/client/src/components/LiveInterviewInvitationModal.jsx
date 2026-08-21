@@ -62,12 +62,19 @@ export default function LiveInterviewInvitationModal() {
       }
     };
 
+    const handleHostAutoEnter = (data) => {
+      if (!data || !data.roomId) return;
+      navigate(`/interviews/room/${data.roomId}`);
+    };
+
     socket.on("live_interview_invitation", handleInvitation);
+    socket.on("host_auto_enter", handleHostAutoEnter);
 
     return () => {
       socket.off("live_interview_invitation", handleInvitation);
+      socket.off("host_auto_enter", handleHostAutoEnter);
     };
-  }, [userEmail]);
+  }, [userEmail, navigate]);
 
   useEffect(() => {
     if (!invitation) return;
@@ -90,6 +97,12 @@ export default function LiveInterviewInvitationModal() {
 
   const handleJoin = () => {
     const targetRoomId = invitation.roomId;
+    socket.emit("candidate_accepted_invitation", {
+      roomId: targetRoomId,
+      hostEmail: invitation.hostEmail,
+      candidateEmail: userEmail,
+      candidateName: user?.name,
+    });
     setInvitation(null);
     socket.emit("candidate_accepted_invite", {
       roomId: targetRoomId,

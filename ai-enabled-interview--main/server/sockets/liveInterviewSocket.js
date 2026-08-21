@@ -180,12 +180,37 @@ function checkIsTimeReached(scheduledDate, scheduledTime) {
         participants,
       });
 
+      // Auto-enter Host into live room when candidate joins
+      const hostEmail = (room.hostEmail || room.creatorEmail || "").trim().toLowerCase();
+      if (hostEmail) {
+        io.to(`user:${hostEmail}`).emit("host_auto_enter", { roomId, candidateName: room.candidateName });
+      }
+
       socket.emit("room_state", room);
       console.log(`Socket ${socket.id} (${currentUserName} - ${currentUserRole}) joined room: ${roomId} (Timer Active: ${hasAdmin && hasCandidate})`);
     };
 
     socket.on("join_room", handleJoinRoom);
     socket.on("join_interview", handleJoinRoom);
+
+    // Candidate accepts invitation toast
+    socket.on("candidate_accepted_invitation", async ({ roomId, hostEmail, candidateName, candidateEmail }) => {
+      try {
+        const room = await LiveInterviewRoom.findOne({ roomId });
+        const hEmail = (hostEmail || (room ? (room.hostEmail || room.creatorEmail) : "") || "").trim().toLowerCase();
+
+        const payload = { roomId, candidateName: candidateName || (room ? room.candidateName : "Candidate") };
+        io.emit("host_auto_enter", payload);
+        if (hEmail) {
+          io.to(`user:${hEmail}`).emit("host_auto_enter", payload);
+        }
+        if (roomId) {
+          io.to(roomId).emit("host_auto_enter", payload);
+        }
+      } catch (err) {
+        console.error("candidate_accepted_invitation error:", err.message);
+      }
+    });
 
     // Admin starts interview
     socket.on("start_interview", async ({ roomId }) => {

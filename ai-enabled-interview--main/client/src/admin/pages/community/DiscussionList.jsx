@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FaComments, FaChevronLeft, FaChevronRight, FaSearch } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaComments, FaChevronLeft, FaChevronRight, FaSearch, FaArrowLeft } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 import useAdminCommunity from "../../hooks/useAdminCommunity";
@@ -9,6 +10,7 @@ import DeleteModal from "../../components/community/DeleteModal";
 import EditDiscussionModal from "../../components/community/EditDiscussionModal";
 
 const DiscussionList = () => {
+  const navigate = useNavigate();
   const { loading, getDiscussions, updateDiscussion, deleteDiscussion } = useAdminCommunity();
 
   const [discussions, setDiscussions] = useState([]);
@@ -21,10 +23,6 @@ const DiscussionList = () => {
   const [selectedDiscussion, setSelectedDiscussion] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
-
-  useEffect(() => {
-    loadDiscussions();
-  }, [page, search, sort]);
 
   const loadDiscussions = async () => {
     const response = await getDiscussions({
@@ -41,15 +39,9 @@ const DiscussionList = () => {
     }
   };
 
-  const openEditModal = (discussion) => {
-    setSelectedDiscussion(discussion);
-    setShowEditModal(true);
-  };
-
-  const openDeleteModal = (discussion) => {
-    setSelectedDiscussion(discussion);
-    setShowDelete(true);
-  };
+  useEffect(() => {
+    loadDiscussions();
+  }, [page, search, sort]);
 
   const handleUpdate = async (id, updatedData) => {
     const response = await updateDiscussion(id, updatedData);
@@ -59,6 +51,16 @@ const DiscussionList = () => {
       setSelectedDiscussion(null);
       loadDiscussions();
     }
+  };
+
+  const openEditModal = (discussion) => {
+    setSelectedDiscussion(discussion);
+    setShowEditModal(true);
+  };
+
+  const openDeleteModal = (discussion) => {
+    setSelectedDiscussion(discussion);
+    setShowDelete(true);
   };
 
   const handleDelete = async () => {
@@ -76,34 +78,44 @@ const DiscussionList = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-8 animate-[fadeIn_0.4s_ease-out]">
-      {/* 1. HEADER SECTION */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/30 animate-bounce">
-              <FaComments />
-            </div>
-            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
-              Discussion Management
-            </span>
-          </h1>
-          <p className="text-sm font-semibold text-slate-500 mt-2">
-            Curate, monitor, edit, and manage community discussion threads and topics.
-          </p>
-        </div>
+      {/* BACK BUTTON & HEADER SECTION */}
+      <div className="space-y-4 border-b border-slate-200/80 pb-6">
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
+        >
+          <FaArrowLeft className="text-xs" />
+          <span>Back</span>
+        </button>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => {
-              setSearch("");
-              setSort("-createdAt");
-              setPage(1);
-            }}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-extrabold px-5 py-2.5 rounded-xl flex items-center gap-2 text-xs shadow-lg shadow-indigo-500/25 active:scale-95 transition-all duration-300 cursor-pointer whitespace-nowrap"
-            title="Click to reset filters"
-          >
-            <FaComments /> Total Discussions: {total}
-          </button>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/30 animate-bounce">
+                <FaComments />
+              </div>
+              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+                Discussion Management
+              </span>
+            </h1>
+            <p className="text-sm font-semibold text-slate-500 mt-2">
+              Curate, monitor, edit, and manage community discussion threads and topics.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                setSearch("");
+                setSort("-createdAt");
+                setPage(1);
+              }}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-extrabold px-5 py-2.5 rounded-xl flex items-center gap-2 text-xs shadow-lg shadow-indigo-500/25 active:scale-95 transition-all duration-300 cursor-pointer whitespace-nowrap"
+              title="Click to reset filters"
+            >
+              <FaComments /> Total Discussions: {total}
+            </button>
+          </div>
         </div>
       </div>
 

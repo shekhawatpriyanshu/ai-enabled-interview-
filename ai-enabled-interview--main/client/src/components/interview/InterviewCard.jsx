@@ -11,7 +11,15 @@ import {
 } from "react-icons/fa";
 
 const InterviewCard = ({ interview }) => {
-  const isCompleted = interview.status === "Completed";
+  const isCompleted = interview.status === "Completed" || interview.status === "completed";
+  const displayScore =
+    interview.overallScore ??
+    interview.score ??
+    interview.mcqScore ??
+    interview.finalResult?.overallScore ??
+    interview.feedback?.score ??
+    (interview.totalScore !== undefined ? Math.round((interview.totalScore / (interview.maxScore || 100)) * 100) : null);
+
   const dateFormatted = interview.createdAt
     ? new Date(interview.createdAt).toLocaleDateString("en-US", {
         month: "short",
@@ -95,14 +103,14 @@ const InterviewCard = ({ interview }) => {
         </div>
 
         {/* Overall Score Badge if completed */}
-        {isCompleted && interview.overallScore !== undefined && (
-          <div className="mt-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2">
-            <span className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5 shrink-0">
-              <FaStar className="text-amber-500 text-xs" />
+        {isCompleted && displayScore !== null && displayScore !== undefined && (
+          <div className="mt-3.5 p-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-tight text-slate-500 flex items-center gap-1.5 shrink-0">
+              <FaStar className="text-amber-500 text-xs shrink-0" />
               <span>Overall Score</span>
             </span>
-            <span className="text-sm font-black text-slate-900 bg-white border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-2xs whitespace-nowrap shrink-0">
-              {interview.overallScore} / 100
+            <span className="text-xs font-black text-slate-900 bg-white border border-slate-200/90 px-3 py-1 rounded-xl shadow-2xs whitespace-nowrap shrink-0">
+              {displayScore} / 100
             </span>
           </div>
         )}

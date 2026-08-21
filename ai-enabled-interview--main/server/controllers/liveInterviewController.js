@@ -93,11 +93,27 @@ Return ONLY a valid JSON object matching this exact schema:
   ]
 }
 `;
-      const completion = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.3,
-      });
+      const candidateModels = [
+        "groq/compound",
+        "openai/gpt-oss-120b",
+        "qwen/qwen3.6-27b",
+        "openai/gpt-oss-20b",
+        "groq/compound-mini",
+      ];
+      let completion = null;
+      for (const modelName of candidateModels) {
+        try {
+          completion = await groq.chat.completions.create({
+            model: modelName,
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.3,
+          });
+          if (completion) break;
+        } catch (mErr) {
+          console.warn(`Live interview eval model ${modelName} failed: ${mErr.message}`);
+        }
+      }
+      if (!completion) throw new Error("All evaluation models failed");
 
       const text = completion.choices[0].message.content;
       const cleanJSON = text.replace(/```json/gi, "").replace(/```/g, "").trim();
@@ -269,6 +285,7 @@ exports.createRoom = async (req, res, next) => {
         targetEmail: cleanEmail,
         candidateName: room.candidateName,
         creatorName: creatorInfo,
+        hostEmail: cleanHostEmail,
         role: room.role,
         interviewerName: room.interviewerName,
         scheduledDate: room.scheduledDate,

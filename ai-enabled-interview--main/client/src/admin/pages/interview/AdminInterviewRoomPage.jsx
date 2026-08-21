@@ -111,9 +111,7 @@ export default function AdminInterviewRoomPage() {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(null);
 
-  // Panels & Tabs State
-  const [leftTab, setLeftTab] = useState("description"); // 'description' | 'submissions' | 'console'
-  const [rightTab, setRightTab] = useState("feeds"); // 'feeds' | 'activity' | 'chat'
+  const [leftTab, setLeftTab] = useState("description"); // 'description' | 'rubric'
 
   // Live Mirroring State
   const [candidateCode, setCandidateCode] = useState(
@@ -434,70 +432,49 @@ export default function AdminInterviewRoomPage() {
   const interviewerName = room?.interviewerName || "Shree singh";
 
   return (
-    <div className="h-screen max-h-screen w-screen max-w-full overflow-hidden bg-[#141414] text-slate-100 flex flex-col font-sans selection:bg-[#ffa116] selection:text-black">
-      {/* 1. TOP NAVBAR HEADER (Strict Single-Line Flex Container) */}
-      <header className="h-14 bg-[#1a1a1a] border-b border-[#282828] px-3 sm:px-4 flex items-center justify-between shrink-0 z-50 w-full overflow-hidden">
-        {/* Left Side: Brand Logo & Room ID */}
-        <div className="flex items-center space-x-2 shrink-0">
-          <div
-            className="flex items-center space-x-2 cursor-pointer hover:opacity-95 transition shrink-0"
-            onClick={() => setShowProblemBankModal(true)}
-            title="Click to view & push LeetCode Problems"
-          >
-            <div className="w-7 h-7 rounded-lg bg-[#ffa116] text-black flex items-center justify-center font-black text-xs shadow-md shrink-0">
-              <FaCode />
+    <div className="min-h-screen bg-[#1a1a1a] text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+      {/* HEADER TOOLBAR */}
+      <header className="h-14 bg-[#262626] border-b border-[#333] px-5 flex items-center justify-between shrink-0 z-50">
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-black text-sm shadow-md">
+              <FaUserTie />
             </div>
-            <span className="text-xs sm:text-sm font-black tracking-tight text-white flex items-center gap-1.5 whitespace-nowrap">
-              <span>LeetCode</span>
-              <span className="text-[#ffa116]">Live Interview</span>
+            <span className="text-sm font-black tracking-tight text-white">
+              LeetCode Admin <span className="text-indigo-400">Live Control</span>
             </span>
           </div>
 
-          <div className="h-4 w-[1px] bg-[#333333] shrink-0" />
-
-          <button
-            onClick={copyRoomId}
-            className="text-[11px] font-mono font-bold text-slate-300 bg-[#262626] hover:bg-[#333] px-2.5 py-1.5 rounded-xl border border-[#383838] transition flex items-center gap-1.5 cursor-pointer shadow-xs whitespace-nowrap shrink-0"
-            title="Click to copy Room ID"
-          >
-            <span>{roomId}</span>
-            {copied ? (
-              <FaCheck className="text-emerald-400 text-[10px]" />
-            ) : (
-              <FaCopy className="text-[10px] text-slate-400" />
-            )}
-          </button>
+          <span className="text-xs font-mono font-bold text-indigo-400 bg-[#1f1f1f] px-3 py-1 rounded-lg border border-[#383838]">
+            {roomId}
+          </span>
         </div>
 
-        {/* Right Side: Timer & Toolbar Controls */}
-        <div className="flex items-center space-x-1.5 shrink-0">
-          {/* Remaining Timer */}
-          <div className="flex items-center space-x-1 bg-[#262626] px-2.5 py-1 rounded-lg border border-[#383838] shadow-xs shrink-0 whitespace-nowrap">
-            <FaClock className="text-[#ffa116] text-[10px] animate-pulse" />
-            <span className="font-mono text-[11px] font-bold text-white tracking-wider">
-              {formatTime(timerRemaining)}
-            </span>
+        {/* TIMER & SESSION CONTROLS */}
+        <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 bg-[#1f1f1f] px-3 py-1.5 rounded-xl border border-[#383838]">
+            <FaClock className="text-amber-400 text-xs animate-pulse" />
+            <span className="font-mono text-xs font-bold text-white">{formatTime(timerRemaining)}</span>
           </div>
 
-          {/* Admin Timer Control Buttons */}
-          <div className="flex items-center space-x-0.5 shrink-0">
+          <div className="flex items-center space-x-1.5">
             <button
               onClick={() => handleTimerControl("start")}
-              className="p-1 bg-[#262626] hover:bg-emerald-500/20 text-emerald-400 rounded-md border border-[#383838] transition cursor-pointer"
+              className="p-2 bg-[#1f1f1f] hover:bg-emerald-500/20 text-emerald-400 rounded-xl border border-[#383838] transition cursor-pointer"
               title="Start / Resume Timer"
             >
               <FaPlay className="text-[9px]" />
             </button>
             <button
               onClick={() => handleTimerControl("pause")}
-              className="p-1 bg-[#262626] hover:bg-amber-500/20 text-amber-400 rounded-md border border-[#383838] transition cursor-pointer"
+              className="p-2 bg-[#1f1f1f] hover:bg-amber-500/20 text-amber-400 rounded-xl border border-[#383838] transition cursor-pointer"
               title="Pause Timer"
             >
               <FaPause className="text-[9px]" />
             </button>
             <button
               onClick={() => handleTimerControl("reset")}
-              className="p-1 bg-[#262626] hover:bg-indigo-500/20 text-indigo-400 rounded-md border border-[#383838] transition cursor-pointer"
+              className="p-2 bg-[#1f1f1f] hover:bg-indigo-500/20 text-indigo-400 rounded-xl border border-[#383838] transition cursor-pointer"
               title="Reset Timer"
             >
               <FaRedo className="text-[9px]" />
@@ -513,60 +490,60 @@ export default function AdminInterviewRoomPage() {
           {/* Settings Button */}
           <button
             onClick={() => setShowSettingsModal(true)}
-            className="px-2.5 py-1 bg-[#262626] hover:bg-[#333] text-slate-200 hover:text-white font-bold text-[11px] rounded-lg border border-[#383838] transition flex items-center gap-1 cursor-pointer shadow-xs shrink-0 whitespace-nowrap"
-            title="Editor Settings"
+            className="px-3.5 py-1.5 bg-[#1f1f1f] hover:bg-[#2d2d2d] text-slate-200 hover:text-white font-bold text-xs rounded-xl border border-[#383838] hover:border-indigo-500/50 transition flex items-center gap-1.5 cursor-pointer shadow-sm"
+            title="Editor Settings (Theme, Font Size, Tab Size)"
           >
-            <FaCog className="text-[#ffa116] text-[10px]" />
+            <FaCog className="text-indigo-400 text-xs" />
             <span>Settings</span>
           </button>
 
           {/* TERMINATE SESSION BUTTON */}
           <button
             onClick={handleEndInterview}
-            className="px-2 py-1 bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-[10px] uppercase rounded-lg transition flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap shadow-xs"
-            title="Terminate Live Interview Session"
+            className="px-4 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg cursor-pointer"
           >
             <FaTimes className="text-[9px]" />
             <span>End Session</span>
           </button>
-
-          {/* PROMINENT LEAVE BUTTON */}
-          <button
-            onClick={() => navigate("/admin/live-interviews")}
-            className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-rose-400 hover:text-rose-300 font-extrabold text-[11px] rounded-lg border border-rose-500/30 transition flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap shadow-sm"
-            title="Leave Interview Room"
-          >
-            <FaSignOutAlt className="text-[10px] text-rose-400" />
-            <span>Leave</span>
-          </button>
         </div>
       </header>
 
-      {/* 2. MAIN WORKSPACE 3-COLUMN FLEX LAYOUT (No Window Scrollbar) */}
-      <div className="flex-1 min-h-0 p-2 gap-2 flex overflow-hidden">
-        {/* LEFT COLUMN: PROBLEM STATEMENT & WRITTEN SOLUTION (31% width) */}
-        <div className="w-[31%] flex flex-col min-h-0 bg-[#1e1e1e] border border-[#282828] rounded-2xl overflow-hidden shadow-sm">
-          {/* Header Tabs */}
-          <div className="flex items-center space-x-1 bg-[#181818] px-2.5 py-1.5 border-b border-[#282828] text-xs font-bold shrink-0 overflow-x-auto scrollbar-hide">
+      {/* PROBLEM SWAPPER & STEPPER STRIP */}
+      <div className="bg-[#1f1f1f] border-b border-[#333] px-5 py-2 flex items-center justify-between overflow-x-auto scrollbar-hide">
+        <div className="flex items-center space-x-2">
+          <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider mr-2">LeetCode Bank:</span>
+          {LEETCODE_BANK.map((pb) => (
             <button
-              onClick={() => setLeftTab("description")}
-              className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
-                leftTab === "description"
-                  ? "bg-[#262626] text-white shadow-xs"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
+              key={pb.questionId}
+              onClick={() => handleSwapProblem(pb)}
+              className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${qObj.questionId === pb.questionId ? "bg-indigo-600 text-white shadow-md" : "bg-[#262626] text-slate-400 hover:text-white border border-[#383838]"}`}
             >
-              <FaFileAlt className="text-[#ffa116] text-xs" />
-              <span>Description</span>
+              <FaCode className="text-[10px] text-indigo-400" />
+              <span>{pb.question}</span>
             </button>
+          ))}
+        </div>
 
+        <button
+          onClick={copyRoomId}
+          className="px-3.5 py-1 bg-[#262626] hover:bg-[#333] text-slate-300 font-bold text-xs rounded-xl border border-[#383838] transition flex items-center gap-1.5 cursor-pointer"
+        >
+          <FaCopy className="text-[10px] text-indigo-400" />
+          <span>{copied ? "Copied Link ✓" : "Copy Link"}</span>
+        </button>
+      </div>
+
+      {/* MAIN ADMIN WORKSPACE SPLIT */}
+      <div className="flex-1 flex overflow-hidden p-2 gap-2">
+        {/* LEFT COLUMN: PROBLEM STATEMENT & INTERVIEWER RUBRIC */}
+        <div className="w-[35%] bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden">
+          <div className="flex items-center space-x-1 bg-[#1f1f1f] px-3 py-2 border-b border-[#333]">
             <button
               onClick={() => setLeftTab("submissions")}
-              className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
-                leftTab === "submissions"
+              className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${leftTab === "submissions"
                   ? "bg-[#262626] text-white shadow-xs"
                   : "text-slate-400 hover:text-slate-200"
-              }`}
+                }`}
             >
               <FaCheckCircle className="text-emerald-400 text-xs" />
               <span>Submissions (0)</span>
@@ -574,11 +551,10 @@ export default function AdminInterviewRoomPage() {
 
             <button
               onClick={() => setLeftTab("console")}
-              className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
-                leftTab === "console"
+              className={`px-3 py-1 rounded-lg transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0 ${leftTab === "console"
                   ? "bg-[#262626] text-white shadow-xs"
                   : "text-slate-400 hover:text-slate-200"
-              }`}
+                }`}
             >
               <FaTerminal className="text-sky-400 text-xs" />
               <span>Console</span>
@@ -688,192 +664,199 @@ export default function AdminInterviewRoomPage() {
           )}
         </div>
 
-        {/* CENTER COLUMN: MONACO CODE SOLUTION & BOTTOM CONSOLE BAR (44% width) */}
-        <div className="flex-1 min-w-0 flex flex-col min-h-0 bg-[#1e1e1e] border border-[#282828] rounded-2xl overflow-hidden shadow-sm">
-          {/* Editor Header Bar */}
-          <div className="h-9 bg-[#181818] px-3 flex items-center justify-between border-b border-[#282828] text-xs font-bold text-slate-300 shrink-0">
-            <span className="flex items-center gap-2 whitespace-nowrap">
-              <FaCode className="text-[#ffa116]" />
-              <span>Code Solution ({candidateLang})</span>
+        {/* CENTER COLUMN: LIVE CANDIDATE MONACO MIRROR */}
+        <div className="flex-1 bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden">
+          <div className="h-10 bg-[#1f1f1f] px-4 flex items-center justify-between border-b border-[#333] text-xs font-bold text-slate-300 shrink-0">
+            <span className="flex items-center gap-2">
+              <FaCode className="text-indigo-400" />
+              Live Candidate Code Stream ({candidateLang})
             </span>
 
-            <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1.5 whitespace-nowrap">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-              Live Mirror
-            </span>
-          </div>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setShowConsole(!showConsole)}
+                className={`px-3 py-1 rounded-lg border text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${showConsole ? "bg-sky-500/20 text-sky-300 border-sky-500/40" : "bg-[#282828] text-slate-400 border-[#383838]"
+                  }`}
+                title="Toggle Console Side Panel"
+              >
+                <FaTerminal className="text-indigo-400 text-xs" />
+                <span>Console Output {showConsole ? "▶" : "◀"}</span>
+              </button>
 
-          {/* MONACO CODE EDITOR */}
-          <div className="flex-1 bg-[#0d0d0d] relative min-h-0">
-            <Editor
-              height="100%"
-              language={candidateLang}
-              theme={editorTheme}
-              value={candidateCode}
-              options={{
-                readOnly: true,
-                fontSize: editorFontSize,
-                fontFamily: "Fira Code, Consolas, monospace",
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                automaticLayout: true,
-                tabSize: editorTabSize,
-              }}
-            />
-          </div>
+              <button
+                onClick={handleRunCandidateCode}
+                disabled={executing}
+                className="px-4 py-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+              >
+                {executing ? <FaSpinner className="animate-spin text-amber-400" /> : <FaPlay className="text-xs" />}
+                <span>{executing ? "Running..." : "Run Candidate Code"}</span>
+              </button>
 
-          {/* BOTTOM CONSOLE BAR & RUN BUTTON (Strict Single Line Layout) */}
-          <div className="bg-[#181818] border-t border-[#282828] px-3 py-2 flex items-center justify-between shrink-0 gap-2 overflow-x-auto scrollbar-hide">
-            <button
-              onClick={() => setShowConsole(!showConsole)}
-              className="px-3 py-1 bg-[#262626] hover:bg-[#333] text-slate-300 font-bold text-xs rounded-lg border border-[#383838] transition flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
-            >
-              <FaTerminal className="text-sky-400 text-xs" />
-              <span>Console</span>
-              {showConsole ? <FaCaretDown className="text-xs" /> : <FaCaretUp className="text-xs" />}
-            </button>
-
-            {/* Run Code Button */}
-            <button
-              onClick={handleRunCandidateCode}
-              disabled={executing}
-              className="px-4 py-1 bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 hover:from-sky-400 hover:to-purple-500 text-white font-black text-xs uppercase tracking-wider rounded-lg shadow-md transition cursor-pointer disabled:opacity-50 flex items-center gap-1.5 shrink-0 whitespace-nowrap"
-            >
-              {executing ? (
-                <FaSpinner className="animate-spin text-amber-400 text-xs" />
-              ) : (
-                <FaPlay className="text-[10px]" />
-              )}
-              <span>{executing ? "Executing..." : "Run Code"}</span>
-            </button>
-
-            {/* Live Monitoring Pill */}
-            <div className="px-3 py-1 bg-[#262626] text-amber-300 text-[11px] font-bold rounded-lg border border-[#383838] flex items-center gap-1.5 shrink-0 whitespace-nowrap">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
-              <span>Live Candidate Monitor</span>
+              <span className="text-[11px] text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> Live Mirroring
+              </span>
             </div>
           </div>
 
-          {/* CONSOLE OUTPUT PANEL OVERLAY */}
-          {showConsole && (
-            <div className="bg-[#111111] border-t border-[#282828] p-3 max-h-48 overflow-y-auto space-y-2 font-mono text-xs animate-fade-in shrink-0">
-              <div className="flex items-center justify-between border-b border-[#282828] pb-1.5">
-                <span className="font-bold text-slate-300 uppercase tracking-wider text-[10px] flex items-center gap-2">
-                  <FaTerminal className="text-sky-400" />
-                  Remote Console Output
-                </span>
-                <button
-                  onClick={() => setShowConsole(false)}
-                  className="text-slate-400 hover:text-white text-xs p-1 cursor-pointer"
-                >
-                  <FaTimes />
-                </button>
+          {/* EDITOR & CONSOLE FLEX CONTAINER */}
+          <div className="flex-1 flex overflow-hidden relative">
+            <div className="flex-1 bg-[#1e1e1e] h-full min-w-0">
+              <Editor
+                height="100%"
+                language={candidateLang}
+                theme={editorTheme}
+                value={candidateCode}
+                options={{
+                  readOnly: true,
+                  fontSize: editorFontSize,
+                  fontFamily: "Fira Code, Consolas, monospace",
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                  tabSize: editorTabSize,
+                }}
+              />
+            </div>
+
+            {/* BOTTOM CONSOLE BAR & RUN BUTTON (Strict Single Line Layout) */}
+            <div className="bg-[#181818] border-t border-[#282828] px-3 py-2 flex items-center justify-between shrink-0 gap-2 overflow-x-auto scrollbar-hide">
+              <button
+                onClick={() => setShowConsole(!showConsole)}
+                className="px-3 py-1 bg-[#262626] hover:bg-[#333] text-slate-300 font-bold text-xs rounded-lg border border-[#383838] transition flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap"
+              >
+                <FaTerminal className="text-sky-400 text-xs" />
+                <span>Console</span>
+                {showConsole ? <FaCaretDown className="text-xs" /> : <FaCaretUp className="text-xs" />}
+              </button>
+
+              {/* Run Code Button */}
+              <button
+                onClick={handleRunCandidateCode}
+                disabled={executing}
+                className="px-4 py-1 bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 hover:from-sky-400 hover:to-purple-500 text-white font-black text-xs uppercase tracking-wider rounded-lg shadow-md transition cursor-pointer disabled:opacity-50 flex items-center gap-1.5 shrink-0 whitespace-nowrap"
+              >
+                {executing ? (
+                  <FaSpinner className="animate-spin text-amber-400 text-xs" />
+                ) : (
+                  <FaPlay className="text-[10px]" />
+                )}
+                <span>{executing ? "Executing..." : "Run Code"}</span>
+              </button>
+
+              {/* Live Monitoring Pill */}
+              <div className="px-3 py-1 bg-[#262626] text-amber-300 text-[11px] font-bold rounded-lg border border-[#383838] flex items-center gap-1.5 shrink-0 whitespace-nowrap">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+                <span>Live Candidate Monitor</span>
               </div>
-
-              {executing ? (
-                <div className="text-center py-4 space-y-2">
-                  <FaSpinner className="w-5 h-5 text-amber-400 animate-spin mx-auto" />
-                  <p className="text-xs text-amber-300 font-bold uppercase">Testing Candidate Code...</p>
-                </div>
-              ) : consoleOutput ? (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs font-bold">
-                    <span
-                      className={`px-2.5 py-0.5 rounded-md border text-[10px] uppercase ${
-                        consoleOutput.status === "Accepted"
-                          ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
-                          : "bg-rose-500/20 text-rose-400 border-rose-500/40"
-                      }`}
-                    >
-                      {consoleOutput.status}
-                    </span>
-                    <div className="text-slate-400 space-x-3 text-[10px]">
-                      <span>Runtime: <strong className="text-amber-400">{consoleOutput.time}</strong></span>
-                      <span>Memory: <strong className="text-indigo-400">{consoleOutput.memory}</strong></span>
-                    </div>
-                  </div>
-                  <pre className="p-2.5 bg-[#181818] rounded-xl border border-[#282828] text-slate-200 text-xs leading-relaxed whitespace-pre-wrap">
-                    {consoleOutput.output}
-                  </pre>
-                </div>
-              ) : (
-                <p className="text-slate-500 italic text-center py-3 text-[11px]">
-                  Click "Run Code" to test execution output.
-                </p>
-              )}
             </div>
-          )}
-        </div>
 
-        {/* RIGHT COLUMN: LIVE FEEDS, AUDIT TRAIL & CHAT (25% width) */}
-        <div className="w-[25%] flex flex-col min-h-0 bg-[#1e1e1e] border border-[#282828] rounded-2xl overflow-hidden shadow-sm">
-          {/* Header Navigation Tabs */}
-          <div className="flex items-center bg-[#181818] p-1 border-b border-[#282828] shrink-0 text-center">
-            <button
-              onClick={() => setRightTab("feeds")}
-              className={`flex-1 py-1 px-1 rounded-lg text-[11px] font-bold transition cursor-pointer whitespace-nowrap truncate ${
-                rightTab === "feeds" ? "bg-[#262626] text-white shadow-xs" : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              Feeds
-            </button>
-            <button
-              onClick={() => setRightTab("activity")}
-              className={`flex-1 py-1 px-1 rounded-lg text-[11px] font-bold transition cursor-pointer whitespace-nowrap truncate ${
-                rightTab === "activity" ? "bg-[#262626] text-indigo-400 shadow-xs" : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              Audit Log
-            </button>
-            <button
-              onClick={() => setRightTab("chat")}
-              className={`flex-1 py-1 px-1 rounded-lg text-[11px] font-bold transition cursor-pointer whitespace-nowrap truncate ${
-                rightTab === "chat" ? "bg-[#262626] text-amber-400 shadow-xs" : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              Chat
-            </button>
+            {/* CONSOLE OUTPUT PANEL OVERLAY */}
+            {showConsole && (
+              <div className="bg-[#111111] border-t border-[#282828] p-3 max-h-48 overflow-y-auto space-y-2 font-mono text-xs animate-fade-in shrink-0">
+                <div className="flex items-center justify-between border-b border-[#282828] pb-1.5">
+                  <span className="font-bold text-slate-300 uppercase tracking-wider text-[10px] flex items-center gap-2">
+                    <FaTerminal className="text-sky-400" />
+                    Remote Console Output
+                  </span>
+                  <button
+                    onClick={() => setShowConsole(false)}
+                    className="text-slate-400 hover:text-white text-xs p-1 cursor-pointer"
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+
+                {executing ? (
+                  <div className="text-center py-4 space-y-2">
+                    <FaSpinner className="w-5 h-5 text-amber-400 animate-spin mx-auto" />
+                    <p className="text-xs text-amber-300 font-bold uppercase">Testing Candidate Code...</p>
+                  </div>
+                ) : consoleOutput ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs font-bold">
+                      <span
+                        className={`px-2.5 py-0.5 rounded-md border text-[10px] uppercase ${consoleOutput.status === "Accepted"
+                            ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
+                            : "bg-rose-500/20 text-rose-400 border-rose-500/40"
+                          }`}
+                      >
+                        {consoleOutput.status}
+                      </span>
+                      <div className="text-slate-400 space-x-3 text-[10px]">
+                        <span>Runtime: <strong className="text-amber-400">{consoleOutput.time}</strong></span>
+                        <span>Memory: <strong className="text-indigo-400">{consoleOutput.memory}</strong></span>
+                      </div>
+                    </div>
+                    <pre className="p-2.5 bg-[#181818] rounded-xl border border-[#282828] text-slate-200 text-xs leading-relaxed whitespace-pre-wrap">
+                      {consoleOutput.output}
+                    </pre>
+                  </div>
+                ) : (
+                  <p className="text-slate-500 italic text-center py-3 text-[11px]">
+                    Click "Run Code" to test execution output.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Right Tab Body */}
-          {rightTab === "feeds" ? (
-            <div className="flex-1 flex flex-col p-3 overflow-y-auto space-y-4 scrollbar-hide min-h-0">
-              {/* LIVE STREAM FEEDS */}
-              <div className="space-y-2 shrink-0">
-                <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block">
-                  LIVE STREAM FEEDS
-                </span>
+          {/* RIGHT COLUMN: LIVE FEEDS, AUDIT TRAIL & CHAT (25% width) */}
+          <div className="w-[25%] flex flex-col min-h-0 bg-[#1e1e1e] border border-[#282828] rounded-2xl overflow-hidden shadow-sm">
+            {/* Header Navigation Tabs */}
+            <div className="flex items-center bg-[#181818] p-1 border-b border-[#282828] shrink-0 text-center">
+              <button
+                onClick={() => setRightTab("feeds")}
+                className={`flex-1 py-1 px-1 rounded-lg text-[11px] font-bold transition cursor-pointer whitespace-nowrap truncate ${rightTab === "feeds" ? "bg-[#262626] text-white shadow-xs" : "text-slate-400 hover:text-slate-200"
+                  }`}
+              >
+                Feeds
+              </button>
+              <button
+                onClick={() => setRightTab("activity")}
+                className={`flex-1 py-1 px-1 rounded-lg text-[11px] font-bold transition cursor-pointer whitespace-nowrap truncate ${rightTab === "activity" ? "bg-[#262626] text-indigo-400 shadow-xs" : "text-slate-400 hover:text-slate-200"
+                  }`}
+              >
+                Audit Log
+              </button>
+              <button
+                onClick={() => setRightTab("chat")}
+                className={`flex-1 py-1 px-1 rounded-lg text-[11px] font-bold transition cursor-pointer whitespace-nowrap truncate ${rightTab === "chat" ? "bg-[#262626] text-amber-400 shadow-xs" : "text-slate-400 hover:text-slate-200"
+                  }`}
+              >
+                Chat
+              </button>
+            </div>
 
+            {/* RIGHT COLUMN: VIDEO TILES & INTERVIEWER CHAT */}
+            <div className="w-[26%] bg-[#262626] rounded-2xl border border-[#333] flex flex-col overflow-hidden">
+              <div className="p-3 border-b border-[#333] space-y-2.5">
+                <span className="text-[11px] font-bold uppercase text-slate-400 tracking-wider block">Participant Streams</span>
                 <div className="grid grid-cols-2 gap-2">
-                  {/* INTERVIEWER TILE */}
-                  <div className="bg-[#141414] p-2.5 rounded-xl border border-[#282828] flex flex-col items-center justify-between text-center gap-1.5 shadow-xs overflow-hidden">
-                    <div className="w-9 h-9 rounded-full bg-[#1e293b] text-sky-400 border border-sky-500/30 flex items-center justify-center font-black text-xs shrink-0">
-                      S
+                  <div className="bg-[#141414] p-3 rounded-2xl border border-[#333] flex flex-col items-center justify-between text-center gap-1.5 min-w-0 shadow-sm">
+                    <div className="w-9 h-9 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center justify-center font-black text-xs">
+                      <FaUserGraduate />
                     </div>
-                    <span className="text-[11px] font-bold text-white block truncate w-full" title={interviewerName}>
-                      {interviewerName}
-                    </span>
-                    <span className="w-full px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/40 text-center leading-none">
-                      INTERVIEWER
+                    <div className="w-full min-w-0">
+                      <span className="text-[11px] font-bold text-white block truncate px-1" title={room?.candidateName || "Candidate"}>
+                        {room?.candidateName || "Candidate"}
+                      </span>
+                    </div>
+                    <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${candidateStatus === "Connected" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"}`}>
+                      {candidateStatus}
                     </span>
                   </div>
 
-                  {/* CANDIDATE TILE */}
-                  <div className="bg-[#141414] p-2.5 rounded-xl border border-[#282828] flex flex-col items-center justify-between text-center gap-1.5 shadow-xs overflow-hidden">
-                    <div className="w-9 h-9 rounded-full bg-[#3b2d1e] text-amber-400 border border-amber-500/30 flex items-center justify-center font-black text-xs shrink-0">
-                      S
+                  <div className="bg-[#141414] p-3 rounded-2xl border border-[#333] flex flex-col items-center justify-between text-center gap-1.5 min-w-0 shadow-sm">
+                    <div className="w-9 h-9 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-black text-xs">
+                      <FaUserTie />
                     </div>
-                    <span className="text-[11px] font-bold text-white block truncate w-full" title={candidateName}>
-                      {candidateName}
-                    </span>
-                    <span
-                      className={`w-full px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg border text-center leading-none ${
-                        candidateStatus === "Connected"
-                          ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/40"
-                          : "bg-amber-500/20 text-amber-400 border-amber-500/40"
-                      }`}
-                    >
-                      CANDIDATE ({candidateStatus.toUpperCase()})
+                    <div className="w-full min-w-0">
+                      <span className="text-[11px] font-bold text-white block truncate px-1" title="Rahul (Admin)">
+                        Rahul (Admin)
+                      </span>
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
+                      Host
                     </span>
                   </div>
                 </div>
@@ -894,11 +877,10 @@ export default function AdminInterviewRoomPage() {
                     chatMessages.map((msg, i) => (
                       <div
                         key={i}
-                        className={`p-2 rounded-xl text-xs space-y-1 ${
-                          msg.role === "Admin" || msg.role === "Interviewer"
+                        className={`p-2 rounded-xl text-xs space-y-1 ${msg.role === "Admin" || msg.role === "Interviewer"
                             ? "bg-indigo-500/10 border border-indigo-500/20 text-indigo-200"
                             : "bg-amber-500/10 border border-amber-500/20 text-amber-200"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center justify-between text-[9px] opacity-75 font-bold">
                           <span>{msg.sender}</span>
@@ -927,7 +909,7 @@ export default function AdminInterviewRoomPage() {
                 </form>
               </div>
             </div>
-          ) : rightTab === "activity" ? (
+            ) : rightTab === "activity" ? (
             <div className="flex-1 p-3 flex flex-col overflow-hidden min-h-0">
               <div className="flex items-center justify-between mb-2 shrink-0">
                 <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider flex items-center gap-1">
@@ -956,7 +938,7 @@ export default function AdminInterviewRoomPage() {
                 <div ref={logsEndRef} />
               </div>
             </div>
-          ) : (
+            ) : (
             <div className="flex-1 flex flex-col p-3 overflow-hidden min-h-0">
               <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider mb-2 block shrink-0">
                 INTERVIEW CHAT
@@ -992,99 +974,97 @@ export default function AdminInterviewRoomPage() {
               </form>
             </div>
           )}
-        </div>
-      </div>
-
-      {/* PROBLEM BANK SWAPPER MODAL FOR ADMIN */}
-      {showProblemBankModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#1a1a1a] border border-[#282828] text-slate-100 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#282828] pb-3">
-              <h3 className="text-base font-black text-white flex items-center gap-2">
-                <FaBookOpen className="text-[#ffa116]" />
-                <span>Select & Push Problem to Room</span>
-              </h3>
-              <button onClick={() => setShowProblemBankModal(false)} className="text-slate-400 hover:text-white p-1 cursor-pointer">
-                <FaTimes />
-              </button>
-            </div>
-
-            <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
-              {LEETCODE_BANK.map((pb) => (
-                <div
-                  key={pb.questionId}
-                  onClick={() => handleSwapProblem(pb)}
-                  className={`p-3.5 rounded-2xl border transition cursor-pointer flex items-center justify-between ${
-                    qObj.questionId === pb.questionId
-                      ? "bg-[#ffa116]/10 border-[#ffa116] text-white"
-                      : "bg-[#141414] border-[#282828] hover:border-slate-500 text-slate-300"
-                  }`}
-                >
-                  <div>
-                    <h4 className="font-bold text-xs text-white">{pb.question}</h4>
-                    <p className="text-[10px] text-slate-400 mt-0.5 line-clamp-1">{pb.problemDescription}</p>
-                  </div>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-[#ffa116]/20 text-[#ffa116] border border-[#ffa116]/30">
-                    {pb.difficulty}
-                  </span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
-      )}
 
-      {/* WORKSPACE SETTINGS MODAL */}
-      {showSettingsModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#1a1a1a] border border-[#282828] text-slate-100 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-[#282828] pb-3">
-              <h3 className="text-base font-black text-white flex items-center gap-2">
-                <FaCog className="text-[#ffa116]" />
-                <span>Workspace Settings</span>
-              </h3>
-              <button onClick={() => setShowSettingsModal(false)} className="text-slate-400 hover:text-white p-1 cursor-pointer">
-                <FaTimes />
-              </button>
-            </div>
+        {/* PROBLEM BANK SWAPPER MODAL FOR ADMIN */}
+        {showProblemBankModal && (
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+            <div className="bg-[#1a1a1a] border border-[#282828] text-slate-100 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[#282828] pb-3">
+                <h3 className="text-base font-black text-white flex items-center gap-2">
+                  <FaBookOpen className="text-[#ffa116]" />
+                  <span>Select & Push Problem to Room</span>
+                </h3>
+                <button onClick={() => setShowProblemBankModal(false)} className="text-slate-400 hover:text-white p-1 cursor-pointer">
+                  <FaTimes />
+                </button>
+              </div>
 
-            <div className="space-y-4 text-xs">
-              <div className="space-y-2">
-                <label className="text-[11px] font-black uppercase text-[#ffa116]">Editor Theme</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { id: "vs-dark", label: "🌙 VS Dark" },
-                    { id: "light", label: "☀️ VS Light" },
-                  ].map((thm) => (
-                    <button
-                      key={thm.id}
-                      type="button"
-                      onClick={() => {
-                        setEditorTheme(thm.id);
-                        localStorage.setItem("editor_theme", thm.id);
-                      }}
-                      className={`p-3 rounded-xl border text-xs font-bold transition cursor-pointer ${
-                        editorTheme === thm.id ? "bg-[#ffa116] text-black border-[#ffa116]" : "bg-[#141414] border-[#282828] text-slate-300"
+              <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+                {LEETCODE_BANK.map((pb) => (
+                  <div
+                    key={pb.questionId}
+                    onClick={() => handleSwapProblem(pb)}
+                    className={`p-3.5 rounded-2xl border transition cursor-pointer flex items-center justify-between ${qObj.questionId === pb.questionId
+                        ? "bg-[#ffa116]/10 border-[#ffa116] text-white"
+                        : "bg-[#141414] border-[#282828] hover:border-slate-500 text-slate-300"
                       }`}
-                    >
-                      {thm.label}
-                    </button>
-                  ))}
-                </div>
+                  >
+                    <div>
+                      <h4 className="font-bold text-xs text-white">{pb.question}</h4>
+                      <p className="text-[10px] text-slate-400 mt-0.5 line-clamp-1">{pb.problemDescription}</p>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-[#ffa116]/20 text-[#ffa116] border border-[#ffa116]/30">
+                      {pb.difficulty}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
+          </div>
+        )}
 
-            <div className="flex justify-end pt-2">
-              <button
-                onClick={() => setShowSettingsModal(false)}
-                className="px-5 py-2 bg-[#ffa116] text-black font-extrabold text-xs rounded-xl cursor-pointer"
-              >
-                Done
-              </button>
+        {/* WORKSPACE SETTINGS MODAL */}
+        {showSettingsModal && (
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+            <div className="bg-[#1a1a1a] border border-[#282828] text-slate-100 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-5">
+              <div className="flex items-center justify-between border-b border-[#282828] pb-3">
+                <h3 className="text-base font-black text-white flex items-center gap-2">
+                  <FaCog className="text-[#ffa116]" />
+                  <span>Workspace Settings</span>
+                </h3>
+                <button onClick={() => setShowSettingsModal(false)} className="text-slate-400 hover:text-white p-1 cursor-pointer">
+                  <FaTimes />
+                </button>
+              </div>
+
+              <div className="space-y-4 text-xs">
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black uppercase text-[#ffa116]">Editor Theme</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: "vs-dark", label: "🌙 VS Dark" },
+                      { id: "light", label: "☀️ VS Light" },
+                    ].map((thm) => (
+                      <button
+                        key={thm.id}
+                        type="button"
+                        onClick={() => {
+                          setEditorTheme(thm.id);
+                          localStorage.setItem("editor_theme", thm.id);
+                        }}
+                        className={`p-3 rounded-xl border text-xs font-bold transition cursor-pointer ${editorTheme === thm.id ? "bg-[#ffa116] text-black border-[#ffa116]" : "bg-[#141414] border-[#282828] text-slate-300"
+                          }`}
+                      >
+                        {thm.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <button
+                  onClick={() => setShowSettingsModal(false)}
+                  className="px-5 py-2 bg-[#ffa116] text-black font-extrabold text-xs rounded-xl cursor-pointer"
+                >
+                  Done
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+      );
 }

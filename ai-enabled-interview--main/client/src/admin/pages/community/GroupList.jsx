@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FaLayerGroup, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaLayerGroup, FaChevronLeft, FaChevronRight, FaArrowLeft } from "react-icons/fa";
 
 import useAdminCommunity from "../../hooks/useAdminCommunity";
 
@@ -8,6 +9,7 @@ import SearchBar from "../../components/community/SearchBar";
 import DeleteModal from "../../components/community/DeleteModal";
 
 const GroupList = () => {
+  const navigate = useNavigate();
   const { loading, getGroups, deleteGroup } = useAdminCommunity();
 
   const [groups, setGroups] = useState([]);
@@ -16,10 +18,6 @@ const GroupList = () => {
   const [search, setSearch] = useState("");
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  useEffect(() => {
-    loadGroups();
-  }, [page, search]);
 
   const loadGroups = async () => {
     const response = await getGroups({
@@ -33,6 +31,10 @@ const GroupList = () => {
       setPages(response.pages);
     }
   };
+
+  useEffect(() => {
+    loadGroups();
+  }, [page, search]);
 
   const openDeleteModal = (group) => {
     setSelectedGroup(group);
@@ -53,20 +55,30 @@ const GroupList = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-8 animate-[fadeIn_0.4s_ease-out]">
-      {/* 1. HEADER SECTION */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/30 animate-bounce">
-              <FaLayerGroup />
-            </div>
-            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
-              Study Group Management
-            </span>
-          </h1>
-          <p className="text-sm font-semibold text-slate-500 mt-2">
-            Organize, monitor, and manage interactive community study groups.
-          </p>
+      {/* BACK BUTTON & HEADER SECTION */}
+      <div className="space-y-4 border-b border-slate-200/80 pb-6">
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
+        >
+          <FaArrowLeft className="text-xs" />
+          <span>Back</span>
+        </button>
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/30 animate-bounce">
+                <FaLayerGroup />
+              </div>
+              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+                Study Group Management
+              </span>
+            </h1>
+            <p className="text-sm font-semibold text-slate-500 mt-2">
+              Organize, monitor, and manage interactive community study groups.
+            </p>
+          </div>
         </div>
       </div>
 

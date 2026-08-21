@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FaComments, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaComments, FaChevronLeft, FaChevronRight, FaArrowLeft } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 import useAdminCommunity from "../../hooks/useAdminCommunity";
@@ -11,6 +12,7 @@ import ViewMessageModal from "../../components/community/ViewMessageModal";
 import EditMessageModal from "../../components/community/EditMessageModal";
 
 const MessageList = () => {
+  const navigate = useNavigate();
   const { loading, getMessages, updateMessage, deleteMessage } = useAdminCommunity();
 
   const [messages, setMessages] = useState([]);
@@ -22,10 +24,6 @@ const MessageList = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  useEffect(() => {
-    loadMessages();
-  }, [page, search]);
 
   const loadMessages = async () => {
     const res = await getMessages({
@@ -39,6 +37,10 @@ const MessageList = () => {
       setPages(res.pages);
     }
   };
+
+  useEffect(() => {
+    loadMessages();
+  }, [page, search]);
 
   const openViewModal = (message) => {
     setSelectedMessage(message);
@@ -80,20 +82,30 @@ const MessageList = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-8 animate-[fadeIn_0.4s_ease-out]">
-      {/* 1. HEADER SECTION */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-400 via-orange-500 to-amber-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-amber-500/30 animate-bounce">
-              <FaComments />
-            </div>
-            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
-              Message Management
-            </span>
-          </h1>
-          <p className="text-sm font-semibold text-slate-500 mt-2">
-            Monitor, view, edit, and moderate group chat messages across study communities.
-          </p>
+      {/* BACK BUTTON & HEADER SECTION */}
+      <div className="space-y-4 border-b border-slate-200/80 pb-6">
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
+        >
+          <FaArrowLeft className="text-xs" />
+          <span>Back</span>
+        </button>
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-400 via-orange-500 to-amber-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-amber-500/30 animate-bounce">
+                <FaComments />
+              </div>
+              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 via-fuchsia-500 to-cyan-500 bg-clip-text text-transparent">
+                Message Management
+              </span>
+            </h1>
+            <p className="text-sm font-semibold text-slate-500 mt-2">
+              Monitor, view, edit, and moderate group chat messages across study communities.
+            </p>
+          </div>
         </div>
       </div>
 

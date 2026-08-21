@@ -65,7 +65,7 @@ const RewardCard = ({ reward }) => {
         )}
 
         {/* Footer Info: Timestamp & XP Pill */}
-        <div className="flex justify-between items-center pt-2">
+        <div className="flex justify-between items-center pt-2 ">
           <span className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400">
             <FaCalendarAlt className="text-slate-300 text-xs" />
             {new Date(reward.createdAt || reward.earnedAt || Date.now()).toLocaleDateString("en-US", {

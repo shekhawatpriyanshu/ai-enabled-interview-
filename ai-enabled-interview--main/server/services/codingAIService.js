@@ -54,15 +54,21 @@ function extractFirstJSONObject(text) {
 // Retry Groq Request
 // ==========================================
 
-async function requestGroq(prompt) {
-  const MAX_RETRIES = 3;
+const candidateModels = [
+  "openai/gpt-oss-20b",
+  "groq/compound-mini",
+  "qwen/qwen3.6-27b",
+  "groq/compound",
+  "openai/gpt-oss-120b",
+];
 
+async function requestGroq(prompt) {
   let lastError = null;
 
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+  for (const modelName of candidateModels) {
     try {
       const completion = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+        model: modelName,
         temperature: 0.85,
         max_tokens: 4096,
         response_format: {
@@ -81,28 +87,20 @@ async function requestGroq(prompt) {
         completion.choices &&
         completion.choices.length
       ) {
+        console.log(`✅ Coding AI succeeded with model: ${modelName}`);
         return completion;
       }
 
-      throw new Error("Empty response from Groq.");
-
     } catch (err) {
       lastError = err;
-
       console.warn(
-        `Groq attempt ${attempt} failed:`,
+        `Groq model ${modelName} failed:`,
         err.message
       );
-
-      if (attempt < MAX_RETRIES) {
-        await new Promise(resolve =>
-          setTimeout(resolve, 1000 * attempt)
-        );
-      }
     }
   }
 
-  throw lastError;
+  throw lastError || new Error("All candidate models failed for coding AI");
 }
 
 const generateCodingProblem = async (
