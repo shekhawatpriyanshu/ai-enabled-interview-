@@ -28155,3 +28155,13 @@
 [ActivityLogger] Success! Method=GET, URL=/api/interviews/my-interviews?page=1&limit=9, Has user? true, Has socket? true
 [ActivityLogger] Success! Method=GET, URL=/api/users/profile, Has user? true, Has socket? true
 [ActivityLogger] Success! Method=GET, URL=/api/interviews/my-interviews?page=1&limit=9, Has user? true, Has socket? true
+[ActivityLogger] Success! Method=POST, URL=/api/admin/auth/login, Has user? false, Has socket? true
+[ActivityLogger] Success! Method=GET, URL=/api/admin/auth/dashboard, Has user? true, Has socket? true
+[ActivityLogger] Success! Method=GET, URL=/api/admin/auth/dashboard, Has user? true, Has socket? true
+[ActivityLogger] Success! Method=GET, URL=/api/live-interviews, Has user? false, Has socket? true
+[ActivityLogger] Success! Method=GET, URL=/api/live-interviews, Has user? false, Has socket? true
+[ActivityLogger] Success! Method=GET, URL=/api/admin/auth/me, Has user? true, Has socket? true
+[ActivityLogger] Success! Method=GET, URL=/api/admin/auth/me, Has user? true, Has socket? true
+[ActivityLogger] Success! Method=GET, URL=/api/live-interviews, Has user? false, Has socket? true
+[ActivityLogger] Success! Method=GET, URL=/api/live-interviews, Has user? false, Has socket? true
+[ActivityLogger] Success! Method=POST, URL=/api/live-interviews/ROOM_UZHMY/submit, Has user? false, Has socket? true

@@ -182,26 +182,28 @@ const AdminLiveInterviews = () => {
       {/* 2. DASHBOARD METRICS CARDS WITH HOVER EFFECTS */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
-          { id: "all", label: "Total Sessions", count: totalCount, color: "from-slate-800 to-slate-900", text: "text-white" },
-          { id: "upcoming", label: "Upcoming 🟡", count: upcomingCount, color: "from-amber-500/10 to-amber-500/20 border-amber-200/90", text: "text-amber-700" },
-          { id: "live", label: "Live 🔴", count: liveCount, color: "from-rose-500/10 to-rose-500/20 border-rose-200/90", text: "text-rose-700" },
-          { id: "completed", label: "Completed ✅", count: completedCount, color: "from-emerald-500/10 to-emerald-500/20 border-emerald-200/90", text: "text-emerald-700" },
-          { id: "cancelled", label: "Cancelled ❌", count: cancelledCount, color: "from-slate-100 to-slate-200/80 border-slate-300/80", text: "text-slate-700" },
+          { id: "all", label: "Total Sessions", count: totalCount, color: "from-slate-800 to-slate-900", text: "text-white", border: "border-slate-700 hover:border-slate-500" },
+          { id: "upcoming", label: "Upcoming 🟡", count: upcomingCount, color: "from-amber-500/10 to-amber-500/20", text: "text-amber-700", border: "border-amber-500/20 hover:border-amber-500/50" },
+          { id: "live", label: "Live 🔴", count: liveCount, color: "from-rose-500/10 to-rose-500/20", text: "text-rose-700", border: "border-rose-500/20 hover:border-rose-500/50" },
+          { id: "completed", label: "Completed ✅", count: completedCount, color: "from-emerald-500/10 to-emerald-500/20", text: "text-emerald-700", border: "border-emerald-500/20 hover:border-emerald-500/50" },
+          { id: "cancelled", label: "Cancelled ❌", count: cancelledCount, color: "from-slate-100 to-slate-200/80", text: "text-slate-700", border: "border-slate-300 hover:border-slate-400" },
         ].map((m) => (
           <div
             key={m.id}
             onClick={() => setActiveStatusFilter(m.id)}
-            className={`p-5 rounded-3xl border bg-gradient-to-br ${m.color} shadow-sm flex flex-col justify-between transition-all duration-300 transform hover:-translate-y-1.5 hover:scale-[1.03] hover:shadow-xl cursor-pointer group relative overflow-hidden`}
+            className={`p-5 rounded-3xl border bg-gradient-to-br ${m.color} ${m.border} shadow-sm flex flex-col justify-between transition-all duration-300 transform hover:-translate-y-2 hover:scale-[1.03] hover:shadow-2xl hover:shadow-indigo-500/10 cursor-pointer group relative overflow-hidden ${
+              activeStatusFilter === m.id ? "ring-2 ring-indigo-500 shadow-lg scale-[1.02]" : ""
+            }`}
           >
-            <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500 pointer-events-none" />
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 group-hover:text-indigo-600 transition-colors">{m.label}</span>
-            <span className={`text-2xl sm:text-3xl font-black mt-2 transition-transform duration-300 group-hover:scale-110 ${m.text}`}>{m.count}</span>
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500 pointer-events-none" />
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 group-hover:text-indigo-600 transition-colors duration-200">{m.label}</span>
+            <span className={`text-2xl sm:text-3xl font-black mt-2 transition-transform duration-300 group-hover:scale-110 origin-left ${m.text}`}>{m.count}</span>
           </div>
         ))}
       </div>
 
       {/* 3. FILTERS & SEARCH BAR WITH HOVER STATES */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300">
         <div className="flex items-center space-x-2 overflow-x-auto scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full md:w-auto">
           {[
             { id: "all", label: "All Sessions" },
@@ -225,13 +227,13 @@ const AdminLiveInterviews = () => {
         </div>
 
         <div className="relative w-full md:w-72 group">
-          <FaSearch className="absolute left-4 top-3.5 text-slate-400 text-xs group-hover:text-indigo-500 transition-colors" />
+          <FaSearch className="absolute left-4 top-3.5 text-slate-400 text-xs group-hover:text-indigo-500 transition-colors duration-200" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search candidate, role or room ID..."
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 hover:bg-white text-slate-800 text-xs font-semibold rounded-2xl border border-slate-300 hover:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 shadow-2xs hover:shadow-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 hover:bg-white text-slate-800 text-xs font-semibold rounded-2xl border border-slate-300 hover:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 shadow-2xs hover:shadow-sm"
           />
         </div>
       </div>
@@ -247,11 +249,11 @@ const AdminLiveInterviews = () => {
           <p className="text-slate-600 font-bold text-base">No interview sessions match the current criteria.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden transition-all duration-300">
           <div className="overflow-x-auto scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-black uppercase text-slate-500 tracking-wider">
+                <tr className="bg-slate-50/90 border-b border-slate-200 text-[11px] font-black uppercase text-slate-500 tracking-wider">
                   <th className="py-4 px-5 whitespace-nowrap">Room ID</th>
                   <th className="py-4 px-5 whitespace-nowrap">Candidate Status</th>
                   <th className="py-4 px-5 whitespace-nowrap">Interviewer Status</th>
@@ -267,19 +269,19 @@ const AdminLiveInterviews = () => {
                   const intConn = rm.interviewerConnected ?? (st === "active" || st === "in-progress" || st === "waiting");
 
                   return (
-                    <tr key={rm.roomId} className="hover:bg-indigo-50/40 transition-colors duration-200 group">
-                      <td className="py-4 px-5 font-mono font-bold text-indigo-600 whitespace-nowrap group-hover:scale-105 transition-transform duration-200 inline-block">{rm.roomId}</td>
+                    <tr key={rm.roomId} className="hover:bg-gradient-to-r hover:from-indigo-50/70 hover:via-purple-50/30 hover:to-indigo-50/70 transition-all duration-300 group cursor-pointer">
+                      <td className="py-4 px-5 font-mono font-bold text-indigo-600 whitespace-nowrap group-hover:translate-x-1 group-hover:text-indigo-700 transition-all duration-200 inline-block">{rm.roomId}</td>
 
                       {/* CANDIDATE STATUS */}
                       <td className="py-4 px-5 whitespace-nowrap">
-                        <div className="font-bold text-slate-900 group-hover:text-indigo-950 transition-colors">{rm.candidateName || "Candidate"}</div>
+                        <div className="font-bold text-slate-900 group-hover:text-indigo-950 transition-colors duration-200">{rm.candidateName || "Candidate"}</div>
                         <div className="flex items-center gap-1.5 mt-1">
                           {candConn ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs group-hover:scale-105 transition-transform">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs group-hover:scale-105 transition-transform duration-200">
                               🟢 Candidate Connected
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200 shadow-2xs group-hover:scale-105 transition-transform">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200 shadow-2xs group-hover:scale-105 transition-transform duration-200">
                               ⚠️ Disconnected
                             </span>
                           )}
@@ -288,14 +290,14 @@ const AdminLiveInterviews = () => {
 
                       {/* INTERVIEWER STATUS */}
                       <td className="py-4 px-5 whitespace-nowrap">
-                        <div className="font-bold text-slate-800 group-hover:text-indigo-950 transition-colors">{rm.interviewerName || "Rahul (Admin)"}</div>
+                        <div className="font-bold text-slate-800 group-hover:text-indigo-950 transition-colors duration-200">{rm.interviewerName || "Rahul (Admin)"}</div>
                         <div className="flex items-center gap-1.5 mt-1">
                           {intConn ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs group-hover:scale-105 transition-transform">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs group-hover:scale-105 transition-transform duration-200">
                               🟢 Interviewer Connected
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200 shadow-2xs group-hover:scale-105 transition-transform">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200 shadow-2xs group-hover:scale-105 transition-transform duration-200">
                               ⚠️ Disconnected
                             </span>
                           )}
@@ -303,7 +305,7 @@ const AdminLiveInterviews = () => {
                       </td>
 
                       {/* LIVE STATUS */}
-                      <td className="py-4 px-5 whitespace-nowrap group-hover:scale-105 transition-transform">
+                      <td className="py-4 px-5 whitespace-nowrap group-hover:scale-105 transition-transform duration-200">
                         {renderStatusBadge(rm.status)}
                       </td>
 
@@ -322,17 +324,17 @@ const AdminLiveInterviews = () => {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => setSelectedRoomDetails(rm)}
-                            className="px-3.5 py-2 bg-slate-100 hover:bg-indigo-600 hover:text-white text-slate-800 font-bold rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shadow-2xs hover:shadow-md hover:shadow-indigo-500/25"
+                            className="px-3.5 py-2 bg-gradient-to-r from-slate-100 to-slate-200 hover:from-indigo-600 hover:to-purple-600 text-slate-800 hover:text-white font-extrabold rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shadow-2xs hover:shadow-lg hover:shadow-indigo-500/30"
                             title="Monitor Room Status"
                           >
-                            <FaEye className="w-3.5 h-3.5 text-indigo-500 group-hover:text-white transition-colors" />
+                            <FaEye className="w-3.5 h-3.5 text-indigo-500 group-hover:text-white transition-colors duration-200" />
                             <span>Monitor</span>
                           </button>
 
                           {rm.status !== "cancelled" && rm.status !== "Cancelled" && (
                             <button
                               onClick={() => setCancelModalRoom(rm)}
-                              className="p-2 bg-rose-50 hover:bg-amber-600 hover:text-white text-rose-600 border border-rose-200 font-bold rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center shadow-2xs hover:shadow-md hover:shadow-amber-500/25"
+                              className="p-2 bg-rose-50 hover:bg-amber-500 hover:text-white text-rose-600 border border-rose-200 font-bold rounded-xl transition-all duration-300 transform hover:scale-110 active:scale-95 cursor-pointer flex items-center justify-center shadow-2xs hover:shadow-lg hover:shadow-amber-500/30"
                               title="Cancel Interview"
                             >
                               <FaBan className="w-3.5 h-3.5" />
@@ -341,7 +343,7 @@ const AdminLiveInterviews = () => {
 
                           <button
                             onClick={() => handleDeleteRoom(rm.roomId)}
-                            className="p-2 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 font-bold rounded-xl transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center shadow-2xs hover:shadow-md hover:shadow-red-500/25"
+                            className="p-2 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 font-bold rounded-xl transition-all duration-300 transform hover:scale-110 active:scale-95 cursor-pointer flex items-center justify-center shadow-2xs hover:shadow-lg hover:shadow-red-500/30"
                             title="Delete Interview Room"
                           >
                             <FaTrash className="w-3.5 h-3.5" />
