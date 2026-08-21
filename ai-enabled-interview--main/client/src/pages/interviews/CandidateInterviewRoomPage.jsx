@@ -4,6 +4,7 @@ import Editor from "@monaco-editor/react";
 import socket from "../../socket";
 import { useAuth } from "../../context/AuthContext";
 import { getLiveInterviewRoomById, runCodeInRoom, submitAndEndInterview } from "../../services/liveInterviewService";
+import { isInterviewTimeReached } from "../../utils/interviewTimeUtils";
 import {
   FaClock,
   FaPaperPlane,
@@ -23,6 +24,7 @@ import {
   FaExclamationTriangle,
   FaCog,
   FaLock,
+  FaVideo,
 } from "react-icons/fa";
 
 const STARTER_TEMPLATES = {
@@ -64,6 +66,28 @@ public class Solution {
         System.out.println("Solution executed successfully.");
     }
 }`
+};
+
+const checkIsHostUser = (usr, rm) => {
+  if (!usr) return false;
+  const uEmail = (usr?.email || "").trim().toLowerCase();
+  const cEmail = (rm?.candidateEmail || "").trim().toLowerCase();
+  const hEmail = (rm?.hostEmail || rm?.creatorEmail || "").trim().toLowerCase();
+  const userType = (usr?.userType || usr?.profile?.userType || "").trim().toLowerCase();
+
+  if (userType === "working professional" || usr?.role === "admin" || usr?.role === "interviewer") {
+    return true;
+  }
+  if (hEmail && uEmail && uEmail === hEmail) {
+    return true;
+  }
+  if (cEmail && uEmail && uEmail === cEmail) {
+    return false;
+  }
+  if (rm?.interviewerName && usr?.name && rm.interviewerName.toLowerCase().includes(usr.name.toLowerCase())) {
+    return true;
+  }
+  return false;
 };
 
 export default function CandidateInterviewRoomPage() {
@@ -866,9 +890,50 @@ export default function CandidateInterviewRoomPage() {
 
         {/* TIMER & LANGUAGE SELECTOR */}
         <div className="flex items-center flex-wrap gap-2 sm:gap-3 ml-auto">
-          <div className="flex items-center space-x-1.5 sm:space-x-2 bg-[#1f1f1f] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-[#383838] shrink-0">
-            <FaClock className="text-amber-400 text-xs animate-pulse" />
-            <span className="font-mono text-xs font-bold text-white">{formatTime(timerRemaining)}</span>
+          <div className="flex items-center space-x-2 shrink-0">
+            <div className="flex items-center space-x-1.5 sm:space-x-2 bg-[#1f1f1f] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-[#383838] shrink-0">
+              <FaClock className={`text-xs ${isTimerPaused ? "text-amber-400" : "text-emerald-400 animate-pulse"}`} />
+              <span className="font-mono text-xs font-bold text-white">{formatTime(timerRemaining)}</span>
+              {isTimerPaused && (
+                <span className="text-[9px] font-extrabold uppercase bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/30">
+                  PAUSED
+                </span>
+              )}
+            </div>
+
+            {/* HOST / WORKING PROFESSIONAL TIMER CONTROLS */}
+            {checkIsHostUser(user, room) && (
+              <div className="flex items-center space-x-1 bg-[#141414] p-1 rounded-xl border border-[#282828] shrink-0">
+                <button
+                  onClick={() => handleTimerControl("start")}
+                  className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                    !isTimerPaused ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-sm" : "text-slate-400 hover:text-white"
+                  }`}
+                  title="Start / Resume Candidate Timer (Realtime Sync)"
+                >
+                  <FaPlay className="text-[9px] text-emerald-400" />
+                  <span className="hidden sm:inline">Start</span>
+                </button>
+                <button
+                  onClick={() => handleTimerControl("pause")}
+                  className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                    isTimerPaused ? "bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-sm" : "text-slate-400 hover:text-white"
+                  }`}
+                  title="Pause Candidate Timer (Realtime Sync)"
+                >
+                  <FaPause className="text-[9px] text-amber-400" />
+                  <span className="hidden sm:inline">Pause</span>
+                </button>
+                <button
+                  onClick={() => handleTimerControl("reset")}
+                  className="px-2 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-indigo-300 hover:bg-indigo-500/10 transition cursor-pointer flex items-center gap-1"
+                  title="Reset Candidate Timer to 30 Mins (Realtime Sync)"
+                >
+                  <FaRedo className="text-[9px] text-indigo-400" />
+                  <span className="hidden sm:inline">Reset</span>
+                </button>
+              </div>
+            )}
           </div>
 
           <select
@@ -1273,6 +1338,10 @@ export default function CandidateInterviewRoomPage() {
                     scrollBeyondLastLine: false,
                     automaticLayout: true,
                     tabSize: editorTabSize,
+                    accessibilitySupport: "off",
+                    overviewRulerLanes: 0,
+                    hideCursorInOverviewRuler: true,
+                    overviewRulerBorder: false,
                   }}
                 />
               );
@@ -1462,17 +1531,18 @@ export default function CandidateInterviewRoomPage() {
             </div>
 
             {/* CHAT INPUT */}
-            <form onSubmit={handleSendMessage} className="mt-3 flex items-center space-x-2">
+            <form onSubmit={handleSendMessage} className="mt-3 flex items-center gap-2 shrink-0 w-full min-w-0">
               <input
                 type="text"
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 bg-[#141414] text-slate-200 text-xs px-3 py-2 rounded-xl border border-[#383838] focus:outline-none focus:border-amber-500 font-semibold"
+                className="flex-1 min-w-0 bg-[#141414] text-slate-200 text-xs px-3 py-2 rounded-xl border border-[#383838] focus:outline-none focus:border-amber-500 font-semibold"
               />
               <button
                 type="submit"
-                className="p-2 bg-amber-500 hover:bg-amber-400 text-black rounded-xl transition cursor-pointer"
+                className="w-8 h-8 rounded-full bg-amber-500 hover:bg-amber-400 text-black flex items-center justify-center transition cursor-pointer font-bold shrink-0 shadow-md"
+                title="Send Message"
               >
                 <FaPaperPlane className="text-xs" />
               </button>

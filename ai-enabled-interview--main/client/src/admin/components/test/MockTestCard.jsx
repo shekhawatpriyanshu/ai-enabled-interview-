@@ -69,44 +69,39 @@ const MockTestCard = ({ test, onDelete, onToggleStatus }) => {
           </div>
         </div>
 
-        {/* Title */}
-        <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1 mb-2">
+        {/* Title (Full Text Display, No Truncation) */}
+        <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors mb-5 leading-snug">
           {test.title}
         </h3>
 
-        {/* Description */}
-        <p className="text-xs text-slate-500 line-clamp-2 mb-5 leading-relaxed min-h-[36px]">
-          {test.description || "No description provided for this mock test."}
-        </p>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-3 gap-2 py-3 px-3.5 bg-slate-50/80 rounded-2xl border border-slate-100 mb-6">
+        {/* Interactive Stats Grid */}
+        <div className="grid grid-cols-3 gap-1.5 p-2 bg-gradient-to-br from-slate-50 via-indigo-50/20 to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 shadow-inner mb-5">
           {/* Questions */}
-          <div className="flex flex-col items-center justify-center text-center">
-            <span className="flex items-center gap-1 text-[11px] font-medium text-slate-400 mb-0.5">
-              <FaQuestionCircle className="text-indigo-500 text-xs" /> Questions
+          <div className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-default group/stat">
+            <span className="flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1 group-hover/stat:text-indigo-600 transition-colors">
+              <FaQuestionCircle className="text-indigo-500 text-xs group-hover/stat:rotate-12 transition-transform" /> Questions
             </span>
-            <span className="text-sm font-bold text-slate-800">
+            <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
               {test.questions?.length || 0}
             </span>
           </div>
 
           {/* Duration */}
-          <div className="flex flex-col items-center justify-center text-center border-x border-slate-200/60">
-            <span className="flex items-center gap-1 text-[11px] font-medium text-slate-400 mb-0.5">
-              <FaClock className="text-cyan-500 text-xs" /> Duration
+          <div className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-default group/stat border-x border-slate-200/60 dark:border-slate-700/60">
+            <span className="flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1 group-hover/stat:text-cyan-600 transition-colors">
+              <FaClock className="text-cyan-500 text-xs group-hover/stat:rotate-12 transition-transform" /> Duration
             </span>
-            <span className="text-sm font-bold text-slate-800">
+            <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
               {test.duration || 0}m
             </span>
           </div>
 
           {/* Marks */}
-          <div className="flex flex-col items-center justify-center text-center">
-            <span className="flex items-center gap-1 text-[11px] font-medium text-slate-400 mb-0.5">
-              <FaTrophy className="text-amber-500 text-xs" /> Marks
+          <div className="flex flex-col items-center justify-center text-center p-2 rounded-xl hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-default group/stat">
+            <span className="flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1 group-hover/stat:text-amber-600 transition-colors">
+              <FaTrophy className="text-amber-500 text-xs group-hover/stat:rotate-12 transition-transform" /> Marks
             </span>
-            <span className="text-sm font-bold text-slate-800">
+            <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
               {test.totalMarks || 0}
             </span>
           </div>

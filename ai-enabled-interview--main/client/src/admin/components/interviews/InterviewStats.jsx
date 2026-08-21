@@ -36,7 +36,12 @@ const InterviewStats = ({ stats }) => {
     },
     {
       title: "Average Score",
-      value: stats?.averageScore ? `${stats.averageScore}%` : "0%",
+      value:
+        stats?.averageScore !== undefined &&
+        stats?.averageScore !== null &&
+        !isNaN(Number(stats.averageScore))
+          ? `${Number(stats.averageScore).toFixed(1)}%`
+          : "0%",
       icon: <FaStar />,
       gradient: "from-purple-600 to-fuchsia-600",
       cardBg: "bg-gradient-to-br from-purple-50/80 via-white to-fuchsia-50/40 border-purple-200/80",
@@ -46,30 +51,32 @@ const InterviewStats = ({ stats }) => {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       {cards.map((card) => (
         <div
           key={card.title}
-          className={`group ${card.cardBg} rounded-2xl border p-5 sm:p-6 shadow-md hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 relative overflow-hidden`}
+          className={`group ${card.cardBg} rounded-2xl border p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col justify-between`}
         >
           {/* Glowing Top Accent */}
-          <div className={`absolute top-0 left-0 right-0 h-1.5 ${card.topAccent}`} />
+          <div className={`absolute top-0 left-0 right-0 h-1 ${card.topAccent}`} />
 
-          <div className="flex items-center justify-between gap-3 pt-1">
-            <div className="space-y-1.5 min-w-0">
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-600">
-                {card.title}
-              </p>
-              <h2 className={`text-2xl sm:text-3xl font-extrabold bg-gradient-to-r ${card.gradient} bg-clip-text text-transparent`}>
-                {card.value}
-              </h2>
-            </div>
-
+          {/* Top Row: Title on Left, Icon on Right */}
+          <div className="flex items-center justify-between gap-1.5 pt-0.5">
+            <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              {card.title}
+            </p>
             <div
-              className={`w-12 h-12 rounded-2xl ${card.iconBg} flex items-center justify-center text-xl shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 shrink-0`}
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${card.iconBg} flex items-center justify-center text-sm sm:text-base shadow-md group-hover:scale-105 transition-transform duration-300 shrink-0`}
             >
               {card.icon}
             </div>
+          </div>
+
+          {/* Bottom Row: Number Value */}
+          <div className="mt-2">
+            <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r ${card.gradient} bg-clip-text text-transparent`}>
+              {card.value}
+            </h2>
           </div>
         </div>
       ))}

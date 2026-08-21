@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getLiveInterviewRooms, createLiveInterviewRoom, endLiveInterviewRoom, cancelLiveInterviewRoom, deleteLiveInterviewRoom } from "../../../services/liveInterviewService";
 import { getUsers } from "../../services/userService";
+import { isInterviewTimeReached } from "../../../utils/interviewTimeUtils";
 import socket from "../../../socket";
 import {
   FaUserTie,
@@ -17,15 +18,23 @@ import {
   FaExclamationTriangle,
   FaWifi,
   FaQuestionCircle,
+  FaPlus,
+  FaVideo,
+  FaPlay,
+  FaCheckCircle,
+  FaTimes,
 } from "react-icons/fa";
 
 const AdminLiveInterviews = () => {
+  const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedRoomDetails, setSelectedRoomDetails] = useState(null);
   const [cancelModalRoom, setCancelModalRoom] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
   const [copiedRoomId, setCopiedRoomId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [userOptions, setUserOptions] = useState([]);
 
   // Filters & Search
   const [activeStatusFilter, setActiveStatusFilter] = useState("all");
@@ -374,15 +383,18 @@ const AdminLiveInterviews = () => {
       {/* 2. DASHBOARD METRICS CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
-          { label: "Total Sessions", count: totalCount, color: "from-slate-800 to-slate-900", text: "text-white" },
-          { label: "Upcoming 🟡", count: upcomingCount, color: "from-amber-500/10 to-amber-500/20 border-amber-200", text: "text-amber-700" },
-          { label: "Live 🔴", count: liveCount, color: "from-rose-500/10 to-rose-500/20 border-rose-200", text: "text-rose-700" },
-          { label: "Completed ✅", count: completedCount, color: "from-emerald-500/10 to-emerald-500/20 border-emerald-200", text: "text-emerald-700" },
-          { label: "Cancelled ❌", count: cancelledCount, color: "from-slate-200 to-slate-300", text: "text-slate-700" },
+          { label: "Total Sessions", count: totalCount, color: "from-slate-800 to-slate-900", text: "text-white", border: "border-slate-700 hover:border-slate-500" },
+          { label: "Upcoming 🟡", count: upcomingCount, color: "from-amber-500/10 to-amber-500/20", text: "text-amber-700 dark:text-amber-400", border: "border-amber-500/20 hover:border-amber-500/50" },
+          { label: "Live 🔴", count: liveCount, color: "from-rose-500/10 to-rose-500/20", text: "text-rose-700 dark:text-rose-400", border: "border-rose-500/20 hover:border-rose-500/50" },
+          { label: "Completed ✅", count: completedCount, color: "from-emerald-500/10 to-emerald-500/20", text: "text-emerald-700 dark:text-emerald-400", border: "border-emerald-500/20 hover:border-emerald-500/50" },
+          { label: "Cancelled ❌", count: cancelledCount, color: "from-slate-200 to-slate-300 dark:from-slate-800 dark:to-slate-900", text: "text-slate-700 dark:text-slate-300", border: "border-slate-300 dark:border-slate-700 hover:border-slate-400" },
         ].map((m, idx) => (
-          <div key={idx} className={`p-5 rounded-3xl border bg-gradient-to-br ${m.color} shadow-sm flex flex-col justify-between`}>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{m.label}</span>
-            <span className={`text-2xl sm:text-3xl font-black mt-2 ${m.text}`}>{m.count}</span>
+          <div
+            key={idx}
+            className={`p-5 rounded-3xl border bg-gradient-to-br ${m.color} ${m.border} shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col justify-between group`}
+          >
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-slate-300 transition-colors">{m.label}</span>
+            <span className={`text-2xl sm:text-3xl font-black mt-2 transition-transform duration-300 group-hover:scale-110 origin-left ${m.text}`}>{m.count}</span>
           </div>
         ))}
       </div>
@@ -477,19 +489,19 @@ const AdminLiveInterviews = () => {
                   const isCopied = copiedRoomId === rm.roomId;
 
                   return (
-                    <tr key={rm.roomId} className="hover:bg-slate-50/80 transition">
-                      <td className="py-4 px-5 font-mono font-bold text-indigo-600 whitespace-nowrap">{rm.roomId}</td>
+                    <tr key={rm.roomId} className="hover:bg-slate-100/70 dark:hover:bg-slate-800/80 transition-all duration-200 group">
+                      <td className="py-4 px-5 font-mono font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap group-hover:scale-105 transition-transform duration-200 origin-left">{rm.roomId}</td>
 
                       {/* CANDIDATE STATUS */}
                       <td className="py-4 px-5 whitespace-nowrap">
-                        <div className="font-bold text-slate-900">{rm.candidateName || "Candidate"}</div>
+                        <div className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{rm.candidateName || "Candidate"}</div>
                         <div className="flex items-center gap-1.5 mt-1">
                           {candConn ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30">
                               🟢 Candidate Connected
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30">
                               ⚠️ Disconnected
                             </span>
                           )}
@@ -498,14 +510,14 @@ const AdminLiveInterviews = () => {
 
                       {/* INTERVIEWER STATUS */}
                       <td className="py-4 px-5 whitespace-nowrap">
-                        <div className="font-bold text-slate-800">{rm.interviewerName || "Rahul (Admin)"}</div>
+                        <div className="font-bold text-slate-800 dark:text-slate-200">{rm.interviewerName || "Rahul (Admin)"}</div>
                         <div className="flex items-center gap-1.5 mt-1">
                           {intConn ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30">
                               🟢 Interviewer Connected
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30">
                               ⚠️ Disconnected
                             </span>
                           )}
@@ -540,7 +552,7 @@ const AdminLiveInterviews = () => {
                             onClick={() =>
                               navigate(`/admin/interview-room/${rm.roomId}`)
                             }
-                            className="px-3.5 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-md shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer inline-flex items-center gap-1.5"
+                            className="px-4 py-2 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-md shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer inline-flex items-center gap-1.5"
                             title="Enter Live Interview Room"
                           >
                             <FaPlay className="text-[10px]" />
@@ -550,17 +562,17 @@ const AdminLiveInterviews = () => {
                           {/* MONITOR DETAILS BUTTON */}
                           <button
                             onClick={() => setSelectedRoomDetails(rm)}
-                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition cursor-pointer inline-flex items-center gap-1"
+                            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold rounded-xl hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer inline-flex items-center gap-1.5 shadow-xs"
                             title="Monitor Room Status"
                           >
-                            <FaEye className="w-3 h-3 text-indigo-600" />
+                            <FaEye className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
                             <span>Monitor</span>
                           </button>
 
                           {rm.status !== "cancelled" && rm.status !== "Cancelled" && (
                             <button
                               onClick={() => setCancelModalRoom(rm)}
-                              className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold rounded-xl transition cursor-pointer flex items-center justify-center"
+                              className="p-2 bg-rose-50 hover:bg-rose-500 hover:text-white text-rose-600 border border-rose-200 dark:border-rose-900/50 font-bold rounded-xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center shadow-xs"
                               title="Cancel Interview"
                             >
                               <FaBan className="w-3.5 h-3.5" />
@@ -570,7 +582,7 @@ const AdminLiveInterviews = () => {
                           {/* DELETE BUTTON */}
                           <button
                             onClick={() => handleDeleteRoom(rm.roomId)}
-                            className="p-2 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 font-bold rounded-xl transition cursor-pointer flex items-center justify-center shadow-xs"
+                            className="p-2 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 dark:border-red-900/50 font-bold rounded-xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center shadow-xs"
                             title="Delete Interview Room"
                           >
                             <FaTrash className="w-3.5 h-3.5" />
